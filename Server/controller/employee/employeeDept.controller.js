@@ -1,9 +1,9 @@
-const EmployeeDept = require ("../../models/Employee/employeeDept")
+const EmployeeDept = require ("../../models/Employee/employeeDept.model")
 
 
 const showAllDepts = async(req,res) => {
     try {
-        const allDepts= await EmployeeDept.find();
+        const allDepts= await EmployeeDept.find({ empDept: { $ne: "Admin" } });
         if (allDepts.length===0){
             return res.status(200).json({
                 success : true,
@@ -11,10 +11,16 @@ const showAllDepts = async(req,res) => {
             });
         }
         else{
+            const deptNames =allDepts.map(dept => ({
+                id: dept._id,
+                empdept : dept.empDept
+            }));
             return res.status(200).json({
                 success : true,
-                message :allDepts
-            })
+                message :{
+                    deptNames
+            }
+        });
         }
     }
     catch(error) {
@@ -73,7 +79,50 @@ const addDept = async (req,res) => {
     }
 };
 
+const updateDept = async (req,res) => {
+    const employeeId = req.employeeId;
+
+    const {deptId,deptName} = req.body || req.query;
+    // console.log(deptId,deptName);
+  
+    if(!deptId){
+        return res.status(400).json({
+            success : false,
+            message : "Department doesn't exist"
+        });
+    }
+
+    const deptExists = await EmployeeDept.findOne({empDept :deptName});
+    if(deptExists){
+        return res.status(400).json({
+            success : false,
+            message : "Department Already Exists"
+        });
+    }
+
+    const updatedDept = await EmployeeDept.findByIdAndUpdate(deptId,
+        {empDept :deptName},
+        {updatedBy : employeeId},
+        {new: true}
+    );
+
+    if(!updatedDept){
+        return res.status(400).json({
+            success: false,
+            message : "Department Updation Failed!, Try after few seconds!"
+        });
+    }
+
+    return res.status(200).json({
+        success : true,
+        message : "Department Updation Successful !"
+    });
+
+}
+
+
 module.exports = {
     showAllDepts,
-    addDept
+    addDept,
+    updateDept
 }
