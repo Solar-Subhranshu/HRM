@@ -7,7 +7,7 @@ const showAllDepts = async(req,res) => {
         if (allDepts.length===0){
             return res.status(200).json({
                 success : true,
-                message : "No Departments Found"
+                message : "No Departments Found, Please Add Department First."
             });
         }
         else{

@@ -45,7 +45,7 @@ const registerEmployee = async (req, res) => {
     }catch(error){
         return res.status(500).json({
             success: false,
-            message: "Internal Server Error",
+            message: "Internal Server Error. Couldn't Register Employee.",
             error: error.message
         });
     }
