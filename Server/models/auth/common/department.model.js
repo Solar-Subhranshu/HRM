@@ -1,21 +1,21 @@
 const mongoose= require("mongoose")
 
 const empDeptSchema = new mongoose.Schema({
-    empDept : {
+    department : {
         type: String,
         required : true,
         unique : true,
     },
-    createdBy : {
+    created_By : {
         type: mongoose.Schema.Types.ObjectId,
         ref : "Emp"
     },
-    updatedBy : {
+    updated_By : {
         type: mongoose.Schema.Types.ObjectId,
         ref : "Emp"
     }
 },{timestamps : true});
 
-const EmployeeDept = mongoose.model("EmployeeDept",empDeptSchema);
+const Department = mongoose.model("Department",empDeptSchema);
 
-module.exports = EmployeeDept;
+module.exports = Department;

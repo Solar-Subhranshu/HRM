@@ -3,8 +3,8 @@ const Company = require("../../models/Company/company.model")
 const addCompany = async (req,res)=>{
     try{
         const employeeId = req.employeeId;
-        const {compName,compBranch, compAddress, compPin} =req.body;
-        if(!compName || !compBranch || !compAddress || !compPin){
+        const {name,branch, address, pin} =req.body;
+        if(!name || !branch || !address || !pin){
             return res.status(400).json({
                 success : false,
                 message : "All fields are required!"
@@ -12,25 +12,30 @@ const addCompany = async (req,res)=>{
         }
 
         const newCompany = new Company({
-           companyName: compName,
-           companyBranch: compBranch,
-           companyAddress: compAddress,
-           companyPin : compPin,
-           createdBy : employeeId
+            name,branch, address, pin,
+           created_By : employeeId
         });
 
-        await newCompany.save();
-        
-        return res.status(200).json({
-            success : true,
-            message : "Company Added Successfully !",
-            data : {
-                "compName" : compName,
-                "compBranch":compBranch,
-                "compAddress":compAddress,
-                "compPin":compPin
+        await newCompany.save().then((responseData,error) =>{
+            if(responseData){
+                return res.status(201).json({
+                    success : true,
+                    message : "Company Added Successfully !",
+                    data : {
+                        "compName" : compName,
+                        "compBranch":compBranch,
+                        "compAddress":compAddress,
+                        "compPin":compPin
+                    }
+                });
             }
-        });
+            if(error){
+                return res.status(400).json({
+                    success : false,
+                    message : "Something is wrong please try again!",
+                });
+            }
+        })
     }
     catch (error){
         if(error.code===11000){
@@ -40,7 +45,7 @@ const addCompany = async (req,res)=>{
                 error: error.message
             });
         }
-        return res.status(500).json({
+        return res.status(400).json({
             success: false,
             message : "Internal Server Error! Couldn't add company.",
             error : error.message
@@ -51,27 +56,18 @@ const addCompany = async (req,res)=>{
 const showCompany = async (req,res)=>{
     try{
 
-        const allCompany=await Company.find();
-        if(allCompany.length===0){
+        const allCompany=await Company.find().select("-created_By, -updated_By");
+        if(allCompany.length===0 || allCompany == null){
             return res.status(200).json({
                 success : true,
                 message : "No Company Found, Please Add Company First."
             });
         }
         else{
-            // console.log(allCompany);
-            const companyData = allCompany.map(comp =>({
-                companyId : comp._id,
-                companyName : comp.companyName,
-                companyBranch : comp.companyBranch,
-                companyAddress: comp.companyAddress,
-                companyPin: comp.companyPin
-            }));
             return res.status(200).json({
                 success:true,
-                message: {
-                    companyData
-                }
+                data:allCompany,
+                message:"All Company list."
             })
         }
 
@@ -88,9 +84,9 @@ const showCompany = async (req,res)=>{
 const updateCompanyDetails= async (req,res)=>{
     try {
         const employeeId = req.employeeId;
-        const {companyId,companyName,companyBranch,companyAddress,companyPin} = req.body || req.query;
+        const {companyId,name,branch,address,pin} = req.body || req.query;
         
-        if(!companyName || !companyBranch || !companyAddress ||!companyPin){
+        if(!companyId){
             return res.status(400).json({
                 success :false,
                 message : "All fields are required! Please fill all feilds."
@@ -108,29 +104,29 @@ const updateCompanyDetails= async (req,res)=>{
             });
         }
 
-        const isUnchanged = (existingCompany.companyName===companyName)&&
-                    (existingCompany.companyBranch===companyBranch)&&
-                    (existingCompany.companyAddress===companyAddress)&&
-                    (existingCompany.companyPin===companyPin);
+        // const isUnchanged = (existingCompany.companyName===companyName)&&
+        //             (existingCompany.companyBranch===companyBranch)&&
+        //             (existingCompany.companyAddress===companyAddress)&&
+        //             (existingCompany.companyPin===companyPin);
 
-        if(isUnchanged){
-            return res.status(400).json({
-                success:false,
-                message : "No changes detected. The new data is same as the existing data.",
-            });
-        }
+        // if(isUnchanged){
+        //     return res.status(400).json({
+        //         success:false,
+        //         message : "No changes detected. The new data is same as the existing data.",
+        //     });
+        // }
 
         const newCompany= await Company.findByIdAndUpdate(companyId,
-            {companyName,companyBranch,companyAddress,companyPin,
-                updatedBy : employeeId
+            {name,branch,address,pin,
+                updated_By : employeeId
             },
         {new :true, runValidators:true});
-
-        return res.status(200).json({
-            success : true,
-            message : "Company updated Successfully !"
-        })
-
+        if(newCompany){
+            return res.status(200).json({
+                success : true,
+                message : "Company updated Successfully !"
+            })
+        }
     } catch (error) {
         if(error.code===11000){
             return res.status(400).json({

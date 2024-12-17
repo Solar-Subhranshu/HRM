@@ -6,28 +6,27 @@ const empSchema= new mongoose.Schema({
         required:true,
         unique: true
     },
-    empName:{
+    name:{
         type: String,
         required:true,
     },
-    empMob_No : {
+    mobile_No : {
         type: Number,
         required: true,
     },
-    empPassword : {
+    password : {
         type:String,
         required:true,
     },
-    empIsActive :{
+    isActive :{
         type: Boolean,
         default: true,
         required: true,
     },
-    empDept:{
+    department:{
         type:mongoose.Schema.Types.ObjectId,
-        ref : "EmployeeDept",
+        ref : "Department",
         required: true
-        // enum:["HR", "Admin", "Sales", "Developer"]
     },
     createdBy:{
         type: mongoose.Schema.Types.ObjectId,
@@ -44,5 +43,5 @@ const empSchema= new mongoose.Schema({
     }
     },{timestamps:true})
 
-const Emp = mongoose.model("Emp",empSchema);
+const Emp = mongoose.model("Employee",empSchema);
 module.exports = Emp;

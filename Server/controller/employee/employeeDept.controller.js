@@ -1,4 +1,4 @@
-const EmployeeDept = require ("../../models/Employee/employeeDept.model")
+const EmployeeDept = require ("../../models/auth/common/department.model")
 
 
 const showAllDepts = async(req,res) => {

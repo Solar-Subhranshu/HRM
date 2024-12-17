@@ -2,35 +2,35 @@ const mongoose =require("mongoose");
 
 const companySchema = new mongoose.Schema({
 
-    companyName: {
+    name: {
         type:String,
         minLength : 2,
         required : true
     },
-    companyBranch: {
+    branch: {
         type:String,
         required : true
     },
-    companyAddress: {
+    address: {
         type:String,
         required : true
     },
-    companyPin : {
+    pin : {
         type : Number,
         required: true
     },
-    createdBy: {
+    created_By: {
         type : mongoose.Schema.Types.ObjectId,
-        ref : "Emp"
+        ref : "Employee"
     },
-    updatedBy : {
+    updated_By : {
         type : mongoose.Schema.Types.ObjectId,
-        ref : "Emp"
+        ref : "Employee"
     }
 
 },{timestamps: true});
 
-companySchema.index({ companyName: 1, companyBranch: 1, companyAddress: 1 }, { unique: true });
+companySchema.index({ name: 1, branch: 1, address: 1 }, { unique: true });
 
 const Company = mongoose.model("Company",companySchema);
 
