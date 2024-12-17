@@ -59,12 +59,13 @@ const showCompany = async (req,res)=>{
             });
         }
         else{
-            console.log(allCompany);
+            // console.log(allCompany);
             const companyData = allCompany.map(comp =>({
-                compName : comp.companyName,
-                compBranch : comp.companyBranch,
-                compAddress: comp.companyAddress,
-                compPin: comp.companyPin
+                companyId : comp._id,
+                companyName : comp.companyName,
+                companyBranch : comp.companyBranch,
+                companyAddress: comp.companyAddress,
+                companyPin: comp.companyPin
             }));
             return res.status(200).json({
                 success:true,
@@ -84,7 +85,69 @@ const showCompany = async (req,res)=>{
     }
 }
 
+const updateCompanyDetails= async (req,res)=>{
+    try {
+        const employeeId = req.employeeId;
+        const {companyId,companyName,companyBranch,companyAddress,companyPin} = req.body || req.query;
+        
+        if(!companyName || !companyBranch || !companyAddress ||!companyPin){
+            return res.status(400).json({
+                success :false,
+                message : "All fields are required! Please fill all feilds."
+            });
+        }
+
+        // console.log(companyId,companyName,companyBranch,companyAddress,companyPin);
+        // to check if changes are same as previously saved data
+        const existingCompany=await Company.findById(companyId);
+
+        if(!existingCompany){
+            return res.status(400).json({
+                success:false,
+                message : `Company with id: ${companyId} Not Found.`
+            });
+        }
+
+        const isUnchanged = (existingCompany.companyName===companyName)&&
+                    (existingCompany.companyBranch===companyBranch)&&
+                    (existingCompany.companyAddress===companyAddress)&&
+                    (existingCompany.companyPin===companyPin);
+
+        if(isUnchanged){
+            return res.status(400).json({
+                success:false,
+                message : "No changes detected. The new data is same as the existing data.",
+            });
+        }
+
+        const newCompany= await Company.findByIdAndUpdate(companyId,
+            {companyName,companyBranch,companyAddress,companyPin,
+                updatedBy : employeeId
+            },
+        {new :true, runValidators:true});
+
+        return res.status(200).json({
+            success : true,
+            message : "Company updated Successfully !"
+        })
+
+    } catch (error) {
+        if(error.code===11000){
+            return res.status(400).json({
+                success:false,
+                message : "Update Failed! The given combination of Company Name, Branch, Address & Pin already exists."
+            })
+        }
+        return res.status(500).json({
+            success:false,
+            message:"Internal Server Error! Company Details could not be updated!",
+            error : error.message
+        });
+    }
+}
+
 module.exports ={
     addCompany,
-    showCompany
+    showCompany,
+    updateCompanyDetails
 }

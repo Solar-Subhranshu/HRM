@@ -4,6 +4,7 @@ const companySchema = new mongoose.Schema({
 
     companyName: {
         type:String,
+        minLength : 2,
         required : true
     },
     companyBranch: {

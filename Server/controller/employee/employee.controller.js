@@ -111,10 +111,83 @@ try{
 }
 }
 
+const deactivateEmp = async (req,res)=>{
+    try{
+        const employeeId = req.employeeId;
+        const {empId} = req.body || req.query;
+        // console.log(empId);
 
+        if(!empId){
+            return res.status(400).json({
+                success:false,
+                message : "Employee ID is required"
+            });
+        }
 
+        const deactiveEmp = await Emp.findOneAndUpdate(
+            {empId : empId},
+            {empIsActive : false},
+            {updatedBy : employeeId},
+            {new : true}  
+        );
+
+        if(!deactivateEmp){
+            return res.status(400).json({
+                success:false,
+                message : `Employee with empId: ${empId} Not Found.`
+            });
+        }
+        return res.status(200).json({
+            success:true,
+            message : "Employee De-Activated Successfuly !"
+        });
+
+    } catch (error) {
+        return res.status(500).json({
+            success:false,
+            message:"Internal Server Error, Couldn't Deactivate Employee, Try Again Later!",
+            error : error.message
+        })
+    }
+}
+
+const showAllEmployee= async (req,res) =>{
+    try{
+        const allEmp= await Emp.find();
+        if(allEmp===0){
+            return res.status(200).json({
+                success:true,
+                message : "No Employee Found, Please Register Employee First"
+            });
+        }
+        else{
+            const empData = allEmp.map(emp=> ({
+                id: emp.empId,
+                // pass : emp.empPassword,
+                name : emp.empName,
+                mobNo : emp.empMob_No,
+                empIsActive: emp.empIsActive
+            }));
+            return res.status(200).json({
+                success: true,
+                message: {
+                    empData
+                }
+            });
+        }
+    }
+    catch(error){
+        return res.status(500).json({
+            success:false,
+            message:"Internal Server Error, Couldn't Show Employee Data",
+            error : error.message
+        });
+    }
+}
 
 module.exports = {
     registerEmployee,
-    login
+    login,
+    deactivateEmp,
+    showAllEmployee
 };

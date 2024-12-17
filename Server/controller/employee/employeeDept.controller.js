@@ -80,6 +80,7 @@ const addDept = async (req,res) => {
 };
 
 const updateDept = async (req,res) => {
+    try{
     const employeeId = req.employeeId;
 
     const {deptId,deptName} = req.body || req.query;
@@ -117,6 +118,14 @@ const updateDept = async (req,res) => {
         success : true,
         message : "Department Updation Successful !"
     });
+}
+catch(error){
+    return res.status(500).json({
+        success:false,
+        message:"Internal Server Error, Couldn't update department.",
+        error : error.message
+    })
+}
 
 }
 
