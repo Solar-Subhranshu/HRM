@@ -1,4 +1,4 @@
-const mongoose= require("mongoose")
+const mongoose= require("mongoose");
 
 const empDeptSchema = new mongoose.Schema({
     department : {
@@ -8,11 +8,11 @@ const empDeptSchema = new mongoose.Schema({
     },
     created_By : {
         type: mongoose.Schema.Types.ObjectId,
-        ref : "Emp"
+        ref : "Employee"
     },
     updated_By : {
         type: mongoose.Schema.Types.ObjectId,
-        ref : "Emp"
+        ref : "Employee"
     }
 },{timestamps : true});
 

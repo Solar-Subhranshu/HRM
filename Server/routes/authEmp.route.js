@@ -1,7 +1,7 @@
 const {registerEmployee,login,deactivateEmp,showAllEmployee} = require("../controller/employee/employee.controller");
 const router = require("express").Router();
 const {tokenVerify} = require("../middlewares/tokenVerification");
-const {showAllDepts,addDept,updateDept} = require("../controller/employee/employeeDept.controller")
+const {showAllDepts,addDept,updateDept} = require("../controller/Common/department.controller")
 
 router.post("/empRegister", tokenVerify, registerEmployee);
 router.post("/add-department", tokenVerify, addDept);

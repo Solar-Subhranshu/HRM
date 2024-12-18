@@ -37,9 +37,9 @@ const registerEmployee = async (req, res) => {
                     message: "Employee Registered Successfully",
                     data: {
                         "empId":newEmployee.empId,
-                        "empName":newEmployee.empName,
-                        "empMob_No":newEmployee.empMob_No,
-                        "empDept": newEmployee.empDept
+                        "empName":newEmployee.name,
+                        "empMob_No":newEmployee.mobile_No,
+                        "empDept": newEmployee.department
                     }
                 });
             }
@@ -138,7 +138,8 @@ const deactivateEmp = async (req,res)=>{
 
         const deactiveEmp = await Employee.findOneAndUpdate(
             {empId : empId},
-            {empIsActive : false,updatedBy : employeeId},
+            {isActive : false,
+                updated_By : employeeId},
             {new : true}  
         );
 
@@ -164,7 +165,7 @@ const deactivateEmp = async (req,res)=>{
 
 const showAllEmployee= async (req,res) =>{
     try{
-        const allEmp= await Emp.find();
+        const allEmp= await Employee.find();
         if(allEmp===0){
             return res.status(200).json({
                 success:true,
@@ -174,10 +175,9 @@ const showAllEmployee= async (req,res) =>{
         else{
             const empData = allEmp.map(emp=> ({
                 id: emp.empId,
-                // pass : emp.empPassword,
-                name : emp.empName,
-                mobNo : emp.empMob_No,
-                empIsActive: emp.empIsActive
+                name : emp.name,
+                mobNo : emp.mobile_NoNo,
+                empIsActive: emp.isActive
             }));
             return res.status(200).json({
                 success: true,

@@ -28,20 +28,20 @@ const empSchema= new mongoose.Schema({
         ref : "Department",
         required: true
     },
-    createdBy:{
+    created_By:{
         type: mongoose.Schema.Types.ObjectId,
-        ref : "Emp",
+        ref : "Employee",
         required: true
 
     },
-    updatedBy:{
+    updated_By:{
         type: mongoose.Schema.Types.ObjectId,
-        ref : "Emp"
+        ref : "Employee"
     },
     refreshToken: {
         type: String,
     }
     },{timestamps:true})
 
-const Emp = mongoose.model("Employee",empSchema);
-module.exports = Emp;
+const Employee = mongoose.model("Employee",empSchema);
+module.exports = Employee;

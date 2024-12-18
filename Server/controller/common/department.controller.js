@@ -1,10 +1,10 @@
-const EmployeeDept = require ("../../models/auth/common/department.model")
+const Department = require ("../../models/auth/common/department.model")
 
 
 const showAllDepts = async(req,res) => {
     try {
-        const allDepts= await EmployeeDept.find({ empDept: { $ne: "Admin" } });
-        if (allDepts.length===0){
+        const allDepts= await Department.find({ department: { $ne: "Admin" } });
+        if (allDepts.length===0 || allDepts==null){
             return res.status(200).json({
                 success : true,
                 message : "No Departments Found, Please Add Department First."
@@ -13,7 +13,7 @@ const showAllDepts = async(req,res) => {
         else{
             const deptNames =allDepts.map(dept => ({
                 id: dept._id,
-                empdept : dept.empDept
+                empdept : dept.department
             }));
             return res.status(200).json({
                 success : true,
@@ -38,7 +38,7 @@ const addDept = async (req,res) => {
         const {dept} = req.body || req.query;
         // console.log(dept);
         const employeeId = req.employeeId;
-        // console.log("empID", employeeId)
+       
         if(!dept){
             return res.status(400).json({
                 success : false,
@@ -46,7 +46,7 @@ const addDept = async (req,res) => {
             });
         }
 
-        const deptExists = await EmployeeDept.findOne({empDept :dept});
+        const deptExists = await Department.findOne({department :dept});
         if(deptExists){
             return res.status(400).json({
                 success : false,
@@ -54,9 +54,9 @@ const addDept = async (req,res) => {
             });
         }
 
-        const newDept =new EmployeeDept({
-            empDept : dept,
-            createdBy : employeeId
+        const newDept = new Department({
+            department : dept,
+            created_By : employeeId
         })
         const responseData = await newDept.save();
         if(responseData){
@@ -93,7 +93,7 @@ const updateDept = async (req,res) => {
         });
     }
 
-    const deptExists = await EmployeeDept.findOne({empDept :deptName});
+    const deptExists = await Department.findOne({department :deptName});
     if(deptExists){
         return res.status(400).json({
             success : false,
@@ -101,9 +101,9 @@ const updateDept = async (req,res) => {
         });
     }
 
-    const updatedDept = await EmployeeDept.findByIdAndUpdate(deptId,
-        {empDept :deptName},
-        {updatedBy : employeeId},
+    const updatedDept = await Department.findByIdAndUpdate(deptId,
+        {department :deptName},
+        {updated_By : employeeId},
         {new: true}
     );
 
@@ -128,7 +128,6 @@ catch(error){
 }
 
 }
-
 
 module.exports = {
     showAllDepts,
