@@ -1,127 +1,286 @@
 const Employee = require("../../models/auth/employee.model");
 const bcrypt = require("bcrypt");
 const {createAccessToken, createRefreshToken} = require("../../utils/tokenGeneration");
+const {generateRandomNumbers} = require("../../utils/randomNumGenerator");
+
+// const registerEmployee = async (req, res) => {
+//     try{
+//         // const employeeId = req.employeeId;
+//         const {empId,name, password, mobile_No, department} = req.body;
+//         if(!empId || !password || !name || !mobile_No || !department){
+//             return res.status(400).json({
+//                 success: false,
+//                 message: "All fields are required"
+//             });
+//         }
+//         const existingEmp = await Employee.findOne({empId: empId});
+//         if(existingEmp){
+//             return res.status(400).json({
+//                 success: false,
+//                 message: "EmpId already exists"
+//             });
+//         }
+//         const hashedPassword = await bcrypt.hash(password,10);
+//         const newEmployee = new Employee({
+//             empId,
+//             name, 
+//             mobile_No, 
+//             department,
+//             password: hashedPassword,
+//             created_By: employeeId
+//         });
+
+//         await newEmployee.save().then((responseData, error) =>{
+//             if(responseData){
+//                 return res.status(201).json({
+//                     success: true,
+//                     message: "Employee Registered Successfully",
+//                     data: {
+//                         "empId":newEmployee.empId,
+//                         "empName":newEmployee.name,
+//                         "empMob_No":newEmployee.mobile_No,
+//                         "empDept": newEmployee.department
+//                     }
+//                 });
+//             }
+//             if(error){
+//                 return res.status(400).json({
+//                     success:false,
+//                     message:"Somthing is wrong please try again."
+//                 })
+//             }
+//         });
+        
+//     }catch(error){
+//         return res.status(500).json({
+//             success: false,
+//             message: "Internal Server Error. Couldn't Register Employee.",
+//             error: error.message
+//         });
+//     }
+// };
 
 
-const registerEmployee = async (req, res) => {
-    try{
-        const employeeId = req.employeeId;
-        const {empId,name, password, mobile_No, department} = req.body;
-        if(!empId || !password || !name || !mobile_No || !department){
+const registerEmployee = async(req,res)=>{
+    try {
+        const{employeeCode,name,father_husbandName,company,department,designation,joiningDate} = req.body;
+        
+        const{password,dateOfBirth,personalPhoneNum,personalEmail,companyPhoneNum,
+            companyEmail,permanentAddress,qualification,panCard,aadharCard,
+            bankName,bankAccount,bankIFSC,reportingManager,lastAppraisalDate,
+            isActive,regisnationDate,aadharCardAttachment,panCardAttachment,
+            bankAttachment,joiningFormAttachment,attachment5
+        }=req.body;
+
+        //checking necessary input fields
+        if(!employeeCode ||!name ||!father_husbandName||!company||!department||!designation||!joiningDate){
             return res.status(400).json({
-                success: false,
-                message: "All fields are required"
+                success:false,
+                message : "All Fields Are Required!"
             });
         }
-        const existingEmp = await Employee.findOne({empId: empId});
-        if(existingEmp){
+
+        const isEmployeeExists = await Employee.findOne({employeeCode:employeeCode});
+        
+        if(isEmployeeExists){
             return res.status(400).json({
-                success: false,
-                message: "EmpId already exists"
+                success:false,
+                message:"Registration Failed! Employee Already Exists!"
             });
         }
-        const hashedPassword = await bcrypt.hash(password,10);
+        let hashedPassword;
+        if(password){
+            hashedPassword = await bcrypt.hash(password,10);
+            // console.log(hashedPassword)
+        }
+        else{
+            hashedPassword = String(employeeCode + "-" +generateRandomNumbers());
+            // console.log(hashedPassword)
+        }
+        
         const newEmployee = new Employee({
-            empId,
-            name, 
-            mobile_No, 
-            department,
-            password: hashedPassword,
-            created_By: employeeId
+            employeeCode,name,father_husbandName,company,department,designation,joiningDate,
+            password:hashedPassword,
+            dateOfBirth,personalPhoneNum,personalEmail,companyPhoneNum,
+            companyEmail,permanentAddress,qualification,panCard,aadharCard,
+            bankName,bankAccount,bankIFSC,reportingManager,lastAppraisalDate,
+            isActive,regisnationDate,aadharCardAttachment,panCardAttachment,
+            bankAttachment,joiningFormAttachment,attachment5
         });
 
-        await newEmployee.save().then((responseData, error) =>{
-            if(responseData){
-                return res.status(201).json({
-                    success: true,
-                    message: "Employee Registered Successfully",
-                    data: {
-                        "empId":newEmployee.empId,
-                        "empName":newEmployee.name,
-                        "empMob_No":newEmployee.mobile_No,
-                        "empDept": newEmployee.department
+        await newEmployee.save()
+        .then((response,error)=>{
+            if(response){
+                return res.status(200).json({
+                    success:true,
+                    message : "Employee Successfully Registered!",
+                    data : {
+                        employeeId:newEmployee.employeeId,
+                        name:newEmployee.name
                     }
                 });
             }
+
             if(error){
-                return res.status(400).json({
+                return res.status(401).json({
                     success:false,
-                    message:"Somthing is wrong please try again."
-                })
+                    message : "Something Went Wrong, Employee Not Registered."
+                });
             }
-        });
-        
-    }catch(error){
+        })
+    } catch (error) {
         return res.status(500).json({
-            success: false,
-            message: "Internal Server Error. Couldn't Register Employee.",
+            success:false,
+            message : "Internal Server Error",
             error: error.message
         });
     }
-};
+}
 
-const login = async (req, res) => {
-try{
-    const {empId, password} = req.body;
-    if(!empId || !password){
-        return res.status(400).json({
-            success : false,
-            message : "All fields are required!"
-        });
-    }
-    const empData = await Employee.findOne({empId:empId});
-    if(!empData){
-        return res.status(400).json({
-            success : false,
-            message : "Invalid creadentials"
-        });
-    }
+// const login = async (req, res) => {
+// try{
+//     const {employeeCode, password} = req.body;
+//     if(!employeeCode || !password){
+//         return res.status(400).json({
+//             success : false,
+//             message : "All fields are required!"
+//         });
+//     }
+//     const empData = await Employee.findOne({employeeCode:employeeCode});
+//     if(!empData){
+//         return res.status(400).json({
+//             success : false,
+//             message : "Invalid creadentials"
+//         });
+//     }
     
-    if(!empData.isActive){
-        return res.status(400).json({
-            success : false,
-            message : "Your account is no longer active, and login is not permitted."
-        });
-    }
+//     if(!empData.isActive){
+//         return res.status(400).json({
+//             success : false,
+//             message : "Your account is no longer active, and login is not permitted."
+//         });
+//     }
     
-    const isMatch = await bcrypt.compare(password,empData.password);
-    if (!isMatch){
-        return res.status(400).json({
-            success : false,
-            message : "Invalid credentials"
-        });
-    }
-    const options = {
-        withCredentials: true,
-        httpOnly: true,
-        secure: false
-    };
-    const accessTokenData ={
-        id:empData._id,
-        role:empData.department
-    }
-    const accessToken = createAccessToken(accessTokenData);
-    const refreshToken = createRefreshToken(empId);
-    await Employee.findByIdAndUpdate(empData._id,{refreshToken:refreshToken},{new:true});
-    return res.status(200)
-    .cookie("accessToken", accessToken, options)
-    .cookie("refreshToken", refreshToken, options)
-    .json({
-        success: true,
-        message: "Login Successful",
-        data: {
-            empName: empData.name,
-            empDept: empData.department
+//     const isMatch = await bcrypt.compare(password,empData.password);
+//     if (!isMatch){
+//         return res.status(400).json({
+//             success : false,
+//             message : "Invalid credentials"
+//         });
+//     }
+//     const options = {
+//         withCredentials: true,
+//         httpOnly: true,
+//         secure: false
+//     };
+//     const accessTokenData ={
+//         id:empData._id,
+//         role:empData.department
+//     }
+//     const accessToken = createAccessToken(accessTokenData);
+//     const refreshToken = createRefreshToken(employeeCode);
+//     await Employee.findByIdAndUpdate(empData._id,{refreshToken:refreshToken},{new:true});
+//     return res.status(200)
+//     .cookie("accessToken", accessToken, options)
+//     .cookie("refreshToken", refreshToken, options)
+//     .json({
+//         success: true,
+//         message: "Login Successful",
+//         data: {
+//             empName: empData.name,
+//             empDept: empData.department
+//         }
+//     });
+// }catch(error){
+//     return res.status(500).json({
+//         success: false,
+//         message: "Internal Server Error",
+//         error: error.message
+//     });
+// }
+// }
+
+const login = async(req,res) =>{
+    try {
+        //checking if both id and password are given
+        const {employeeCode, password}= req.body;
+        if(!employeeCode || !password){
+            return res.status(400).json({
+                success:false,
+                message : "All fields are required!"
+            });
         }
-    });
-}catch(error){
-    return res.status(500).json({
-        success: false,
-        message: "Internal Server Error",
-        error: error.message
-    });
+
+        //we call this data as admin data !
+        //checking if valid id is given
+        const adminData = await Admin.find({employeeCode:employeeCode});
+        if(!adminData){
+            return res.status(401).json({
+                success : false,
+                message : "Invalid creadentials! Wrong ID."
+            });
+        }
+
+        //checking if valid password is given
+        const isMatch = await bcrypt.compare(password,adminData.password);
+        if(!isMatch){
+            return res.status(401).json({
+                success : false,
+                message : "Invalid creadentials! Wrong Password."
+            });
+        }
+
+        //checking if given admin-id is active or not. 
+        if(!adminData.isActive){
+            return res.status(400).json({
+                success : false,
+                message : "Your account is no longer active, and login is not permitted."
+            });
+        }
+
+        //setting access-token and refresh-token
+        const options ={
+            withCredentials:true,
+            httpOnly:true,
+            secure:false
+        };
+
+        const accessTokenData= {
+            id:adminData._id,
+            employeeCode:adminData.employeeCode
+        }
+        const accessToken = createAccessToken(accessTokenData);
+        const refreshToken = createRefreshToken(adminData.employeeCode);
+
+        const setRefreshToken = await Admin.findByIdAndUpdate(adminData._id,{refreshToken:refreshToken},{new:true});
+        if(!setRefreshToken){
+            return res.status(401).json({
+                success:false,
+                message: "Login Failed! Please Try Again"
+            });
+        }
+
+        return res.status(200)
+        .cookie("accessToken",accessToken,options)
+        .cookie("refreshToke",refreshToken,options)
+        .json({
+            success:true,
+            message:"Login Successful",
+            data : {
+                adminCode : adminData.employeeCode,
+                name : adminData.name
+            }
+        });
+
+    } catch (error) {
+        return res.status(500).json({
+            success:false,
+            message:"Internal Server Error",
+            error : error.message
+        });
+    }
 }
-}
+
 
 const deactivateEmp = async (req,res)=>{
     try{
@@ -198,7 +357,7 @@ const showAllEmployee= async (req,res) =>{
 
 module.exports = {
     registerEmployee,
-    login,
+    login,    
     deactivateEmp,
     showAllEmployee
 };

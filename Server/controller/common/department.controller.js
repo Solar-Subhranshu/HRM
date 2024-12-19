@@ -3,6 +3,7 @@ const Department = require ("../../models/auth/common/department.model")
 
 const showAllDepts = async(req,res) => {
     try {
+        // show all departments except for Admin.
         const allDepts= await Department.find({ department: { $ne: "Admin" } });
         if (allDepts.length===0 || allDepts==null){
             return res.status(200).json({
@@ -17,9 +18,8 @@ const showAllDepts = async(req,res) => {
             }));
             return res.status(200).json({
                 success : true,
-                message :{
-                    deptNames
-            }
+                message :"Department List.",
+                data : deptNames
         });
         }
     }
@@ -37,7 +37,7 @@ const addDept = async (req,res) => {
     try{
         const {dept} = req.body || req.query;
         // console.log(dept);
-        const employeeId = req.employeeId;
+        // const employeeId = req.employeeId;
        
         if(!dept){
             return res.status(400).json({
@@ -56,7 +56,7 @@ const addDept = async (req,res) => {
 
         const newDept = new Department({
             department : dept,
-            created_By : employeeId
+            // created_By : employeeId
         })
         const responseData = await newDept.save();
         if(responseData){

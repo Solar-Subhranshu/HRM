@@ -3,7 +3,7 @@ const Company = require("../../models/Company/company.model")
 const addCompany = async (req,res)=>{
     try{
         const employeeId = req.employeeId;
-        const {name,branch, address, pin} =req.body;
+        const {name, branch, address, pin} =req.body;
         if(!name || !branch || !address || !pin){
             return res.status(400).json({
                 success : false,
@@ -12,30 +12,34 @@ const addCompany = async (req,res)=>{
         }
 
         const newCompany = new Company({
-            name,branch, address, pin,
+            name, 
+            branch, 
+            address, 
+            pin,
            created_By : employeeId
         });
 
-        await newCompany.save().then((responseData,error) =>{
-            if(responseData){
-                return res.status(201).json({
-                    success : true,
-                    message : "Company Added Successfully !",
-                    data : {
-                        "compName" : compName,
-                        "compBranch":compBranch,
-                        "compAddress":compAddress,
-                        "compPin":compPin
-                    }
-                });
-            }
-            if(error){
-                return res.status(400).json({
-                    success : false,
-                    message : "Something is wrong please try again!",
-                });
-            }
-        })
+        const newCompanyAdded= await newCompany.save();
+
+        if(newCompanyAdded){
+            return res.status(201).json({
+                success : true,
+                message : "Company Added Successfully !",
+                data : {
+                    "compName" : name,
+                    "compBranch":branch,
+                    "compAddress":address,
+                    "compPin":pin
+                }
+            });
+        }
+        else{
+            return res.status(400).json({
+                success : false,
+                message : "Couldn't Add Company! Something is wrong please try again!",
+            });
+        }
+
     }
     catch (error){
         if(error.code===11000){
@@ -56,7 +60,7 @@ const addCompany = async (req,res)=>{
 const showCompany = async (req,res)=>{
     try{
 
-        const allCompany=await Company.find().select("-created_By, -updated_By");
+        const allCompany=await Company.find().select("-created_By -updated_By -createdAt -updatedAt -__v");
         if(allCompany.length===0 || allCompany == null){
             return res.status(200).json({
                 success : true,
@@ -93,8 +97,6 @@ const updateCompanyDetails= async (req,res)=>{
             });
         }
 
-        // console.log(companyId,companyName,companyBranch,companyAddress,companyPin);
-        // to check if changes are same as previously saved data
         const existingCompany=await Company.findById(companyId);
 
         if(!existingCompany){
@@ -104,17 +106,18 @@ const updateCompanyDetails= async (req,res)=>{
             });
         }
 
-        // const isUnchanged = (existingCompany.companyName===companyName)&&
-        //             (existingCompany.companyBranch===companyBranch)&&
-        //             (existingCompany.companyAddress===companyAddress)&&
-        //             (existingCompany.companyPin===companyPin);
+         // to check if changes are same as previously saved data
+        const isUnchanged = (existingCompany.name===name)&&
+                    (existingCompany.branch===branch)&&
+                    (existingCompany.address===address)&&
+                    (existingCompany.pin===pin);
 
-        // if(isUnchanged){
-        //     return res.status(400).json({
-        //         success:false,
-        //         message : "No changes detected. The new data is same as the existing data.",
-        //     });
-        // }
+        if(isUnchanged){
+            return res.status(400).json({
+                success:false,
+                message : "No changes detected. The new data is same as the existing data.",
+            });
+        }
 
         const newCompany= await Company.findByIdAndUpdate(companyId,
             {name,branch,address,pin,
