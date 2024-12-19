@@ -94,7 +94,7 @@ const registerEmployee = async(req,res)=>{
             // console.log(hashedPassword)
         }
         else{
-            hashedPassword = String(employeeCode + "-" +generateRandomNumbers());
+            hashedPassword = String(employeeCode + "-" + generateRandomNumbers());
             // console.log(hashedPassword)
         }
         
