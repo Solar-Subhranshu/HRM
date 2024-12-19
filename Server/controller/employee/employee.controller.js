@@ -3,6 +3,7 @@ const bcrypt = require("bcrypt");
 const {createAccessToken, createRefreshToken} = require("../../utils/tokenGeneration");
 const {generateRandomNumbers} = require("../../utils/randomNumGenerator");
 
+// done
 const registerEmployee = async(req,res)=>{
     try {
         const{employeeCode,name,father_husbandName,company,department,designation,joiningDate} = req.body;
@@ -79,6 +80,7 @@ const registerEmployee = async(req,res)=>{
     }
 }
 
+// done
 const login = async(req,res) =>{
     try {
         //checking if both id and password are given
@@ -97,7 +99,7 @@ const login = async(req,res) =>{
         if(adminData.department.department !== 'Admin'){
             return res.status(400).json({
                 success: false,
-                message: "You are not authorised to login"
+                message: "You are not authorised to login."
             });
         }
 
@@ -170,13 +172,14 @@ const login = async(req,res) =>{
     }
 }
 
+// done
 const deactivateEmp = async (req,res)=>{
     try{
         const employeeId = req.employeeId;
-        const {empId} = req.body || req.query || req.params;
+        const {employeeCode} = req.body || req.query || req.params;
         // console.log(empId);
 
-        if(!empId){
+        if(!employeeCode){
             return res.status(400).json({
                 success:false,
                 message : "Employee ID is required"
@@ -184,7 +187,7 @@ const deactivateEmp = async (req,res)=>{
         }
 
         const deactiveEmp = await Employee.findOneAndUpdate(
-            {empId : empId},
+            {employeeCode : employeeCode},
             {isActive : false,
                 updated_By : employeeId},
             {new : true}  
@@ -193,7 +196,7 @@ const deactivateEmp = async (req,res)=>{
         if(!deactiveEmp){
             return res.status(400).json({
                 success:false,
-                message : `Employee with empId: ${empId} Not Found.`
+                message : `Employee with employeeCode: ${employeeCode} Not Found.`
             });
         }
             return res.status(200).json({
@@ -210,6 +213,7 @@ const deactivateEmp = async (req,res)=>{
     }
 }
 
+// done
 const showAllEmployee= async (req,res) =>{
     try{
         const allEmp= await Employee.find();
