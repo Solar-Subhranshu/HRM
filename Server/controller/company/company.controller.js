@@ -3,8 +3,8 @@ const Company = require("../../models/Company/company.model")
 const addCompany = async (req,res)=>{
     try{
         const employeeId = req.employeeId;
-        const {name, branch, address, pin} =req.body;
-        if(!name || !branch || !address || !pin){
+        const {name} =req.body;
+        if(!name){
             return res.status(400).json({
                 success : false,
                 message : "All fields are required!"
@@ -13,9 +13,6 @@ const addCompany = async (req,res)=>{
 
         const newCompany = new Company({
             name, 
-            branch, 
-            address, 
-            pin,
            created_By : employeeId
         });
 
@@ -26,10 +23,7 @@ const addCompany = async (req,res)=>{
                 success : true,
                 message : "Company Added Successfully !",
                 data : {
-                    "compName" : name,
-                    "compBranch":branch,
-                    "compAddress":address,
-                    "compPin":pin
+                    "company" : name,
                 }
             });
         }
@@ -70,8 +64,8 @@ const showCompany = async (req,res)=>{
         else{
             return res.status(200).json({
                 success:true,
-                data:allCompany,
-                message:"All Company list."
+                message:"All Company list.",
+                data:allCompany
             })
         }
 
@@ -85,10 +79,10 @@ const showCompany = async (req,res)=>{
     }
 }
 
-const updateCompanyDetails= async (req,res)=>{
+const updateCompanyName= async (req,res)=>{
     try {
         const employeeId = req.employeeId;
-        const {companyId,name,branch,address,pin} = req.body || req.query;
+        const {companyId,name} = req.body || req.query;
         
         if(!companyId){
             return res.status(400).json({
@@ -107,10 +101,8 @@ const updateCompanyDetails= async (req,res)=>{
         }
 
          // to check if changes are same as previously saved data
-        const isUnchanged = (existingCompany.name===name)&&
-                    (existingCompany.branch===branch)&&
-                    (existingCompany.address===address)&&
-                    (existingCompany.pin===pin);
+        const isUnchanged = (existingCompany.name===name);
+                
 
         if(isUnchanged){
             return res.status(400).json({
@@ -120,23 +112,23 @@ const updateCompanyDetails= async (req,res)=>{
         }
 
         const newCompany= await Company.findByIdAndUpdate(companyId,
-            {name,branch,address,pin,
-                updated_By : employeeId
+            {name,
+            updated_By : employeeId
             },
         {new :true, runValidators:true});
         if(newCompany){
             return res.status(200).json({
                 success : true,
-                message : "Company updated Successfully !"
+                message : "Company Name Updated Successfully !"
             })
         }
     } catch (error) {
-        if(error.code===11000){
-            return res.status(400).json({
-                success:false,
-                message : "Update Failed! The given combination of Company Name, Branch, Address & Pin already exists."
-            })
-        }
+        // if(error.code===11000){
+        //     return res.status(400).json({
+        //         success:false,
+        //         message : "Update Failed! The given combination of Company Name, Branch, Address & Pin already exists."
+        //     })
+        // }
         return res.status(500).json({
             success:false,
             message:"Internal Server Error! Company Details could not be updated!",
@@ -148,5 +140,5 @@ const updateCompanyDetails= async (req,res)=>{
 module.exports ={
     addCompany,
     showCompany,
-    updateCompanyDetails
+    updateCompanyName
 }

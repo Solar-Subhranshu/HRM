@@ -6,7 +6,10 @@ const app=express();
 require("./db/db");
 const authEmpRoute = require("./routes/authEmp.route");
 const companyRoute= require("./routes/company.route");
+const branchRoute =require("./routes/branch.route");
 const designationRoute = require("./routes/common/designation.route");
+const qualifiactionRoute = require("./routes/common/qualification.route");
+const degreeRoute = require("./routes/common/degree.route");
 
 const PORT = process.env.PORT || 5000;
 
@@ -17,6 +20,10 @@ app.use(express.urlencoded({ extended:true }));
 app.use("/auth", authEmpRoute);
 app.use("/company",companyRoute);
 app.use("/common",designationRoute);
+app.use("/common",qualifiactionRoute);
+app.use("/common",degreeRoute);
+app.use("/branch",branchRoute);
+
 
 app.listen(PORT, () => {
     console.log(`Server running at port ${PORT}`);

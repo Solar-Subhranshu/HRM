@@ -35,6 +35,8 @@ const showAllDepts = async(req,res) => {
 
 const addDept = async (req,res) => {
     try{
+        const employeeId = req.employeeId;
+        
         const {dept} = req.body || req.query;
         // console.log(dept);
         // const employeeId = req.employeeId;
@@ -56,7 +58,7 @@ const addDept = async (req,res) => {
 
         const newDept = new Department({
             department : dept,
-            // created_By : employeeId
+            created_By : employeeId
         })
         const responseData = await newDept.save();
         if(responseData){
@@ -86,10 +88,12 @@ const updateDept = async (req,res) => {
     const {deptId,deptName} = req.body || req.query;
     // console.log(deptId,deptName);
   
-    if(!deptId){
+        // we are assuming that always a valid deptId is passed 
+
+    if(!deptId || !deptName){
         return res.status(400).json({
             success : false,
-            message : "Department doesn't exist"
+            message : "Fields can't be empty. "
         });
     }
 

@@ -6,14 +6,46 @@ const {generateRandomNumbers} = require("../../utils/randomNumGenerator");
 // done
 const registerEmployee = async(req,res)=>{
     try {
-        const{employeeCode,name,father_husbandName,company,department,designation,joiningDate} = req.body;
+        //employeeID is admin to track who is registering employee
+        const employeeId=req.employeeId;
+        const{employeeCode,
+            password,
+            name,
+            father_husbandName,
+            dateOfBirth,
+            personalPhoneNum,
+            personalEmail,
+            panCard,
+            aadharCard,
+            qualification,
+            permanentAddress,
+            permanentPinCode,
+            currentAddress,
+            currentPinCode,
+            bankName,
+            branchName,
+            bankAccount,
+            bankIFSC,
+            bankAccountHolderName,
+            bankAddress,
+            reportingManager,
+            companyPhoneNum,
+            companyEmail,
+            joiningDate,
+            lastAppraisalDate,
+            regisnationDate,
+            company,
+            branch,
+            department,
+            designation,
+            officeTimePolicy,
+            shift,
+            aadharCardAttachment,
+            panCardAttachment,
+            bankAttachment,
+            joiningFormAttachment,
+            otherAttachment}=req.body;
         
-        const{password,dateOfBirth,personalPhoneNum,personalEmail,companyPhoneNum,
-            companyEmail,permanentAddress,qualification,panCard,aadharCard,
-            bankName,bankAccount,bankIFSC,reportingManager,lastAppraisalDate,
-            isActive,regisnationDate,aadharCardAttachment,panCardAttachment,
-            bankAttachment,joiningFormAttachment,attachment5
-        }=req.body;
 
         //checking necessary input fields
         if(!employeeCode ||!name ||!father_husbandName||!company||!department||!designation||!joiningDate){
@@ -42,14 +74,48 @@ const registerEmployee = async(req,res)=>{
         }
         
         const newEmployee = new Employee({
-            employeeCode,name,father_husbandName,company,department,designation,joiningDate,
-            password:hashedPassword,
-            dateOfBirth,personalPhoneNum,personalEmail,companyPhoneNum,
-            companyEmail,permanentAddress,qualification,panCard,aadharCard,
-            bankName,bankAccount,bankIFSC,reportingManager,lastAppraisalDate,
-            isActive,regisnationDate,aadharCardAttachment,panCardAttachment,
-            bankAttachment,joiningFormAttachment,attachment5
+            employeeCode,
+            name,
+            father_husbandName,
+            dateOfBirth,
+            personalPhoneNum,
+            personalEmail,
+            panCard,
+            aadharCard,
+            qualification,
+            permanentAddress,
+            permanentPinCode,
+            currentAddress,
+            currentPinCode,
+            bankName,
+            branchName,
+            bankAccount,
+            bankIFSC,
+            bankAccountHolderName,
+            bankAddress,
+            reportingManager,
+            companyPhoneNum,
+            companyEmail,
+            joiningDate,
+            lastAppraisalDate,
+            regisnationDate,
+            company,
+            branch,
+            department,
+            designation,
+            officeTimePolicy,
+            shift,
+            aadharCardAttachment,
+            panCardAttachment,
+            bankAttachment,
+            joiningFormAttachment,
+            otherAttachment,
+        
+            password :hashedPassword,
+            created_By : employeeId
         });
+
+        // console.log(newEmployee);
 
         await newEmployee.save()
         .then((response,error)=>{
@@ -176,13 +242,15 @@ const login = async(req,res) =>{
 const deactivateEmp = async (req,res)=>{
     try{
         const employeeId = req.employeeId;
+        // console.log(employeeId);
+
         const {employeeCode} = req.body || req.query || req.params;
         // console.log(empId);
 
         if(!employeeCode){
             return res.status(400).json({
                 success:false,
-                message : "Employee ID is required"
+                message : "Employee Code is required"
             });
         }
 
@@ -199,10 +267,10 @@ const deactivateEmp = async (req,res)=>{
                 message : `Employee with employeeCode: ${employeeCode} Not Found.`
             });
         }
-            return res.status(200).json({
-                success:true,
-                message : "Employee Account deleted Successfuly!"
-            });
+        return res.status(200).json({
+            success:true,
+            message : "Employee Account deleted Successfuly!"
+        });
 
     } catch (error) {
         return res.status(500).json({
@@ -227,6 +295,7 @@ const showAllEmployee= async (req,res) =>{
             // console.log(allEmp);
 
             const empData = allEmp.map(emp=> ({
+                _id:emp._id,
                 id: emp.employeeCode,
                 name : emp.name,
                 dept : emp.department,
@@ -249,9 +318,52 @@ const showAllEmployee= async (req,res) =>{
     }
 }
 
+const showSingleEmployee = async(req,res)=>{
+    try{
+
+        const {employeeCode} = req.body;
+        const employeeData = await Employee.findOne({employeeCode:employeeCode})
+        .populate({
+            path:"department",
+            select:"-updatedAt -createdAt -__v"
+        })
+        .select("-updated_By -created_By -__v -password")
+
+        // console.log(employeeData);
+        
+        if(!employeeData){
+            return res.status(400).json({
+                success:false,
+                message : `Employee with ${employeeCode} Not Found.`
+            });
+        }
+
+        if(employeeData.department.department==="Admin"){
+            return res.status(200).json({
+                success: true,
+                message : "We can not show you data for this employee."
+            });
+        }
+
+        return res.status(200).json({
+            success:true,
+            message:"Employee Found!",
+            data : employeeData
+        });
+    }
+    catch(error){
+        return res.status(500).json({
+            success:false,
+            message:"Internal Server Error ! Couldn't Find Employee Data.",
+            error:error.message
+        });
+    }
+}
+
 module.exports = {
     registerEmployee,
     login,    
     deactivateEmp,
-    showAllEmployee
+    showAllEmployee,
+    showSingleEmployee
 };

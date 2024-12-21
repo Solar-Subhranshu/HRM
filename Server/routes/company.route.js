@@ -1,8 +1,9 @@
 const router= require("express").Router();
-const {addCompany,showCompany,updateCompanyDetails} = require("../controller/company/company.controller");
+const {addCompany,showCompany,updateCompanyName} = require("../controller/company/company.controller");
+const {tokenVerify} = require("../middlewares/tokenVerification");
 
 router.get("/show-company",showCompany);
-router.post("/add-company",addCompany);
-router.put("/update-company",updateCompanyDetails);
+router.post("/add-company",tokenVerify,addCompany);
+router.put("/update-company",tokenVerify,updateCompanyName);
 
 module.exports = router;

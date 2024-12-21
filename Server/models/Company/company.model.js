@@ -7,18 +7,19 @@ const companySchema = new mongoose.Schema({
         minLength : 2,
         required : true
     },
-    branch: {
-        type:String,
-        required : true
-    },
-    address: {
-        type:String,
-        required : true
-    },
-    pin : {
-        type : Number,
-        required: true
-    },
+    // branch: {
+    //     type:String,
+    //     required : true
+    // },
+    // address: {
+    //     type:String,
+    //     required : true
+    // },
+    // pin : {
+    //     type : Number,
+    //     required: true
+    // },
+    
     created_By: {
         type : mongoose.Schema.Types.ObjectId,
         ref : "Employee"
@@ -29,8 +30,6 @@ const companySchema = new mongoose.Schema({
     }
 
 },{timestamps: true});
-
-companySchema.index({ name: 1, branch: 1, address: 1 }, { unique: true });
 
 const Company = mongoose.model("Company",companySchema);
 
