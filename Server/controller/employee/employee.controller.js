@@ -18,6 +18,7 @@ const registerEmployee = async(req,res)=>{
             panCard,
             aadharCard,
             qualification,
+            degree,
             permanentAddress,
             permanentPinCode,
             currentAddress,
@@ -57,12 +58,42 @@ const registerEmployee = async(req,res)=>{
 
         const isEmployeeExists = await Employee.findOne({employeeCode:employeeCode});
         
+        // checking unique employee
         if(isEmployeeExists){
             return res.status(400).json({
                 success:false,
                 message:"Registration Failed! Employee Already Exists!"
             });
         }
+
+        // checking unique Pan Card
+        const isPanCardExists = await Employee.findOne({panCard:panCard});
+        if(isPanCardExists){
+            return res.status(400).json({
+                success:false,
+                message:"Registration Failed! Pan Card Exists!"
+            });
+        }
+
+        // checking unique Aadhar Card
+        const isAadharCardExists = await Employee.findOne({aadharCard:aadharCard});
+        if(isAadharCardExists){
+            return res.status(400).json({
+                success:false,
+                message:"Registration Failed! Aadhar Card Exists!"
+            });
+        }
+
+        // checking unique Bank Account
+        const isBankAccountExists = await Employee.findOne({bankAccount:bankAccount});
+        if(isBankAccountExists){
+            return res.status(400).json({
+                success:false,
+                message:"Registration Failed! Bank Account Exists!"
+            });
+        }
+
+
         let hashedPassword;
         if(password){
             hashedPassword = await bcrypt.hash(password,10);
@@ -83,6 +114,7 @@ const registerEmployee = async(req,res)=>{
             panCard,
             aadharCard,
             qualification,
+            degree,
             permanentAddress,
             permanentPinCode,
             currentAddress,

@@ -46,30 +46,16 @@ const addDesignation = async(req,res)=>{
 const showDesignation = async(req,res)=>{
     try {
         const {department}=req.body ||req.query;
+        console.log(department)
         const allDesignation = await Designation.find({department:department});
-
-        if(allDesignation.length===0 || allDesignation==null){
+        if(allDesignation){
             return res.status(200).json({
-                success :true,
-                message:"No Designation Found! please add designation first."
-            });
-        }
-        else{
-            const designationNames= allDesignation.map(desig=> ({
-                id:desig._id,
-                designation : desig.designation
-            }));
-            return res.status(200).json({
-                success : true,
-                message: 'All designations for this department',
-                data : {
-                    designationNames
-                }
-
-            });
+                success:true,
+                message:"All designation",
+                data:allDesignation
+            })
         }
     } catch (error) {
-        
         return res.status(500).json({
             success :false,
             message:"Internal Server Error! Couldn't show designation.",

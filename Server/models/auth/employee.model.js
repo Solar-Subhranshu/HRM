@@ -63,6 +63,11 @@ const employeeSchema = new mongoose.Schema({
             required:true
         },
 
+        degree :{
+            type:mongoose.Schema.Types.ObjectId,
+            ref:"Degree",
+            required:true
+        },
         permanentAddress : {
             type:String,
             required:true
