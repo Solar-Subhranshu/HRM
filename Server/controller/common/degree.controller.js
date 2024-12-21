@@ -2,7 +2,7 @@ const Degree = require("../../models/auth/common/degree.model");
 
 const showDegree = async (req,res) =>{
     try {
-        const {qualificationId} = req.body;
+        const {qualificationId} = req.query;
 
         const result= await Degree.find({qualificationID:qualificationId});
 
