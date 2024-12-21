@@ -45,14 +45,15 @@ const addDesignation = async(req,res)=>{
 
 const showDesignation = async(req,res)=>{
     try {
-        const {department}=req.body ||req.query;
-        console.log(department)
-        const allDesignation = await Designation.find({department:department});
+        const {departmentId} = req.query;
+        console.log(departmentId)
+        const allDesignation = await Designation.find({ department: departmentId});
+
         if(allDesignation){
             return res.status(200).json({
                 success:true,
                 message:"All designation",
-                data:allDesignation
+                data: allDesignation || []
             })
         }
     } catch (error) {

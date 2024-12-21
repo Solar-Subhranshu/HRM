@@ -59,7 +59,7 @@ const addBranch = async (req,res)=>{
 
 const showBranch = async (req,res)=>{
     try{
-        const {companyID}=req.body;
+        const {companyID}=req.query;
 
         if(!companyID){
             return res.status(400).json({
