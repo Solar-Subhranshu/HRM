@@ -5,7 +5,9 @@ const tokenVerify = require("../middlewares/tokenVerification")
 router.post("/empRegister",tokenVerify,registerEmployee);
 router.put("/deactivateEmp",tokenVerify,deactivateEmp);
 router.get("/showAllEmployee",showAllEmployee);
-router.get("/showSingleEmployee",showSingleEmployee);
+
+// router.get("/showSingleEmployee",showSingleEmployee);
+
 router.post("/login",login);
 
 router.get("/show-reporting-manager",showReportingManager)

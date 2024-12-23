@@ -1,7 +1,7 @@
 const mongoose = require("mongoose");
 
 const officeTimePolicySchema = new mongoose.Schema({
-    policyName : {
+    policyId : {
         type:String,
         required:true
     },

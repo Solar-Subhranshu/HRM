@@ -4,6 +4,7 @@ const Department = require ("../../models/common/department.model");
 const Branch = require("../../models/Company/branch.model");
 const Designation = require("../../models/common/designation.model");
 const Shift = require("../../models/common/shift.model");
+const OfficeTimePolicy = require("../../models/common/officeTimePolicy.model")
 
 const showDegree = async (req,res) =>{
     try {
@@ -777,16 +778,60 @@ const showShift = async (req,res)=>{
 const addOfficeTimePolicy = async (req,res)=>{
     try {
         const employeeId=req.employeeId;
-        const {policyName,allowedTimeDelay}=req.body;
+        const {policyId,allowedTimeDelay}=req.body;
 
-        if(!policyName || !allowedTimeDelay){
+        if(!policyId || !allowedTimeDelay){
             return res.status(400).json({
                 success:false,
-                message: "Required Fields Can't be "
-            })
+                message: "Required Fields Can't be Empty"
+            });
         }
+
+        const existingPolicy = await OfficeTimePolicy.find({policyId:policyId});
+        if(existingPolicy){
+            return res.status(400).json({
+                success:false,
+                message:"Policy Already Exists!"
+            });
+        }
+
+        const newPolicy= new OfficeTimePolicy({
+            policyId,
+            allowedTimeDelay,
+            created_By:employeeId
+        });
+
+        await newPolicy.save();
+
+        return res.status(200).json({
+            success:true,
+            message:"Policy Added Successfully"
+        });
+
     } catch (error) {
-        
+        return res.status(500).json({
+            success :false,
+            message:"Internal Server Error! Policy Not Added!",
+            error : error.message
+        });
+    }
+}
+
+const showOfficeTimePolicy = async (req,res)=> {
+    try {
+        const allPolicy = await OfficeTimePolicy.find().select("-updatedAt -createdAt -__v -created_By -updated_By");
+
+        return res.status(200).json({
+            success:true,
+            message : "All Policy",
+            data : allPolicy
+        })
+    } catch (error) {
+        return res.status(500).json({
+            success:false,
+            message :"Internal Server Error! Can't show Policy",
+            error:error.message
+        });
     }
 }
 
@@ -808,5 +853,7 @@ module.exports={
     showDesignation,
     updateDesignation,
     addShift,
-    showShift  
+    showShift,
+    addOfficeTimePolicy,
+    showOfficeTimePolicy
 }

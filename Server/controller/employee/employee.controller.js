@@ -316,7 +316,38 @@ const deactivateEmp = async (req,res)=>{
 // done
 const showAllEmployee= async (req,res) =>{
     try{
-        const allEmp= await Employee.find().populate("department").populate("designation");
+        const allEmp= await Employee.find()
+        .populate({
+            path:"department",
+            select:"-updatedAt -createdAt -__v -created_By -updated_By"
+        })
+        .populate({
+            path:"designation",
+            select:"-updatedAt -createdAt -__v -created_By -updated_By"
+        })
+        .populate({
+            path:"qualification",
+            select:"-updatedAt -createdAt -__v -created_By -updated_By"
+        })
+        .populate({
+            path:"degree",
+            select:"-updatedAt -createdAt -__v -created_By -updated_By"
+        })
+        .populate({
+            path:"company",
+            select:"-updatedAt -createdAt -__v -created_By -updated_By"
+        })
+        .populate({
+            path:"branch",
+            select:"-updatedAt -createdAt -__v -created_By -updated_By"
+        })
+        .populate({
+            path:"reportingManager",
+            select:"-updatedAt -createdAt -__v -created_By -updated_By -password -company -department -deisgnation -joiningDate -refreshToken"
+        })
+        .select("-updated_By -created_By -__v -password")
+
+
         if(allEmp===0){
             return res.status(200).json({
                 success:true,
@@ -326,20 +357,21 @@ const showAllEmployee= async (req,res) =>{
         else{
             // console.log(allEmp);
 
-            const empData = allEmp.map(emp=> ({
-                _id:emp._id,
-                id: emp.employeeCode,
-                name : emp.name,
-                department : emp.department.department,
-                designation :emp.designation.designation,
-                mobileNo: emp.personalPhoneNum,
-                email:emp.personalEmail,
-                empIsActive: emp.isActive
-            }));
+            // const empData = allEmp.map(emp=> ({
+            //     _id:emp._id,
+            //     id: emp.employeeCode,
+            //     name : emp.name,
+            //     department : emp.department.department,
+            //     designation :emp.designation.designation,
+            //     mobileNo: emp.personalPhoneNum,
+            //     email:emp.personalEmail,
+            //     empIsActive: emp.isActive
+            // }));
             return res.status(200).json({
                 success: true,
                 message: "List of All Employee",
-                data : empData
+                data : allEmp
+                // data : empData
             });
         }
     }
@@ -453,6 +485,6 @@ module.exports = {
     login,    
     deactivateEmp,
     showAllEmployee,
-    showSingleEmployee,
+    // showSingleEmployee,
     showReportingManager
 };

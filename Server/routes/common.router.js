@@ -19,4 +19,7 @@ router.get("/show-department",commonController.showAllDepts);
 router.post("/add-shift",commonController.addShift);
 router.get("/show-shift",commonController.showShift);
 
+router.post("/add-officeTimePolicy",commonController.addOfficeTimePolicy);
+router.get("/show-officeTimePolicy",commonController.showOfficeTimePolicy);
+
 module.exports = router;
