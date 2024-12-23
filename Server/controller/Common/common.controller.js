@@ -696,6 +696,7 @@ const updateDesignation =async (req,res)=>{
     }
 }
 
+// shift controllers
 const addShift = async (req,res)=>{
     try {
         const employeeId = req.employeeId;
@@ -769,6 +770,23 @@ const showShift = async (req,res)=>{
             message:"Internal Server Error! Couldn't show shifts.",
             error : error.message
         });
+    }
+}
+
+// office time policy controllers
+const addOfficeTimePolicy = async (req,res)=>{
+    try {
+        const employeeId=req.employeeId;
+        const {policyName,allowedTimeDelay}=req.body;
+
+        if(!policyName || !allowedTimeDelay){
+            return res.status(400).json({
+                success:false,
+                message: "Required Fields Can't be "
+            })
+        }
+    } catch (error) {
+        
     }
 }
 

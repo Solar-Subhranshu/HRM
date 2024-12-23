@@ -355,11 +355,35 @@ const showAllEmployee= async (req,res) =>{
 const showSingleEmployee = async(req,res)=>{
     try{
 
-        const {employeeCode} = req.body;
+        const {employeeCode} = req.query || req.body;
         const employeeData = await Employee.findOne({employeeCode:employeeCode})
         .populate({
             path:"department",
-            select:"-updatedAt -createdAt -__v"
+            select:"-updatedAt -createdAt -__v -created_By -updated_By"
+        })
+        .populate({
+            path:"designation",
+            select:"-updatedAt -createdAt -__v -created_By -updated_By"
+        })
+        .populate({
+            path:"qualification",
+            select:"-updatedAt -createdAt -__v -created_By -updated_By"
+        })
+        .populate({
+            path:"degree",
+            select:"-updatedAt -createdAt -__v -created_By -updated_By"
+        })
+        .populate({
+            path:"company",
+            select:"-updatedAt -createdAt -__v -created_By -updated_By"
+        })
+        .populate({
+            path:"branch",
+            select:"-updatedAt -createdAt -__v -created_By -updated_By"
+        })
+        .populate({
+            path:"reportingManager",
+            select:"-updatedAt -createdAt -__v -created_By -updated_By -password -company -department -deisgnation -joiningDate -refreshToken"
         })
         .select("-updated_By -created_By -__v -password")
 
