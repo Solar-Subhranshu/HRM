@@ -316,7 +316,7 @@ const deactivateEmp = async (req,res)=>{
 // done
 const showAllEmployee= async (req,res) =>{
     try{
-        const allEmp= await Employee.find();
+        const allEmp= await Employee.find().populate("department").populate("designation");
         if(allEmp===0){
             return res.status(200).json({
                 success:true,
@@ -330,14 +330,16 @@ const showAllEmployee= async (req,res) =>{
                 _id:emp._id,
                 id: emp.employeeCode,
                 name : emp.name,
-                dept : emp.department,
+                department : emp.department.department,
+                designation :emp.designation.designation,
+                mobileNo: emp.personalPhoneNum,
+                email:emp.personalEmail,
                 empIsActive: emp.isActive
             }));
             return res.status(200).json({
                 success: true,
-                message: {
-                    empData
-                }
+                message: "List of All Employee",
+                data : empData
             });
         }
     }
