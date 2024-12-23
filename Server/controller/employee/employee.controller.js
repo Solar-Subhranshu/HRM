@@ -323,7 +323,7 @@ const showAllEmployee= async (req,res) =>{
         })
         .populate({
             path:"designation",
-            select:"-updatedAt -createdAt -__v -created_By -updated_By"
+            select:"-updatedAt -createdAt -__v -created_By -updated_By -department"
         })
         .populate({
             path:"qualification",
@@ -331,7 +331,7 @@ const showAllEmployee= async (req,res) =>{
         })
         .populate({
             path:"degree",
-            select:"-updatedAt -createdAt -__v -created_By -updated_By"
+            select:"name"
         })
         .populate({
             path:"company",
@@ -339,13 +339,13 @@ const showAllEmployee= async (req,res) =>{
         })
         .populate({
             path:"branch",
-            select:"-updatedAt -createdAt -__v -created_By -updated_By"
+            select:"name"
         })
         .populate({
             path:"reportingManager",
-            select:"-updatedAt -createdAt -__v -created_By -updated_By -password -company -department -deisgnation -joiningDate -refreshToken"
+            select:"name"
         })
-        .select("-updated_By -created_By -__v -password")
+        .select("-createdAt -aadharCardAttachment -panCardAttachment -bankAttachment -joiningFormAttachment -otherAttachment -updatedAt -isActive -updated_By -created_By -__v -password -dateOfBirth -aadharCard -lastAppraisalDate -regisnationDate -permanentAddress -permanentPinCode -currentAddress -currentPinCode")
 
 
         if(allEmp===0){
