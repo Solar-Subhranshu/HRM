@@ -249,8 +249,8 @@ const login = async(req,res) =>{
         }
 
         return res.status(200)
-        .cookie("accessToken",accessToken,options)
-        .cookie("refreshToke",refreshToken,options)
+        .cookie("accessToken",`Bearer ${accessToken}`,options)
+        .cookie("refreshToke",`Bearer ${refreshToken}`,options)
         .json({
             success:true,
             message:"Login Successful",
@@ -392,10 +392,41 @@ const showSingleEmployee = async(req,res)=>{
     }
 }
 
+const showReportingManager = async (req,res)=>{
+    try {
+        const allEmployees = await Employee.find()
+        .populate({
+            path:"department"
+        });
+
+        const reportingManager = allEmployees.filter(emp=>(emp.department.department==="HR"))
+                                            .map(emp=>({
+                                            _id:emp._id,
+                                            name:emp.name,
+                                            department:emp.department.department
+                                        }));
+        // console.log(reportingManager);
+
+        return res.status(200).json({
+            success:true,
+            message : "List of all HRs",
+            data : reportingManager || []
+        })
+    } catch (error) {
+        return res.status(500).json({
+            success:false,
+            message:"Internal Server Error, No Manager For Now!",
+            error : error.message
+        });
+    }
+}
+
+
 module.exports = {
     registerEmployee,
     login,    
     deactivateEmp,
     showAllEmployee,
-    showSingleEmployee
+    showSingleEmployee,
+    showReportingManager
 };

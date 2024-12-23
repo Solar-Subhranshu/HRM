@@ -447,7 +447,7 @@ const addQualification = async (req,res) => {
         const employeeId = req.employeeId;
         
         const {qualificationName} = req.body || req.query;
-        // console.log(qualificationName);
+        // console.log(employeeId);
         // const employeeId = req.employeeId;
        
         if(!qualificationName){
@@ -707,7 +707,7 @@ const addShift = async (req,res)=>{
                 message : `Required fields can't be empty.`
             });
         }
-        
+
         // calculating duration
         const start = new Date(startTime);
         const end = new Date(endTime);

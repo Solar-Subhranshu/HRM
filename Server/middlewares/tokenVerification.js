@@ -3,6 +3,8 @@ const tokenVerify = (req,res,next) =>{
     try {
         const authHeader = req.headers['authorization'] || req.cookies.accessToken;
         const token = authHeader && authHeader.split(' ')[1];
+        // console.log(token)
+
         if(!token){
             return res.status(401).json({
                 success : false,

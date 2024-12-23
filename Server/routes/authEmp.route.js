@@ -1,4 +1,4 @@
-const {registerEmployee,login,deactivateEmp,showAllEmployee,showSingleEmployee} = require("../controller/employee/employee.controller");
+const {registerEmployee,login,deactivateEmp,showAllEmployee,showSingleEmployee,showReportingManager} = require("../controller/Employee/employee.controller");
 const router = require("express").Router();
 const tokenVerify = require("../middlewares/tokenVerification")
 
@@ -8,6 +8,6 @@ router.get("/showAllEmployee",showAllEmployee);
 router.get("/showSingleEmployee",showSingleEmployee);
 router.post("/login",login);
 
-
+router.get("/show-reporting-manager",showReportingManager)
 
 module.exports = router;

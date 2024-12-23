@@ -10,9 +10,11 @@ router.get("/show-designation",commonController.showDesignation);
 router.post("/add-designation",commonController.addDesignation);
 router.put("/update-designation",commonController.updateDesignation);
 router.get("/show-qualification",commonController.showAllQualification);
-// router.post("/add-qualifiaction",tokenVerify,commonController.addQualification);
+router.post("/add-qualifiaction",tokenVerify,commonController.addQualification);
 router.delete("/delete-qualifiaction",commonController.deleteQualification);
 router.put("/update-qualifiaction",commonController.updateQualification);
+
+router.get("/show-department",commonController.showAllDepts);
 
 router.post("/add-shift",commonController.addShift);
 router.get("/show-shift",commonController.showShift);
