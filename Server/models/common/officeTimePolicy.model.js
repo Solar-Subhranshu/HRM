@@ -6,7 +6,7 @@ const officeTimePolicySchema = new mongoose.Schema({
         required:true
     },
     allowedTimeDelay :{
-        type : Date,
+        type : String,
         required:true,
     },
     created_By:{

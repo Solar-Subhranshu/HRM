@@ -778,7 +778,7 @@ const showShift = async (req,res)=>{
 const addOfficeTimePolicy = async (req,res)=>{
     try {
         const employeeId=req.employeeId;
-        const {policyId,allowedTimeDelay}=req.body;
+        const {policyId,allowedTimeDelay}=req.body || req.params;
 
         if(!policyId || !allowedTimeDelay){
             return res.status(400).json({
@@ -788,7 +788,9 @@ const addOfficeTimePolicy = async (req,res)=>{
         }
 
         const existingPolicy = await OfficeTimePolicy.find({policyId:policyId});
-        if(existingPolicy){
+        // console.log(existingPolicy)
+
+        if(existingPolicy.length!==0){
             return res.status(400).json({
                 success:false,
                 message:"Policy Already Exists!"

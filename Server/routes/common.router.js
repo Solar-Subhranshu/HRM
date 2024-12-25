@@ -13,7 +13,6 @@ router.get("/show-qualification",commonController.showAllQualification);
 router.post("/add-qualifiaction",tokenVerify,commonController.addQualification);
 router.delete("/delete-qualifiaction",commonController.deleteQualification);
 router.put("/update-qualifiaction",commonController.updateQualification);
-
 router.get("/show-department",commonController.showAllDepts);
 
 router.post("/add-shift",commonController.addShift);
