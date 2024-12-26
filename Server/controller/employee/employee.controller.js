@@ -6,7 +6,7 @@ const {generateRandomNumbers} = require("../../utils/randomNumGenerator");
 // done
 const registerEmployee = async(req,res)=>{
     try {
-        //employeeID is admin to track who is registering employee
+        //employeeID is "admin ID" used to track who is registering employee
         const employeeId=req.employeeId;
         const{employeeCode,
             password,
@@ -41,18 +41,29 @@ const registerEmployee = async(req,res)=>{
             designation,
             officeTimePolicy,
             shift,
-            aadharCardAttachment,
-            panCardAttachment,
-            bankAttachment,
-            joiningFormAttachment,
-            otherAttachment}=req.body;
+            // aadharCardAttachment,
+            // panCardAttachment,
+            // bankAttachment,
+            // joiningFormAttachment,
+            // otherAttachment
+        }=req.body;
         
+
+        const attachedFiles = req.files;    
 
         //checking necessary input fields
         if(!employeeCode ||!name ||!father_husbandName||!company||!department||!designation||!joiningDate){
             return res.status(400).json({
                 success:false,
                 message : "All Fields Are Required!"
+            });
+        }
+
+        // checking if files are uploaded or not.
+        if(!attachedFiles){
+            res.status(400).json({
+                success:false,
+                message: "No Files Uploaded"
             });
         }
 
@@ -103,6 +114,13 @@ const registerEmployee = async(req,res)=>{
             hashedPassword = String(employeeCode + "-" + generateRandomNumbers());
             // console.log(hashedPassword)
         }
+        
+        // assigning attachments to model's fields 
+        aadharCardAttachment= attachedFiles.aadharCardAttachment ? attachedFiles.aadharCardAttachment[0].path : undefined;
+        panCardAttachment= attachedFiles.panCardAttachment ? attachedFiles.panCardAttachment[0].path : undefined;
+        bankAttachment= attachedFiles.bankAttachment ? attachedFiles.bankAttachment[0].path : undefined;
+        joiningFormAttachment= attachedFiles.joiningFormAttachment ? attachedFiles.joiningFormAttachment[0].path : undefined;
+        otherAttachment= attachedFiles.otherAttachment ? attachedFiles.otherAttachment[0].path : undefined;
         
         const newEmployee = new Employee({
             employeeCode,
@@ -170,6 +188,14 @@ const registerEmployee = async(req,res)=>{
             }
         })
     } catch (error) {
+
+        if (error.code === 'LIMIT_FILE_SIZE') {
+            return res.status(400).json({
+                success: false,
+                message: "Please upload an image less than 5 MB!",
+            });
+            }
+
         return res.status(500).json({
             success:false,
             message : "Internal Server Error",
@@ -345,7 +371,7 @@ const showAllEmployee= async (req,res) =>{
             path:"reportingManager",
             select:"name"
         })
-        .select("-createdAt -aadharCardAttachment -panCardAttachment -bankAttachment -joiningFormAttachment -otherAttachment -updatedAt -isActive -updated_By -created_By -__v -password -dateOfBirth -aadharCard -lastAppraisalDate -regisnationDate -permanentAddress -permanentPinCode -currentAddress -currentPinCode")
+        .select("-createdAt -aadharCardAttachment -panCardAttachment -bankAttachment -joiningFormAttachment -otherAttachment -updatedAt -updated_By -created_By -__v -password -refreshToken -dateOfBirth -aadharCard -lastAppraisalDate -regisnationDate -permanentAddress -permanentPinCode -currentAddress -currentPinCode")
 
 
         if(allEmp===0){
@@ -372,6 +398,63 @@ const showAllEmployee= async (req,res) =>{
                 message: "List of All Employee",
                 data : allEmp
                 // data : empData
+            });
+        }
+    }
+    catch(error){
+        return res.status(500).json({
+            success:false,
+            message:"Internal Server Error, Couldn't Show Employee Data",
+            error : error.message
+        });
+    }
+}
+
+const seeEmpBackend= async (req,res) =>{
+    try{
+        const allEmp= await Employee.find()
+        // .populate({
+        //     path:"department",
+        //     select:"-updatedAt -createdAt -__v -created_By -updated_By"
+        // })
+        // .populate({
+        //     path:"designation",
+        //     select:"-updatedAt -createdAt -__v -created_By -updated_By -department"
+        // })
+        // .populate({
+        //     path:"qualification",
+        //     select:"-updatedAt -createdAt -__v -created_By -updated_By"
+        // })
+        // .populate({
+        //     path:"degree",
+        //     select:"name"
+        // })
+        // .populate({
+        //     path:"company",
+        //     select:"-updatedAt -createdAt -__v -created_By -updated_By"
+        // })
+        // .populate({
+        //     path:"branch",
+        //     select:"name"
+        // })
+        // .populate({
+        //     path:"reportingManager",
+        //     select:"name"
+        // })
+        // .select("-createdAt -aadharCardAttachment -panCardAttachment -bankAttachment -joiningFormAttachment -otherAttachment -updatedAt -updated_By -created_By -__v -password -refreshToken -dateOfBirth -aadharCard -lastAppraisalDate -regisnationDate -permanentAddress -permanentPinCode -currentAddress -currentPinCode")
+
+
+        if(allEmp===0){
+            return res.status(200).json({
+                success:true,
+                message : "No Employee Found, Please Register Employee First"
+            });
+        }
+        else{
+            return res.status(200).json({
+                success: true,
+                message: "List of All Employee",
+                data : allEmp
             });
         }
     }
@@ -486,5 +569,8 @@ module.exports = {
     deactivateEmp,
     showAllEmployee,
     // showSingleEmployee,
-    showReportingManager
+    showReportingManager,
+
+    seeEmpBackend
 };
+

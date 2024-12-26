@@ -160,7 +160,7 @@ const employeeSchema = new mongoose.Schema({
 
         officeTimePolicy :{
             type : mongoose.Schema.Types.ObjectId,
-            ref : "TimePolicy",
+            ref : "OfficeTimePolicy",
             // requi red : true
         },
  
