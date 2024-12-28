@@ -101,6 +101,41 @@ const showBranch = async (req,res)=>{
     }
 }
 
+const showAllBranch = async (req,res)=>{
+    try{
+    
+        const allBranch = await Branch.find()
+        .populate({
+            path:"companyID",
+            select:"-created_By -updated_By -createdAt -updatedAt -__v"
+        })
+        .select("-created_By -updated_By -createdAt -updatedAt -__v");
+
+
+        if(allBranch.length===0 || allBranch == null){
+            return res.status(200).json({
+                success : true,
+                message : "No Details Found."
+            });
+        }
+        else{
+            return res.status(200).json({
+                success:true,
+                message:"All Details list.",
+                data:allBranch
+            })
+        }
+
+    }
+    catch (error){
+        return res.status(500).json({
+            success: false,
+            message : "Internal Server Error! Can't show you Branch.",
+            error : error.message
+        });
+    }
+}
+
 const updateBranchDetails= async (req,res)=>{
     try {
         const employeeId = req.employeeId;
@@ -164,5 +199,6 @@ const updateBranchDetails= async (req,res)=>{
 module.exports={
     addBranch,
     showBranch,
-    updateBranchDetails
+    updateBranchDetails,
+    showAllBranch
 }
