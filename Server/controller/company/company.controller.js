@@ -11,6 +11,14 @@ const addCompany = async (req,res)=>{
             });
         }
 
+        const isExisting = await Company.findOne({name:name});
+        if(isExisting){
+            return res.status(400).json({
+                success:false,
+                message:"Company with same name already registered."
+            })
+        };
+
         const newCompany = new Company({
             name, 
            created_By : employeeId
@@ -136,6 +144,14 @@ const updateCompanyName= async (req,res)=>{
         });
     }
 }
+
+// const deleteCompany = async(req,res)=>{
+//     try {
+        
+//     } catch (error) {
+        
+//     }
+// }
 
 module.exports ={
     addCompany,
