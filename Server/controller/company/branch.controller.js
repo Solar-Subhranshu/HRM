@@ -4,7 +4,7 @@ const addBranch = async (req,res)=>{
     try{
         const employeeId = req.employeeId;
         const {companyID, name, address, pin} =req.body;
-        if(!name ||!companyID ||!address ||!pin){
+        if(!name ||!companyID ||!address){
             return res.status(400).json({
                 success : false,
                 message : "All fields are required!"
