@@ -9,6 +9,10 @@ const officeTimePolicySchema = new mongoose.Schema({
         type : String,
         required:true,
     },
+    p_Hr:{
+        type:Number,
+        required:true
+    },
     created_By:{
         type : mongoose.Schema.Types.ObjectId,
         ref : "Employee"

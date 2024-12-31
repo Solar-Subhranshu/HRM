@@ -688,16 +688,16 @@ const updateDesignation =async (req,res)=>{
         }
 
     } catch (error) {
-
         return res.status(500).json({
             success : false,
-            message:'Internal Server Error.'
-        })
-        
+            message:'Internal Server Error.',
+            error:error.message
+        });
     }
 }
 
 // shift controllers
+
 const addShift = async (req,res)=>{
     try {
         const employeeId = req.employeeId;
@@ -774,13 +774,44 @@ const showShift = async (req,res)=>{
     }
 }
 
+const updateShift = async(req,res)=>{
+    try {
+        const employeeId=req.employeeId;
+        const {_id,name,code,startTime,endTime,markAsAbsent,isNightShift} = req.body ||req.query;
+
+        if(!name || !code ||!startTime ||!endTime ||!markAsAbsent ||!isNightShift){
+            return res.status(400).json({
+                success:false,
+                message:"Please fill all the fields"
+            });
+        }
+       
+        await Shift.findByIdAndUpdate({_id},{
+            name,code,startTime,endTime,markAsAbsent,isNightShift,
+            updated_By:employeeId
+        },{new:true});
+
+        return res.status(201).json({
+            success:true,
+            message:"Shift Updated Successfully!"
+        });
+
+    } catch (error) {
+        return res.status(500).json({
+            success:false,
+            message:"Internal Server Error! Couldn't Update Shift.",
+            error:error.message
+        })
+    }
+}
+
 // office time policy controllers
 const addOfficeTimePolicy = async (req,res)=>{
     try {
         const employeeId=req.employeeId;
-        const {policyId,allowedTimeDelay}=req.body || req.params;
+        const {policyId,allowedTimeDelay,p_Hr}=req.body || req.params;
 
-        if(!policyId || !allowedTimeDelay){
+        if(!policyId || !allowedTimeDelay ||!p_Hr){
             return res.status(400).json({
                 success:false,
                 message: "Required Fields Can't be Empty"
@@ -800,6 +831,7 @@ const addOfficeTimePolicy = async (req,res)=>{
         const newPolicy= new OfficeTimePolicy({
             policyId,
             allowedTimeDelay,
+            p_Hr,
             created_By:employeeId
         });
 
@@ -837,25 +869,71 @@ const showOfficeTimePolicy = async (req,res)=> {
     }
 }
 
+const updateOfficeTimePolicy=async (req,res)=>{
+    try {
+        const employeeId=req.employeeId;
+        const {_id,policyId,allowedTimeDelay,p_Hr}=req.body ||req.query;
+
+        if(!_id){
+            return res.status(400).json({
+                success:false,
+                message:"Can't Update without this."
+            });
+        }
+
+        if(!policyId ||!allowedTimeDelay ||!p_Hr){
+            return res.status(400).json({
+                success:false,
+                message: "All fields are required! Can't be Empty."
+            });
+        }
+
+        await OfficeTimePolicy.findByIdAndUpdate({_id:_id},{
+            policyId,allowedTimeDelay,p_Hr,
+            updated_By:employeeId
+        },{new:true});
+
+        return res.status(200).json({
+            success:true,
+            message:"Policy updated Successfully!"
+        });
+        
+    } catch (error) {
+        return res.status(500).json({
+            success:false,
+            message:"Internal Server Error, Couldn't Update.",
+            error:error.message
+        });
+    }
+}
+
 module.exports={
     showAllDepts,
     addDept,
     updateDept,
+
     showDegree,
     addDegree,
     deleteDegree,
+
     addBranch,
     showBranch,
     updateBranchDetails,
+
     showAllQualification,
     addQualification,
     updateQualification,
     deleteQualification,
+    
     addDesignation,
     showDesignation,
     updateDesignation,
+
     addShift,
     showShift,
+    updateShift,
+
     addOfficeTimePolicy,
-    showOfficeTimePolicy
+    showOfficeTimePolicy,
+    updateOfficeTimePolicy
 }

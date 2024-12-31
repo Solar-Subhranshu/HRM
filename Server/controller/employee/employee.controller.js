@@ -2,6 +2,7 @@ const Employee = require("../../models/auth/employee.model");
 const bcrypt = require("bcrypt");
 const {createAccessToken, createRefreshToken} = require("../../utils/tokenGeneration");
 const {generateRandomNumbers} = require("../../utils/randomNumGenerator");
+const excelToJSON = require("../../utils/excelToJson");
 
 // done
 const registerEmployee = async(req,res)=>{
@@ -52,7 +53,8 @@ const registerEmployee = async(req,res)=>{
         const attachedFiles = req.files;    
 
         //checking necessary input fields
-        if(!employeeCode ||!name ||!father_husbandName||!company||!department||!designation||!joiningDate){
+        if(!employeeCode ||!name ||!father_husbandName || !dateOfBirth || !personalPhoneNum ||!personalEmail ||!panCard||!aadharCard
+            ||!permanentAddress ||!permanentPinCode ||!currentAddress ||!currentPinCode ||!company||!department||!designation||!joiningDate){
             return res.status(400).json({
                 success:false,
                 message : "All Fields Are Required!"
@@ -276,7 +278,7 @@ const login = async(req,res) =>{
 
         return res.status(200)
         .cookie("accessToken",`Bearer ${accessToken}`,options)
-        .cookie("refreshToke",`Bearer ${refreshToken}`,options)
+        .cookie("refreshToken",`Bearer ${refreshToken}`,options)
         .json({
             success:true,
             message:"Login Successful",
@@ -562,6 +564,138 @@ const showReportingManager = async (req,res)=>{
     }
 }
 
+const addEmployeeByExcel = async(req,res)=>{
+    try{
+        const JSON_Data= await excelToJSON(req.file.buffer);
+
+        console.log(JSON_Data);
+        
+        
+    }
+    catch(error){
+        return res.status(500).json({
+            success:false,
+            message: "Internal Server Error, Couldn't add by Excel."
+        })
+    }
+}
+
+const updateEmployee= async(req,res)=>{
+    try {
+        const employeeId=req.employeeId;
+
+        const {employeeCode,
+            password,
+            name,
+            father_husbandName,
+            dateOfBirth,
+            personalPhoneNum,
+            personalEmail,
+            panCard,
+            aadharCard,
+            qualification,
+            degree,
+            permanentAddress,
+            permanentPinCode,
+            currentAddress,
+            currentPinCode,
+            bankName,
+            branchName,
+            bankAccount,
+            bankIFSC,
+            bankAccountHolderName,
+            bankAddress,
+            reportingManager,
+            companyPhoneNum,
+            companyEmail,
+            joiningDate,
+            lastAppraisalDate,
+            regisnationDate,
+            company,
+            branch,
+            department,
+            designation,
+            officeTimePolicy,
+            shift} = req.body;
+
+        const attachedFiles=req.files;
+        
+        const employeeToUpdate= await Employee.findOne({employeeCode:employeeCode});
+        if(!employeeToUpdate){
+            return res.status(400).json({
+                success:false,
+                message: "Employee Not Found!"
+            });
+        }
+
+        if(!employeeToUpdate.isActive){
+            return res.status(401).json({
+                success:false,
+                message: "The employee you are trying to update is no longer active."
+            });
+        }
+
+        aadharCardAttachment= attachedFiles.aadharCardAttachment ? attachedFiles.aadharCardAttachment[0].path : undefined;
+        panCardAttachment= attachedFiles.panCardAttachment ? attachedFiles.panCardAttachment[0].path : undefined;
+        bankAttachment= attachedFiles.bankAttachment ? attachedFiles.bankAttachment[0].path : undefined;
+        joiningFormAttachment= attachedFiles.joiningFormAttachment ? attachedFiles.joiningFormAttachment[0].path : undefined;
+        otherAttachment= attachedFiles.otherAttachment ? attachedFiles.otherAttachment[0].path : undefined;
+        
+        // code that updates
+
+        await Employee.findByIdAndUpdate(employeeToUpdate._id,{
+            name,
+            father_husbandName,
+            dateOfBirth,
+            personalPhoneNum,
+            personalEmail,
+            panCard,
+            aadharCard,
+            qualification,
+            degree,
+            permanentAddress,
+            permanentPinCode,
+            currentAddress,
+            currentPinCode,
+            bankName,
+            branchName,
+            bankAccount,
+            bankIFSC,
+            bankAccountHolderName,
+            bankAddress,
+            reportingManager,
+            companyPhoneNum,
+            companyEmail,
+            joiningDate,
+            lastAppraisalDate,
+            regisnationDate,
+            company,
+            branch,
+            department,
+            designation,
+            officeTimePolicy,
+            shift,
+            aadharCardAttachment,
+            panCardAttachment,
+            bankAttachment,
+            joiningFormAttachment,
+            otherAttachment,
+            updated_By : employeeId
+        },{new:true});
+
+        return res.status(201).json({
+            success:true,
+            message : "Employee Successfully Updated!"
+        });
+    } catch (error) {
+        return res.status(500).json({
+            success:false,
+            message : "Internal Server Error! Couldn't Update Employee.",
+            error: error.message
+        });
+    }
+}
+
 
 module.exports = {
     registerEmployee,
@@ -570,7 +704,8 @@ module.exports = {
     showAllEmployee,
     // showSingleEmployee,
     showReportingManager,
-
+    addEmployeeByExcel,
+    updateEmployee,
     seeEmpBackend
 };
 
