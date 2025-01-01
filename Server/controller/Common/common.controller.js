@@ -629,7 +629,7 @@ const addDesignation = async(req,res)=>{
 const showDesignation = async(req,res)=>{
     try {
         const {departmentId} = req.query;
-        console.log(departmentId)
+        // console.log(departmentId)
         const allDesignation = await Designation.find({ department: departmentId});
 
         if(allDesignation){

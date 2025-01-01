@@ -1,51 +1,72 @@
-const addFarmerByExcel = async(req,res) =>{
+const Employee = require("../../models/auth/employee.model");
+const excelToJSON = require("../../utils/excelToJson");
+
+async function findOne(model,data){
+    await model.findOne(data)
+    .then((response,error)=>{
+        if(response) return response._id;
+        if(error)  return [];
+    }) 
+}
+
+const addEmployeeByExcel = async(req,res) =>{
     try {
         const JSON_Data = await excelToJSON(req.file.buffer);
         // console.log(JSON_Data)
             // Process each row to convert date strings into valid Date objects
-
-        const farmers = JSON_Data.map((row) => ({
-            saralId: row['saralId'],
-            farmerName: row['farmerName'],
-            fatherOrHusbandName: row['fatherOrHusbandName'],
-            contact: row['contact'].toString(), // Ensure contact is a string
-            state: row['state'],
-            district: row['district'] || '', // Default to empty string if undefined
-            department: row['department'],
-            product: row['product'],
-            project: row['project'] || '',
-            block: row['block'] || '',
-            gram_Panchayat: row['gram_Panchayat'] || '',
-            village: row['village'] || '',
-            pin: parseInt(row['pin'], 10), // Ensure pin is a number
-            address: row['address'] || '',
-            installationDate: new Date((row['installationDate'] - 25569) * 86400 * 1000), // Convert to Date
-            pump_type: row['pump_type'] || '',
-            installer_name: row['installer_name'] || '',
-            survey_done: row['survey_done'] === 'true' || row['survey_done'] === true, // Boolean conversion
-            survey_done_date: row['survey_done_date'] ? new Date(row['survey_done_date']) : null,
-            Supplier_selection: row['supplier_selection'] || '',
-            Supplier_selection_come_in_office: row['Supplier_selection_come_in_office'] || '',
-            HP: row['HP'] || '',
-            AC_DC: row['AC_DC'] || '',
-            remark: row['remark'] || ''
+        
+        const employees=JSON_Data.map((row)=>({
+            employeeCode: row['employeeCode'],
+            name:row['name'],
+            father_husbandName:row['father_husbandName'],
+            dateOfBirth: row['dateOfBirth'],
+            personalPhoneNum: row['personalPhoneNum'],
+            personalEmail: row['personalEmail'],
+            panCard : row['panCard'],
+            aadharCard : row['aadharCard'],
+            qualification : "",   //check for reference
+            degree :"",            //check for reference
+            permanentAddress : row['permanentAddress'],
+            permanentPinCode : row['permanentPinCode'],
+            currentAddress : row['currentAddress'],
+            currentPinCode : row['currentPinCode'],
+            bankName : row['bankName'],
+            branchName : row['branchName'],
+            bankAccount : row['bankAccount'],
+            bankIFSC : row['bankIFSC'],
+            bankAccountHolderName : row['bankAccountHolderName'],
+            bankAddress : row['bankAddress'],
+            reportingManager : "",          //check for reference
+            companyPhoneNum : row['companyPhoneNum'],
+            companyEmail : row['companyEmail'],
+            joiningDate : row['joiningDate'],
+            company : "",           //check for reference
+            branch : "",            //check for reference
+            department : "",        //check for reference
+            designation : "",       //check for reference
+            officeTimePolicy : "",      //check for reference
+            shift : ""              //check for reference
         }));
-        const insertResponse = await insertMany(Farmer, farmers);
+
+        
+
+        const insertResponse = await Employee.insertMany(employees);
+
         if(insertResponse){
             return res.status(200).json({
                 success:true,
-                message:'Excel Uploaded successfully.'
-            })
+                message:'File Uploaded Successfully.'
+            });
         }
-        return res.status(400).json({
-            success:false,
-            message:'something is wrong'
-        })
+
     } catch (error) {
         console.log(error)
         return res.status(400).json({
             success:false,
-            message:'Something is wrong please connect with developer.'
-        })
+            message:'Something is wrong please connect with developer.',
+            error:error.message
+        });
     }
 }
+
+module.exports={addEmployeeByExcel}
