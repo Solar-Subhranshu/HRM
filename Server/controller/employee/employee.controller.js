@@ -374,7 +374,7 @@ const showAllEmployee= async (req,res) =>{
             path:"reportingManager",
             select:"name"
         })
-        .select("-createdAt -aadharCardAttachment -panCardAttachment -bankAttachment -joiningFormAttachment -otherAttachment -updatedAt -updated_By -created_By -__v -password -refreshToken -dateOfBirth -aadharCard -lastAppraisalDate -regisnationDate -permanentAddress -permanentPinCode -currentAddress -currentPinCode")
+        .select("-createdAt -updatedAt -updated_By -created_By -__v -password -refreshToken ")
 
 
         if(allEmp===0){
