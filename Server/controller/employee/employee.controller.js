@@ -666,11 +666,11 @@ const updateEmployee= async(req,res)=>{
             
         }
 
-        aadharCardAttachment= attachedFiles.aadharCardAttachment ? attachedFiles.aadharCardAttachment[0].path : employeeToUpdate.aadharCardAttachment;
-        panCardAttachment= attachedFiles.panCardAttachment ? attachedFiles.panCardAttachment[0].path : employeeToUpdate.panCardAttachment;
-        bankAttachment= attachedFiles.bankAttachment ? attachedFiles.bankAttachment[0].path : employeeToUpdate.bankAttachment;
-        joiningFormAttachment= attachedFiles.joiningFormAttachment ? attachedFiles.joiningFormAttachment[0].path : employeeToUpdate.joiningFormAttachment;
-        otherAttachment= attachedFiles.otherAttachment ? attachedFiles.otherAttachment[0].path : employeeToUpdate.otherAttachment;
+        aadharCardAttachment= (attachedFiles?.aadharCardAttachment) ? (attachedFiles?.aadharCardAttachment[0].path) : employeeToUpdate.aadharCardAttachment;
+        panCardAttachment= (attachedFiles?.panCardAttachment) ? (attachedFiles?.panCardAttachment[0].path) : employeeToUpdate.panCardAttachment;
+        bankAttachment= (attachedFiles?.bankAttachment) ? (attachedFiles?.bankAttachment[0].path) : employeeToUpdate.bankAttachment;
+        joiningFormAttachment= (attachedFiles?.joiningFormAttachment) ? (attachedFiles?.joiningFormAttachment[0].path) : employeeToUpdate.joiningFormAttachment;
+        otherAttachment= (attachedFiles?.otherAttachment) ? (attachedFiles?.otherAttachment[0].path) : employeeToUpdate.otherAttachment;
         
         // code that updates
 
