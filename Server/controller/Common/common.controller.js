@@ -701,9 +701,9 @@ const updateDesignation =async (req,res)=>{
 const addShift = async (req,res)=>{
     try {
         const employeeId = req.employeeId;
-        const {name,code,startTime,endTime,markAsAbsent} = req.body;
+        const {name,startTime,endTime,markAsAbsent,isNightShift,weekOff,maxEarlyAllowed,maxLateAllowed} = req.body;
 
-        if(!name || !code || !startTime || !endTime){
+        if(!name || !startTime || !endTime || !weekOff || !maxEarlyAllowed || !maxLateAllowed){
             return res.status(400).json({
                 success : false,
                 message : `Required fields can't be empty.`
@@ -715,7 +715,7 @@ const addShift = async (req,res)=>{
         const end = new Date(endTime);
         const duration = Math.max(0, (end - start) / (1000 * 60 * 60));
 
-        const existShift = await Shift.find({code :code});
+        const existShift = await Shift.find({name :name});
         if(!existShift){
             return res.status(400).json({
                 success : false,
@@ -727,11 +727,15 @@ const addShift = async (req,res)=>{
 
         const newShift = new Shift({
             name,
-            code,
             startTime,
             endTime,
             markAsAbsent,
             duration,
+            markAsAbsent,
+            isNightShift,
+            weekOff,
+            maxEarlyAllowed,
+            maxLateAllowed,
             created_By:employeeId
         });
 
@@ -755,7 +759,7 @@ const addShift = async (req,res)=>{
 const showShift = async (req,res)=>{
 
     try {
-        const allShift= await Shift.find();
+        const allShift= await Shift.find().select("-__v -createdAt -updatedAt");
 
         if(allShift){
             return res.status(200).json({
@@ -777,9 +781,9 @@ const showShift = async (req,res)=>{
 const updateShift = async(req,res)=>{
     try {
         const employeeId=req.employeeId;
-        const {_id,name,code,startTime,endTime,markAsAbsent,isNightShift} = req.body ||req.query;
+        const {_id,name,startTime,endTime,markAsAbsent,isNightShift,weekOff,maxEarlyAllowed,maxLateAllowed} = req.body ||req.query;
 
-        if(!name || !code ||!startTime ||!endTime ||!markAsAbsent ||!isNightShift){
+        if(!name ||!startTime ||!endTime ||!markAsAbsent ||!weekOff || !maxEarlyAllowed || !maxLateAllowed){
             return res.status(400).json({
                 success:false,
                 message:"Please fill all the fields"
@@ -787,7 +791,7 @@ const updateShift = async(req,res)=>{
         }
        
         await Shift.findByIdAndUpdate({_id},{
-            name,code,startTime,endTime,markAsAbsent,isNightShift,
+            name,startTime,endTime,markAsAbsent,isNightShift,weekOff,maxEarlyAllowed,maxLateAllowed,
             updated_By:employeeId
         },{new:true});
 

@@ -3,6 +3,7 @@ const bcrypt = require("bcrypt");
 const {createAccessToken, createRefreshToken} = require("../../utils/tokenGeneration");
 const {generateRandomNumbers} = require("../../utils/randomNumGenerator");
 const excelToJSON = require("../../utils/excelToJson");
+const fs = require("fs/promises"); 
 
 // done
 const registerEmployee = async(req,res)=>{
@@ -373,7 +374,7 @@ const showAllEmployee= async (req,res) =>{
             path:"reportingManager",
             select:"name"
         })
-        .select("-createdAt -aadharCardAttachment -panCardAttachment -bankAttachment -joiningFormAttachment -otherAttachment -updatedAt -updated_By -created_By -__v -password -refreshToken -dateOfBirth -aadharCard -lastAppraisalDate -regisnationDate -permanentAddress -permanentPinCode -currentAddress -currentPinCode")
+        .select("-createdAt -updatedAt -updated_By -created_By -__v -password -refreshToken ")
 
 
         if(allEmp===0){
@@ -635,11 +636,41 @@ const updateEmployee= async(req,res)=>{
             });
         }
 
-        aadharCardAttachment= attachedFiles.aadharCardAttachment ? attachedFiles.aadharCardAttachment[0].path : undefined;
-        panCardAttachment= attachedFiles.panCardAttachment ? attachedFiles.panCardAttachment[0].path : undefined;
-        bankAttachment= attachedFiles.bankAttachment ? attachedFiles.bankAttachment[0].path : undefined;
-        joiningFormAttachment= attachedFiles.joiningFormAttachment ? attachedFiles.joiningFormAttachment[0].path : undefined;
-        otherAttachment= attachedFiles.otherAttachment ? attachedFiles.otherAttachment[0].path : undefined;
+        if(attachedFiles){
+            // console.log(attachedFiles);
+            try {
+                if(attachedFiles.aadharCardAttachment && employeeToUpdate.aadharCardAttachment ){
+                await fs.unlink(employeeToUpdate.aadharCardAttachment);
+                }
+
+                if(attachedFiles.panCardAttachment && employeeToUpdate.panCardAttachment ){
+                    await fs.unlink(employeeToUpdate.panCardAttachment);
+                }
+
+                if(attachedFiles.bankAttachment && employeeToUpdate.bankAttachment ){
+                await fs.unlink(employeeToUpdate.bankAttachment);
+                }
+
+                if(attachedFiles.joiningFormAttachment && employeeToUpdate.joiningFormAttachment ){
+                await fs.unlink(employeeToUpdate.joiningFormAttachment);
+                }
+
+                if(attachedFiles.otherAttachment && employeeToUpdate.otherAttachment ){
+                await fs.unlink(employeeToUpdate.otherAttachment);
+                }
+
+            } catch (error) {
+                console.log(error);
+            }
+            
+            
+        }
+
+        aadharCardAttachment= (attachedFiles?.aadharCardAttachment) ? (attachedFiles?.aadharCardAttachment[0].path) : employeeToUpdate.aadharCardAttachment;
+        panCardAttachment= (attachedFiles?.panCardAttachment) ? (attachedFiles?.panCardAttachment[0].path) : employeeToUpdate.panCardAttachment;
+        bankAttachment= (attachedFiles?.bankAttachment) ? (attachedFiles?.bankAttachment[0].path) : employeeToUpdate.bankAttachment;
+        joiningFormAttachment= (attachedFiles?.joiningFormAttachment) ? (attachedFiles?.joiningFormAttachment[0].path) : employeeToUpdate.joiningFormAttachment;
+        otherAttachment= (attachedFiles?.otherAttachment) ? (attachedFiles?.otherAttachment[0].path) : employeeToUpdate.otherAttachment;
         
         // code that updates
 
@@ -702,7 +733,7 @@ module.exports = {
     login,    
     deactivateEmp,
     showAllEmployee,
-    // showSingleEmployee,
+    showSingleEmployee,
     showReportingManager,
     addEmployeeByExcel,
     updateEmployee,

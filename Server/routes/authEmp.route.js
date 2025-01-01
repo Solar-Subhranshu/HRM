@@ -1,4 +1,4 @@
-const {registerEmployee,login,deactivateEmp,showAllEmployee,
+const {registerEmployee,login,deactivateEmp,showAllEmployee,showSingleEmployee,
     seeEmpBackend,showReportingManager,updateEmployee} = require("../controller/Employee/employee.controller");
 
 const {addEmployeeByExcel} = require("../controller/Employee/addEmployeeBYExcel");
@@ -31,7 +31,7 @@ router.get("/showAllEmployee",showAllEmployee);
 
 router.get("/seeEmpBackend",seeEmpBackend);
 
-// router.get("/showSingleEmployee",showSingleEmployee);
+router.get("/showSingleEmployee",showSingleEmployee);
 
 router.post("/login",login);
 
