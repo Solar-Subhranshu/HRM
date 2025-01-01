@@ -64,31 +64,6 @@ const upload = multer({
   storage: storage,
   fileFilter: fileFilter,
   limits: { fileSize: 5 * 1024 * 1024 }, 
-})
-
-// const uploadHandler = (req, res, next) => {
-//   upload(req, res, (err) => {
-//     if (err) {
-//       if (err.code === 'LIMIT_FILE_SIZE') {
-//         return res.status(400).json({
-//           success: false,
-//           message: "Please upload an image less than 5 MB!",
-//         });
-//       }
-//       return res.status(400).json({
-//         success: false,
-//         message: err.message,
-//       });
-//     }
-
-//     if (!req.files || req.files.length === 0) {
-//       return res.status(400).json({
-//         success: false,
-//         message: "No files uploaded!",
-//       });
-//     }
-//     next();
-//   });
-// };
+});
 
 module.exports =  upload;

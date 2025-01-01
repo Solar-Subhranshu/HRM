@@ -5,10 +5,6 @@ const shiftSchema = new mongoose.Schema({
         type:String,
         required : true
     },
-    code :{
-        type : String,
-        required :true
-    },
     startTime : {
         type:Date,
         required : true
@@ -30,6 +26,20 @@ const shiftSchema = new mongoose.Schema({
         required:true,
         default:false
     },
+    weekOff:{
+        type:String,
+        enum:["Monday","Tuesday","Wednesday","Thursday","Friday","Saturday","Sunday"],
+        required:true,
+        default:"Sunday"
+    },
+    maxEarlyAllowed:{
+        type:Date,
+        required:true
+    },
+    maxLateAllowed:{
+        type:Date,
+        required:true
+    },
      created_By:{
         type : mongoose.Schema.Types.ObjectId,
         ref : "Employee"
@@ -42,5 +52,5 @@ const shiftSchema = new mongoose.Schema({
 },{timestamps:true});
 
 const Shift = mongoose.model("Shift",shiftSchema);
-
+ 
 module.exports = Shift;
