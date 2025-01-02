@@ -1,43 +1,42 @@
 const mongoose = require("mongoose");
 
 const officeTimePolicySchema = new mongoose.Schema({
-    policyId : {
+    policyName : {
         type:String,
         required:true
     },
-    allowedTimeDelay :{
-        type : String,
-        required:true,
+    permittedLateArrive:{
+        type:String,
+        required:true
     },
-    p_Hr:{
+    absent:{
+        type:String,
+        required:true
+    },
+    pByTwo:{
+        type:String,
+        required:true
+    },
+    persent:{
+        type:String,
+        required:true
+    },
+    lunchTime:{
+        type:String,
+        required:true
+    },
+    lateArrivalAllowTime:{
+        type:String,
+        required:true
+    },
+    maxDaysLateArrival:{
         type:Number,
         required:true
     },
-    lateArrival1:{
-        type: Date,
+    noOfAllowedP2:{
+        type:Number,
+        required:true
     },
-    dayDeduct1:{
-        type:Number
-    },
-    lateArrival2:{
-        type: Date,
-    },
-    dayDeduct2:{
-        type:Number
-    }, 
-    lateArrival3:{
-        type: Date,
-    },
-    dayDeduct3:{
-        type:Number
-    },
-    lateArrival4:{
-        type: Date,
-    },
-    dayDeduct4:{
-        type:Number
-    },
-    
     deductFromAttendance:{
         type:Boolean,
         default:false
@@ -45,12 +44,6 @@ const officeTimePolicySchema = new mongoose.Schema({
     deductFromLeave:{
         type:Boolean,
         default:false
-    },
-    noOfLateInMonth:{
-        type: Number
-    },
-    cutDays:{
-        type:Number
     },
     continuous:{
         type:Boolean,
@@ -60,8 +53,6 @@ const officeTimePolicySchema = new mongoose.Schema({
         type:Boolean,
         default:false
     },
-    
-
     created_By:{
         type : mongoose.Schema.Types.ObjectId,
         ref : "Employee"
