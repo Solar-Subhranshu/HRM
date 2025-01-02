@@ -5,7 +5,7 @@ const officeTimePolicySchema = new mongoose.Schema({
         type:String,
         required:true
     },
-    permittedLateArrive:{
+    permittedLateArrival:{
         type:String,
         required:true
     },

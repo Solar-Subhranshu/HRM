@@ -6,15 +6,15 @@ const shiftSchema = new mongoose.Schema({
         required : true
     },
     startTime : {
-        type:Date,
+        type:String,
         required : true
     },
     endTime : {
-        type :Date,
+        type :String,
         required: true,
     },
     duration : {
-        type:Number,
+        type:String,
         required :true
     },
     markAsAbsent :{
@@ -33,11 +33,11 @@ const shiftSchema = new mongoose.Schema({
         default:"Sunday"
     },
     maxEarlyAllowed:{
-        type:Date,
+        type:String,
         required:true
     },
     maxLateAllowed:{
-        type:Date,
+        type:String,
         required:true
     },
      created_By:{
