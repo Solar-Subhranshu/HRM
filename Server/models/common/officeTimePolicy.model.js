@@ -17,25 +17,37 @@ const officeTimePolicySchema = new mongoose.Schema({
         type:String,
         required:true
     },
-    persent:{
-        type:String,
-        required:true
+    lateComingRule:{
+        type:Boolean,
+        default:false
     },
-    lunchTime:{
-        type:String,
-        required:true
+    lateArrival1:{
+        type: String,
     },
-    lateArrivalAllowTime:{
-        type:String,
-        required:true
+    dayDeduct1:{
+        type:Number
     },
-    maxDaysLateArrival:{
-        type:Number,
-        required:true
+    lateArrival2:{
+        type: String,
     },
-    noOfAllowedP2:{
-        type:Number,
-        required:true
+    dayDeduct2:{
+        type:Number
+    }, 
+    lateArrival3:{
+        type: String,
+    },
+    dayDeduct3:{
+        type:Number
+    },
+    lateArrival4:{
+        type: String,
+    },
+    dayDeduct4:{
+        type:Number
+    },
+    multiPunch:{
+        type:Boolean,
+        default:false
     },
     deductFromAttendance:{
         type:Boolean,
