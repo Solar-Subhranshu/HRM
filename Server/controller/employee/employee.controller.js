@@ -387,7 +387,7 @@ const showAllEmployee= async (req,res) =>{
             return res.status(200).json({
                 success: true,
                 message: "List of All Employee",
-                root: "http://localhost:8000",
+                root: "http://localhost:8000/",
                 data : allEmp
 
             });
