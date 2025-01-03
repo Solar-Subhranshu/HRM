@@ -384,23 +384,11 @@ const showAllEmployee= async (req,res) =>{
             });
         }
         else{
-            // console.log(allEmp);
-
-            // const empData = allEmp.map(emp=> ({
-            //     _id:emp._id,
-            //     id: emp.employeeCode,
-            //     name : emp.name,
-            //     department : emp.department.department,
-            //     designation :emp.designation.designation,
-            //     mobileNo: emp.personalPhoneNum,
-            //     email:emp.personalEmail,
-            //     empIsActive: emp.isActive
-            // }));
             return res.status(200).json({
                 success: true,
                 message: "List of All Employee",
                 data : allEmp
-                // data : empData
+
             });
         }
     }

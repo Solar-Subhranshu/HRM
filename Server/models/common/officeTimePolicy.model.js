@@ -5,14 +5,17 @@ const officeTimePolicySchema = new mongoose.Schema({
         type:String,
         required:true
     },
+    //time
     permittedLateArrival:{
         type:String,
         required:true
     },
+    //time
     absent:{
         type:String,
         required:true
     },
+    //time
     pByTwo:{
         type:String,
         required:true
@@ -21,24 +24,28 @@ const officeTimePolicySchema = new mongoose.Schema({
         type:Boolean,
         default:false
     },
+    //time
     lateArrival1:{
         type: String,
     },
     dayDeduct1:{
         type:Number
     },
+    //time
     lateArrival2:{
         type: String,
     },
     dayDeduct2:{
         type:Number
     }, 
+    //time
     lateArrival3:{
         type: String,
     },
     dayDeduct3:{
         type:Number
     },
+    //time
     lateArrival4:{
         type: String,
     },
@@ -49,6 +56,7 @@ const officeTimePolicySchema = new mongoose.Schema({
         type:Boolean,
         default:false
     },
+
     deductFromAttendance:{
         type:Boolean,
         default:false
