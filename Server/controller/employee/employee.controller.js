@@ -4,6 +4,7 @@ const {createAccessToken, createRefreshToken} = require("../../utils/tokenGenera
 const {generateRandomNumbers} = require("../../utils/randomNumGenerator");
 const excelToJSON = require("../../utils/excelToJson");
 const fs = require("fs/promises"); 
+const handleBase64Images = require("../../middlewares/base64ImageHandler");
 
 // done
 const registerEmployee = async(req,res)=>{
@@ -43,30 +44,19 @@ const registerEmployee = async(req,res)=>{
             designation,
             officeTimePolicy,
             shift,
-            // aadharCardAttachment,
-            // panCardAttachment,
-            // bankAttachment,
-            // joiningFormAttachment,
-            // otherAttachment
+            aadharCardAttachment,
+            panCardAttachment,
+            bankAttachment,
+            joiningFormAttachment,
+            otherAttachment
         }=req.body;
         
-
-        const attachedFiles = req.files;    
-
         //checking necessary input fields
         if(!employeeCode ||!name ||!father_husbandName || !dateOfBirth || !personalPhoneNum ||!personalEmail ||!panCard||!aadharCard
-            ||!permanentAddress ||!permanentPinCode ||!currentAddress ||!currentPinCode ||!company||!department||!designation||!joiningDate){
+            ||!permanentAddress ||!permanentPinCode ||!currentAddress ||!currentPinCode ||!company||!department||!designation||!joiningDate || !aadharCardAttachment || !panCardAttachment || !bankAttachment || !joiningFormAttachment || !otherAttachment){
             return res.status(400).json({
                 success:false,
                 message : "All Fields Are Required!"
-            });
-        }
-
-        // checking if files are uploaded or not.
-        if(!attachedFiles){
-            res.status(400).json({
-                success:false,
-                message: "No Files Uploaded"
             });
         }
 
@@ -107,7 +97,6 @@ const registerEmployee = async(req,res)=>{
             });
         }
 
-
         let hashedPassword;
         if(password){
             hashedPassword = await bcrypt.hash(password,10);
@@ -117,13 +106,18 @@ const registerEmployee = async(req,res)=>{
             hashedPassword = String(employeeCode + "-" + generateRandomNumbers());
             // console.log(hashedPassword)
         }
-        
-        // assigning attachments to model's fields 
-        aadharCardAttachment= attachedFiles.aadharCardAttachment ? attachedFiles.aadharCardAttachment[0].path : undefined;
-        panCardAttachment= attachedFiles.panCardAttachment ? attachedFiles.panCardAttachment[0].path : undefined;
-        bankAttachment= attachedFiles.bankAttachment ? attachedFiles.bankAttachment[0].path : undefined;
-        joiningFormAttachment= attachedFiles.joiningFormAttachment ? attachedFiles.joiningFormAttachment[0].path : undefined;
-        otherAttachment= attachedFiles.otherAttachment ? attachedFiles.otherAttachment[0].path : undefined;
+
+        const aadharCardImage = aadharCardAttachment ? await handleBase64Images(aadharCardAttachment, "aadharCardAttachments") : [];
+        const panCardImage = panCardAttachment ? await handleBase64Images(panCardAttachment, "panCardAttachments") : [];
+        const bankAccountImage = bankAttachment ? await handleBase64Images(bankAttachment, "bankAttachments") : [];
+        const joiningFormImage = joiningFormAttachment ? await handleBase64Images(joiningFormAttachment, "joiningForms") : [];
+        const otherAttachmentImage = otherAttachment ? await handleBase64Images(otherAttachment, "otherAttachments") : [];
+
+        const aadharCardUrl = `${req.protocol}://${req.get("host")}/uploads/aadharCardAttachments/${aadharCardImage[0].fileName}`;
+        const panCardUrl = `${req.protocol}://${req.get("host")}/uploads/panCardAttachments/${panCardImage[0].fileName}`;
+        const bankAccountUrl = `${req.protocol}://${req.get("host")}/uploads/bankAttachments/${bankAccountImage[0].fileName}`;
+        const joiningFormUrl = `${req.protocol}://${req.get("host")}/uploads/joiningForms/${joiningFormImage[0].fileName}`;
+        const otherAttachmentUrl = `${req.protocol}://${req.get("host")}/uploads/otherAttachments/${otherAttachmentImage[0].fileName}`;
         
         const newEmployee = new Employee({
             employeeCode,
@@ -158,11 +152,11 @@ const registerEmployee = async(req,res)=>{
             designation,
             officeTimePolicy,
             shift,
-            aadharCardAttachment,
-            panCardAttachment,
-            bankAttachment,
-            joiningFormAttachment,
-            otherAttachment,
+            aadharCardAttachment: aadharCardUrl,
+            panCardAttachment: panCardUrl,
+            bankAttachment: bankAccountUrl,
+            joiningFormAttachment: joiningFormUrl,
+            otherAttachment: otherAttachmentUrl,
         
             password :hashedPassword,
             created_By : employeeId
