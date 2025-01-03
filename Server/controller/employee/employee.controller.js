@@ -5,6 +5,7 @@ const generateRandomNumbers = require("../../utils/randomNumGenerator");
 const excelToJSON = require("../../utils/excelToJson");
 const fs = require("fs/promises"); 
 const handleBase64Images = require("../../middlewares/base64ImageHandler");
+const absolutePath = require("../../utils/absolutePath");
 
 // done
 const registerEmployee = async(req,res)=>{
@@ -603,9 +604,15 @@ const updateEmployee= async(req,res)=>{
             department,
             designation,
             officeTimePolicy,
-            shift} = req.body;
+            shift,
+            aadharCardAttachment,
+            panCardAttachment,
+            bankAttachment,
+            joiningFormAttachment,
+            otherAttachment
+        } = req.body;
 
-        const attachedFiles=req.files;
+        // const attachedFiles=req.files;
         
         const employeeToUpdate= await Employee.findOne({employeeCode:employeeCode});
         if(!employeeToUpdate){
@@ -622,44 +629,58 @@ const updateEmployee= async(req,res)=>{
             });
         }
 
-        if(attachedFiles){
-            // console.log(attachedFiles);
-            try {
-                if(attachedFiles.aadharCardAttachment && employeeToUpdate.aadharCardAttachment ){
-                await fs.unlink(employeeToUpdate.aadharCardAttachment);
-                }
+        let aadharCardAttachmentUrl=employeeToUpdate.aadharCardAttachment;
+        let panCardAttachmentUrl=employeeToUpdate.panCardAttachment;
+        let bankAttachmentUrl=employeeToUpdate.bankAttachment;
+        let joiningFormAttachmentUrl=employeeToUpdate.joiningFormAttachment;
+        let otherAttachmentUrl=employeeToUpdate.otherAttachment;
 
-                if(attachedFiles.panCardAttachment && employeeToUpdate.panCardAttachment ){
-                    await fs.unlink(employeeToUpdate.panCardAttachment);
-                }
+        // console.log(aadharCardAttachmentUrl);
+        // console.log(panCardAttachmentUrl);
+        // console.log(bankAttachmentUrl);
+        // console.log(joiningFormAttachmentUrl);
+        // console.log(otherAttachmentUrl);
 
-                if(attachedFiles.bankAttachment && employeeToUpdate.bankAttachment ){
-                await fs.unlink(employeeToUpdate.bankAttachment);
-                }
 
-                if(attachedFiles.joiningFormAttachment && employeeToUpdate.joiningFormAttachment ){
-                await fs.unlink(employeeToUpdate.joiningFormAttachment);
-                }
-
-                if(attachedFiles.otherAttachment && employeeToUpdate.otherAttachment ){
-                await fs.unlink(employeeToUpdate.otherAttachment);
-                }
-
-            } catch (error) {
-                console.log(error);
-            }
+        //checking each 
+        if(aadharCardAttachment){
+            const actualPath = absolutePath(aadharCardAttachmentUrl);
+            await fs.unlink(actualPath);
             
-            
+            const aadharCardImage = await handleBase64Images([aadharCardAttachment], "aadharCardAttachments");
+            aadharCardAttachmentUrl = `${req.protocol}://${req.get("host")}/uploads/aadharCardAttachments/${aadharCardImage[0].fileName}`;
+            // console.log(aadharCardAttachmentUrl);
+        }
+        if(panCardAttachment){
+            const actualPath = absolutePath(panCardAttachmentUrl);
+            await fs.unlink(actualPath);
+            const panCardImage = await handleBase64Images([panCardAttachment], "panCardAttachments");
+            panCardAttachmentUrl = `${req.protocol}://${req.get("host")}/uploads/panCardAttachments/${panCardImage[0].fileName}`;
+            // console.log(panCardAttachmentUrl);
+        }
+        if(bankAttachment){
+            const actualPath = absolutePath(bankAttachmentUrl);
+            await fs.unlink(actualPath);
+            const bankAccountImage = await handleBase64Images([bankAttachment], "bankAttachments");
+            bankAttachmentUrl = `${req.protocol}://${req.get("host")}/uploads/bankAttachments/${bankAccountImage[0].fileName}`;
+            // console.log(bankAttachmentUrl);
+        }
+        if(joiningFormAttachment){
+            const actualPath = absolutePath(joiningFormAttachmentUrl);
+            await fs.unlink(actualPath);
+            const joiningFormImage = await handleBase64Images([joiningFormAttachment], "joiningForms");
+            joiningFormAttachmentUrl = `${req.protocol}://${req.get("host")}/uploads/joiningForms/${joiningFormImage[0].fileName}`;
+            // console.log(joiningFormAttachmentUrl);
+        }
+        if(otherAttachment){
+            const actualPath = absolutePath(otherAttachmentUrl);
+            await fs.unlink(actualPath);
+            const otherAttachmentImage= await handleBase64Images([otherAttachment], "otherAttachments");
+            otherAttachmentUrl = `${req.protocol}://${req.get("host")}/uploads/otherAttachments/${otherAttachmentImage[0].fileName}`;
+            // console.log(otherAttachmentUrl);
         }
 
-        aadharCardAttachment= (attachedFiles?.aadharCardAttachment) ? (attachedFiles?.aadharCardAttachment[0].path) : employeeToUpdate.aadharCardAttachment;
-        panCardAttachment= (attachedFiles?.panCardAttachment) ? (attachedFiles?.panCardAttachment[0].path) : employeeToUpdate.panCardAttachment;
-        bankAttachment= (attachedFiles?.bankAttachment) ? (attachedFiles?.bankAttachment[0].path) : employeeToUpdate.bankAttachment;
-        joiningFormAttachment= (attachedFiles?.joiningFormAttachment) ? (attachedFiles?.joiningFormAttachment[0].path) : employeeToUpdate.joiningFormAttachment;
-        otherAttachment= (attachedFiles?.otherAttachment) ? (attachedFiles?.otherAttachment[0].path) : employeeToUpdate.otherAttachment;
-        
         // code that updates
-
         await Employee.findByIdAndUpdate(employeeToUpdate._id,{
             name,
             father_husbandName,
@@ -692,7 +713,7 @@ const updateEmployee= async(req,res)=>{
             designation,
             officeTimePolicy,
             shift,
-            aadharCardAttachment,
+            aadharCardAttachment:aadharCardAttachmentUrl,
             panCardAttachment,
             bankAttachment,
             joiningFormAttachment,

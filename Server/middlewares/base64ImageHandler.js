@@ -25,7 +25,6 @@ const handleBase64Images = async (photos, folder) => {
     for (const [index, base64Image] of photos.entries()) {
       // Check if the base64 image has the correct prefix for image type
       const match = base64Image.match(/^data:image\/([a-zA-Z0-9]+);base64,/);
-      console.log(match);
 
       if (!match) {
         throw new Error(`Image ${index + 1} does not have a valid base64 format.`);

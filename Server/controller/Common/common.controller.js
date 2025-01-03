@@ -781,7 +781,23 @@ const addShift = async (req,res)=>{
         }
         const duration= `${durationHr}:${durationMin}`;
         // console.log(duration);
+*/
+        const maxEarlyMinute = helper.timeDurationInMinutes(maxEarlyAllowed,startTime);
+        if(maxEarlyMinute<0){
+            return res.status(400).json({
+                success:false,
+                message:"Max-Early-Allowed-Time can't be after Start-Time."
+            });
+        }
 
+        const maxLateMinute = helper.timeDurationInMinutes(startTime,maxLateAllowed);
+        if(maxLateMinute<0){
+            return res.status(400).json({
+                success:false,
+                message : "Max-Late-Allowed-Time can't be before Start Time."
+            });
+        }
+    /*
         // checking if the max Early Allowed time is before the start time or not.
         let maxEarlyHr = parseInt((maxEarlyAllowed.split(":"))[0]);
         let maxEarlyMin = parseInt((maxEarlyAllowed.split(":"))[1]);
@@ -789,12 +805,7 @@ const addShift = async (req,res)=>{
         let totalMaxEarlyMinutes= maxEarlyHr * 60 + maxEarlyMin;
         const maxEarlyDuration = totalStartMinutes - totalMaxEarlyMinutes;
 
-        if(maxEarlyDuration<0){
-            return res.status(400).json({
-                success:false,
-                message:"Max-Early-Allowed-Time can't be after Start-Time."
-            });
-        }
+       
 
          // checking if the max Late Allowed time is after the start time or not.
         let maxLateHr = parseInt((maxLateAllowed.split(":"))[0]);
@@ -803,16 +814,8 @@ const addShift = async (req,res)=>{
         let totalMaxLateMinutes = maxLateHr *60 + maxLateMin;
         const maxLateDuration = totalMaxLateMinutes - totalStartMinutes;
 
-        if(maxLateDuration<0){
-            return res.status(400).json({
-                success:false,
-                message : "Max-Late-Allowed-Time can't be before Start Time."
-            });
-        }
+        
         */
-
-
-
         const existShift = await Shift.findOne({name :name});
         if(existShift){
             return res.status(400).json({
