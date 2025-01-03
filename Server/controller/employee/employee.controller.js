@@ -635,13 +635,6 @@ const updateEmployee= async(req,res)=>{
         let joiningFormAttachmentUrl=employeeToUpdate.joiningFormAttachment;
         let otherAttachmentUrl=employeeToUpdate.otherAttachment;
 
-        // console.log(aadharCardAttachmentUrl);
-        // console.log(panCardAttachmentUrl);
-        // console.log(bankAttachmentUrl);
-        // console.log(joiningFormAttachmentUrl);
-        // console.log(otherAttachmentUrl);
-
-
         //checking each 
         if(aadharCardAttachment){
             const actualPath = absolutePath(aadharCardAttachmentUrl);
@@ -652,7 +645,7 @@ const updateEmployee= async(req,res)=>{
             // console.log(aadharCardAttachmentUrl);
         }
         if(panCardAttachment){
-            const actualPath = absolutePath(panCardAttachmentUrl);
+            // const actualPath = absolutePath(panCardAttachmentUrl);
             await fs.unlink(actualPath);
             const panCardImage = await handleBase64Images([panCardAttachment], "panCardAttachments");
             panCardAttachmentUrl = `${req.protocol}://${req.get("host")}/uploads/panCardAttachments/${panCardImage[0].fileName}`;
@@ -714,10 +707,10 @@ const updateEmployee= async(req,res)=>{
             officeTimePolicy,
             shift,
             aadharCardAttachment:aadharCardAttachmentUrl,
-            panCardAttachment,
-            bankAttachment,
-            joiningFormAttachment,
-            otherAttachment,
+            panCardAttachment:panCardAttachmentUrl,
+            bankAttachment:panCardAttachmentUrl,
+            joiningFormAttachment:panCardAttachmentUrl,
+            otherAttachment:panCardAttachmentUrl,
             updated_By : employeeId
         },{new:true});
 

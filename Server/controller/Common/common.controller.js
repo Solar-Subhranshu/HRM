@@ -699,7 +699,6 @@ const updateDesignation =async (req,res)=>{
 }
 
 // shift controllers
-
 const addShift = async (req,res)=>{
     try {
         const employeeId = req.employeeId;
@@ -719,29 +718,6 @@ const addShift = async (req,res)=>{
                 message:`${check}`
             });
         }
-        /*
-        // trimming string data
-        name=name.trim();
-
-        startTime=startTime.trim();
-        endTime=endTime.trim();
-        maxEarlyAllowed=maxEarlyAllowed.trim();
-        maxLateAllowed=maxLateAllowed.trim();
-
-        // checking 5-character format for Time-inputs (24:00)
-        if(startTime.length!=5 || endTime.length!=5 || maxEarlyAllowed.length!=5 || maxLateAllowed.length!=5){
-            let faultMsg="";
-            if(startTime.length!=5) faultMsg=faultMsg+"Start-Time";
-            if(endTime.length!=5) faultMsg=faultMsg+" End-Time";
-            if(maxEarlyAllowed.length!=5) faultMsg=faultMsg+" Max-Early-Allowed";
-            if(maxLateAllowed.length!=5) faultMsg=faultMsg+" Max-Late-Allowed";
-
-            return res.status(400).json({
-                success:false,
-                message:`${faultMsg} format is wrong. Can't be more that 5-characters.`
-            })
-        }
-       */
       
         const timeDurationInMin = helper.timeDurationInMinutes(startTime,endTime);
         if(timeDurationInMin<0){
@@ -752,36 +728,6 @@ const addShift = async (req,res)=>{
         }
         const duration= `${Math.floor(timeDurationInMin / 60)}:${timeDurationInMin % 60}`;
 
-        /*
-        // calculating duration
-        const start = startTime.split(":");
-        const end = endTime.split(":");
-
-        let startHr =parseInt(start[0]);
-        let startMin =parseInt(start[1]);
-
-        let endHr =parseInt(end[0]);
-        let endMin =parseInt(end[1]);
-
-        let totalStartMinutes = startHr * 60 + startMin;
-        let totalEndMinutes = endHr * 60 + endMin;
-
-        // Calculate the duration in minutes
-        let durationMinutes = totalEndMinutes - totalStartMinutes;
-        // Convert duration back to hours and minutes
-        let durationHr = Math.floor(durationMinutes / 60);
-        let durationMin = durationMinutes % 60;
-
-        // console.log(durationMinutes,durationHr,durationMin);
-        if(durationMinutes<0){
-            return res.status(400).json({
-                success:false,
-                message:"Shift End-Time can't be less than Start-Time"
-            })
-        }
-        const duration= `${durationHr}:${durationMin}`;
-        // console.log(duration);
-*/
         const maxEarlyMinute = helper.timeDurationInMinutes(maxEarlyAllowed,startTime);
         if(maxEarlyMinute<0){
             return res.status(400).json({
@@ -797,25 +743,7 @@ const addShift = async (req,res)=>{
                 message : "Max-Late-Allowed-Time can't be before Start Time."
             });
         }
-    /*
-        // checking if the max Early Allowed time is before the start time or not.
-        let maxEarlyHr = parseInt((maxEarlyAllowed.split(":"))[0]);
-        let maxEarlyMin = parseInt((maxEarlyAllowed.split(":"))[1]);
 
-        let totalMaxEarlyMinutes= maxEarlyHr * 60 + maxEarlyMin;
-        const maxEarlyDuration = totalStartMinutes - totalMaxEarlyMinutes;
-
-       
-
-         // checking if the max Late Allowed time is after the start time or not.
-        let maxLateHr = parseInt((maxLateAllowed.split(":"))[0]);
-        let maxLateMin = parseInt((maxLateAllowed.split(":"))[1]);
-        
-        let totalMaxLateMinutes = maxLateHr *60 + maxLateMin;
-        const maxLateDuration = totalMaxLateMinutes - totalStartMinutes;
-
-        
-        */
         const existShift = await Shift.findOne({name :name});
         if(existShift){
             return res.status(400).json({
@@ -889,85 +817,40 @@ const updateShift = async(req,res)=>{
             });
         }
 
-         // trimming string data
-         name=name.trim();
-         startTime=startTime.trim();
-         endTime=endTime.trim();
-         maxEarlyAllowed=maxEarlyAllowed.trim();
-         maxLateAllowed=maxLateAllowed.trim();
- 
-         // checking 5-character format for Time-inputs (24:00)
-         if(startTime.length>5 || endTime.length>5 || maxEarlyAllowed.length>5 || maxLateAllowed.length>5){
-             let faultMsg="";
-             if(startTime.length>5) faultMsg=faultMsg+"Start-Time";
-             if(endTime.length>5) faultMsg=faultMsg+" End-Time";
-             if(maxEarlyAllowed.length>5) faultMsg=faultMsg+" Max-Early-Allowed";
-             if(maxLateAllowed.length>5) faultMsg=faultMsg+" Max-Late-Allowed";
- 
-             return res.status(400).json({
-                 success:false,
-                 message:`${faultMsg} format is wrong. Can't be more that 5-characters.`
-             })
-         }
+        const check= helper.timeFormatValidator(startTime,endTime,maxEarlyAllowed,maxLateAllowed);
+        if(check!='Pass'){
+            return res.status(400).json({
+                success:false,
+                message:`${check}`
+            });
+        }
         
-         // calculating duration
-         const start = startTime.split(":");
-         const end = endTime.split(":");
- 
-         let startHr =parseInt(start[0]);
-         let startMin =parseInt(start[1]);
- 
-         let endHr =parseInt(end[0]);
-         let endMin =parseInt(end[1]);
- 
-         let totalStartMinutes = startHr * 60 + startMin;
-         let totalEndMinutes = endHr * 60 + endMin;
- 
-         // Calculate the duration in minutes
-         let durationMinutes = totalEndMinutes - totalStartMinutes;
-         // Convert duration back to hours and minutes
-         let durationHr = Math.floor(durationMinutes / 60);
-         let durationMin = durationMinutes % 60;
- 
-         // console.log(durationMinutes,durationHr,durationMin);
-         if(durationMinutes<0){
-             return res.status(400).json({
-                 success:false,
-                 message:"Shift End-Time can't be less than Start-Time"
-             })
-         }
-         const duration= `${durationHr}:${durationMin}`;
-         // console.log(duration);
- 
-         // checking if the max Early Allowed time is before the start time or not.
-         let maxEarlyHr = parseInt((maxEarlyAllowed.split(":"))[0]);
-         let maxEarlyMin = parseInt((maxEarlyAllowed.split(":"))[1]);
- 
-         let totalMaxEarlyMinutes= maxEarlyHr * 60 + maxEarlyMin;
-         const maxEarlyDuration = totalStartMinutes - totalMaxEarlyMinutes;
- 
-         if(maxEarlyDuration<0){
-             return res.status(400).json({
-                 success:false,
-                 message:"Max-Early-Allowed-Time can't be after Start-Time."
-             });
-         }
- 
-          // checking if the max Late Allowed time is after the start time or not.
-         let maxLateHr = parseInt((maxLateAllowed.split(":"))[0]);
-         let maxLateMin = parseInt((maxLateAllowed.split(":"))[1]);
-         
-         let totalMaxLateMinutes = maxLateHr *60 + maxLateMin;
-         const maxLateDuration = totalMaxLateMinutes - totalStartMinutes;
- 
-         if(maxLateDuration<0){
-             return res.status(400).json({
-                 success:false,
-                 message : "Max-Late-Allowed-Time can't be before Start Time."
-             });
-         }
+        //  // calculating duration
+        const timeDurationInMin = helper.timeDurationInMinutes(startTime,endTime);
+        if(timeDurationInMin<0){
+            return res.status(400).json({
+                success:false,
+                message:"Shift End-Time can't be less than Start-Time"
+            })
+        }
+        const duration= `${Math.floor(timeDurationInMin / 60)}:${timeDurationInMin % 60}`;
 
-       
+        const maxEarlyMinute = helper.timeDurationInMinutes(maxEarlyAllowed,startTime);
+        if(maxEarlyMinute<0){
+            return res.status(400).json({
+                success:false,
+                message:"Max-Early-Allowed-Time can't be after Start-Time."
+            });
+        }
+
+        const maxLateMinute = helper.timeDurationInMinutes(startTime,maxLateAllowed);
+        if(maxLateMinute<0){
+            return res.status(400).json({
+                success:false,
+                message : "Max-Late-Allowed-Time can't be before Start Time."
+            });
+        }
+
         await Shift.findByIdAndUpdate({_id},{
             name,startTime,endTime,markAsAbsent,isNightShift,weekOff,maxEarlyAllowed,maxLateAllowed,
             duration,
@@ -988,7 +871,6 @@ const updateShift = async(req,res)=>{
     }
 }
 
-
 // office time policy controllers
 const addOfficeTimePolicy = async (req,res)=>{
     try {
@@ -997,10 +879,22 @@ const addOfficeTimePolicy = async (req,res)=>{
             dayDeduct1,dayDeduct2,dayDeduct3,dayDeduct4,multiPunch,deductFromAttendance,deductFromLeave,continuous,disContinuous
         }=req.body || req.params;
 
+        console.log(req.body);
+        console.log(dayDeduct1);
+
         if(!policyName || !permittedLateArrival ||!pByTwo || !absent){
             return res.status(400).json({
                 success:false,
                 message: "Required Fields Can't be Empty"
+            });
+        }
+
+        // do the data-type check at front-end.
+        const check = helper.timeFormatValidator(permittedLateArrival, pByTwo, absent,lateArrival1,lateArrival2,lateArrival3,lateArrival4);
+        if(check!='Pass'){
+            return res.status(400).json({
+                success:false,
+                message:`${check}`
             });
         }
 
@@ -1077,6 +971,15 @@ const updateOfficeTimePolicy=async (req,res)=>{
                 message: "Required fields Can't be Empty."
             });
         }
+
+         // do the data-type check at front-end.
+         const check = helper.timeFormatValidator(permittedLateArrival, pByTwo, absent,lateArrival1,lateArrival2,lateArrival3,lateArrival4);
+         if(check!='Pass'){
+             return res.status(400).json({
+                 success:false,
+                 message:`${check}`
+             });
+         }
 
         await OfficeTimePolicy.findByIdAndUpdate({_id:_id},{
             policyName,permittedLateArrival,pByTwo,absent,lateComingRule,lateArrival1,lateArrival2,lateArrival3,lateArrival4,

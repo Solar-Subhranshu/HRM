@@ -6,14 +6,21 @@ const timeFormatValidator = (...args)=>{
             args[i]=args[i].trim();
 
             if(args[i].length!=5){
-                faultMsg=`${args[i]} `
+                faultMsg=faultMsg+` ${args[i]}, `
             }
+
+            let checkHr = parseInt(args[i].split(":")[0]);
+            let checkMin = parseInt(args[i].split(":")[1]);
+
+            if(checkHr>24 || checkHr<0 || checkMin<0 || checkMin>59)
+                return `Fail ! ${args[i]} is not correct 24-Hr Format (HH:MM)`
+
         }
     }
     if(faultMsg==="") 
         return 'Pass'
     else
-        return `Fail \n ${faultMsg} format is wrong.`
+        return `Fail ! ${faultMsg} format is wrong. Please provide in HH:MM`
 }
 
 const timeDurationInMinutes = (start,end)=>{
