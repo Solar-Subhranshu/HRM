@@ -25,7 +25,7 @@ app.use("/company",companyRoute);
 app.use("/common",commonRoute);
 app.use("/branch",branchRoute);
 
-app.use("/uploads", express.static(path.join(__dirname, "uploads/temp")));
+app.use("/uploads", express.static(path.join(__dirname, "uploads")));
 
 app.listen(PORT, () => {
     console.log(`Server running at port ${PORT}`);
