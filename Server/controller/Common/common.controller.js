@@ -712,6 +712,7 @@ const addShift = async (req,res)=>{
 
         // trimming string data
         name=name.trim();
+        
         startTime=startTime.trim();
         endTime=endTime.trim();
         maxEarlyAllowed=maxEarlyAllowed.trim();
