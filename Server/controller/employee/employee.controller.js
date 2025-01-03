@@ -345,7 +345,7 @@ const deactivateEmp = async (req,res)=>{
 // done
 const showAllEmployee= async (req,res) =>{
     try{
-        const allEmp= await Employee.find()
+        const allEmp = await Employee.find()
         .populate({
             path:"department",
             select:"-updatedAt -createdAt -__v -created_By -updated_By"
@@ -399,6 +399,7 @@ const showAllEmployee= async (req,res) =>{
             return res.status(200).json({
                 success: true,
                 message: "List of All Employee",
+                root: "http://localhost:8000",
                 data : allEmp
                 // data : empData
             });
