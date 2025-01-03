@@ -6,6 +6,8 @@ const Designation = require("../../models/common/designation.model");
 const Shift = require("../../models/common/shift.model");
 const OfficeTimePolicy = require("../../models/common/officeTimePolicy.model")
 
+const helper = require("../../utils/common.util")
+
 const showDegree = async (req,res) =>{
     try {
         const {qualificationId} = req.query;
@@ -701,7 +703,7 @@ const updateDesignation =async (req,res)=>{
 const addShift = async (req,res)=>{
     try {
         const employeeId = req.employeeId;
-        let {name,startTime,endTime,markAsAbsent,isNightShift,weekOff,maxEarlyAllowed,maxLateAllowed} = req.body;
+        const {name,startTime,endTime,markAsAbsent,isNightShift,weekOff,maxEarlyAllowed,maxLateAllowed} = req.body;
 
         if(!name || !startTime || !endTime || !weekOff || !maxEarlyAllowed || !maxLateAllowed){
             return res.status(400).json({
@@ -710,28 +712,47 @@ const addShift = async (req,res)=>{
             });
         }
 
+        const check= helper.timeFormatValidator(startTime,endTime,maxEarlyAllowed,maxLateAllowed);
+        if(check!='Pass'){
+            return res.status(400).json({
+                success:false,
+                message:`${check}`
+            });
+        }
+        /*
         // trimming string data
         name=name.trim();
-        
+
         startTime=startTime.trim();
         endTime=endTime.trim();
         maxEarlyAllowed=maxEarlyAllowed.trim();
         maxLateAllowed=maxLateAllowed.trim();
 
         // checking 5-character format for Time-inputs (24:00)
-        if(startTime.length>5 || endTime.length>5 || maxEarlyAllowed.length>5 || maxLateAllowed.length>5){
+        if(startTime.length!=5 || endTime.length!=5 || maxEarlyAllowed.length!=5 || maxLateAllowed.length!=5){
             let faultMsg="";
-            if(startTime.length>5) faultMsg=faultMsg+"Start-Time";
-            if(endTime.length>5) faultMsg=faultMsg+" End-Time";
-            if(maxEarlyAllowed.length>5) faultMsg=faultMsg+" Max-Early-Allowed";
-            if(maxLateAllowed.length>5) faultMsg=faultMsg+" Max-Late-Allowed";
+            if(startTime.length!=5) faultMsg=faultMsg+"Start-Time";
+            if(endTime.length!=5) faultMsg=faultMsg+" End-Time";
+            if(maxEarlyAllowed.length!=5) faultMsg=faultMsg+" Max-Early-Allowed";
+            if(maxLateAllowed.length!=5) faultMsg=faultMsg+" Max-Late-Allowed";
 
             return res.status(400).json({
                 success:false,
                 message:`${faultMsg} format is wrong. Can't be more that 5-characters.`
             })
         }
-       
+       */
+      
+        const timeDurationInMin = helper.timeDurationInMinutes(startTime,endTime);
+        if(timeDurationInMin<0){
+            return res.status(400).json({
+                success:false,
+                message:"Shift End-Time can't be less than Start-Time"
+            })
+        }
+        const duration= `${Math.floor(timeDurationInMin / 60)}:${timeDurationInMin % 60}`;
+
+        /*
         // calculating duration
         const start = startTime.split(":");
         const end = endTime.split(":");
@@ -788,6 +809,9 @@ const addShift = async (req,res)=>{
                 message : "Max-Late-Allowed-Time can't be before Start Time."
             });
         }
+        */
+
+
 
         const existShift = await Shift.findOne({name :name});
         if(existShift){

@@ -2,9 +2,10 @@
 const fs = require("fs/promises");
 const path = require("path");
 
-const handleBase64Images = async (photos, path) => {
+const handleBase64Images = async (photos, folder) => {
   try {
-    if (!photos || !Array.isArray(photos) || photos.length === 0) {
+    // console.log(photos,path);
+    if (!photos || !Array.isArray(photos) || photos.length === 0) {   
       throw new Error("No images provided!");
     }
 
@@ -13,7 +14,8 @@ const handleBase64Images = async (photos, path) => {
     }
 
     const allowedFormats = ["jpeg", "jpg", "png"]; 
-    const uploadDir = path.join(__dirname, `../uploads/${path}`);
+    const uploadDir = path.join(__dirname, `../uploads/${folder}`);
+    
 
     // Ensure the directory exists
     await fs.mkdir(uploadDir, { recursive: true });
@@ -23,6 +25,7 @@ const handleBase64Images = async (photos, path) => {
     for (const [index, base64Image] of photos.entries()) {
       // Check if the base64 image has the correct prefix for image type
       const match = base64Image.match(/^data:image\/([a-zA-Z0-9]+);base64,/);
+      console.log(match);
 
       if (!match) {
         throw new Error(`Image ${index + 1} does not have a valid base64 format.`);

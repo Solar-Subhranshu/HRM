@@ -1,7 +1,7 @@
 const Employee = require("../../models/auth/employee.model");
 const bcrypt = require("bcrypt");
 const {createAccessToken, createRefreshToken} = require("../../utils/tokenGeneration");
-const {generateRandomNumbers} = require("../../utils/randomNumGenerator");
+const generateRandomNumbers = require("../../utils/randomNumGenerator");
 const excelToJSON = require("../../utils/excelToJson");
 const fs = require("fs/promises"); 
 const handleBase64Images = require("../../middlewares/base64ImageHandler");
@@ -107,11 +107,11 @@ const registerEmployee = async(req,res)=>{
             // console.log(hashedPassword)
         }
 
-        const aadharCardImage = aadharCardAttachment ? await handleBase64Images(aadharCardAttachment, "aadharCardAttachments") : [];
-        const panCardImage = panCardAttachment ? await handleBase64Images(panCardAttachment, "panCardAttachments") : [];
-        const bankAccountImage = bankAttachment ? await handleBase64Images(bankAttachment, "bankAttachments") : [];
-        const joiningFormImage = joiningFormAttachment ? await handleBase64Images(joiningFormAttachment, "joiningForms") : [];
-        const otherAttachmentImage = otherAttachment ? await handleBase64Images(otherAttachment, "otherAttachments") : [];
+        const aadharCardImage = aadharCardAttachment ? await handleBase64Images([aadharCardAttachment], "aadharCardAttachments") : [];
+        const panCardImage = panCardAttachment ? await handleBase64Images([panCardAttachment], "panCardAttachments") : [];
+        const bankAccountImage = bankAttachment ? await handleBase64Images([bankAttachment], "bankAttachments") : [];
+        const joiningFormImage = joiningFormAttachment ? await handleBase64Images([joiningFormAttachment], "joiningForms") : [];
+        const otherAttachmentImage = otherAttachment ? await handleBase64Images([otherAttachment], "otherAttachments") : [];
 
         const aadharCardUrl = `${req.protocol}://${req.get("host")}/uploads/aadharCardAttachments/${aadharCardImage[0].fileName}`;
         const panCardUrl = `${req.protocol}://${req.get("host")}/uploads/panCardAttachments/${panCardImage[0].fileName}`;
