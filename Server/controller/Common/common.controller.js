@@ -5,6 +5,7 @@ const Branch = require("../../models/Company/branch.model");
 const Designation = require("../../models/common/designation.model");
 const Shift = require("../../models/common/shift.model");
 const OfficeTimePolicy = require("../../models/common/officeTimePolicy.model")
+const WorkType = require("../../models/common/workType.model")
 
 const helper = require("../../utils/common.util")
 
@@ -879,8 +880,6 @@ const addOfficeTimePolicy = async (req,res)=>{
             dayDeduct1,dayDeduct2,dayDeduct3,dayDeduct4,multiPunch,deductFromAttendance,deductFromLeave,continuous,disContinuous
         }=req.body || req.params;
 
-        console.log(req.body);
-        console.log(dayDeduct1);
 
         if(!policyName || !permittedLateArrival ||!pByTwo || !absent){
             return res.status(400).json({
@@ -999,6 +998,27 @@ const updateOfficeTimePolicy=async (req,res)=>{
             error:error.message
         });
     }
+}
+
+// Work Type Controller
+const addWorkType = async(req,res) =>{
+    try {
+        const employeeId = req.employeeId;
+        const {workType}= req.body || req.params;
+
+        if(!workType){
+            return res.status(400).json({
+                success : false,
+                message : "Field Can't be empty"
+            });
+        }
+
+        const isExisting = await Work
+
+    } catch (error) {
+        
+    }
+    
 }
 
 module.exports={

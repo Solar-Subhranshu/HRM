@@ -370,6 +370,14 @@ const showAllEmployee= async (req,res) =>{
             path:"reportingManager",
             select:"name"
         })
+        .populate({
+            path:"officeTimePolicy",
+            select:"policyName"
+        })
+        .populate({
+            path:"shift",
+            select:"name"
+        })
         .select("-createdAt -updatedAt -updated_By -created_By -__v -password -refreshToken ")
 
 

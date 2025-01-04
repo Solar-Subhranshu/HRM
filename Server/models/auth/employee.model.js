@@ -161,13 +161,13 @@ const employeeSchema = new mongoose.Schema({
         officeTimePolicy :{
             type : mongoose.Schema.Types.ObjectId,
             ref : "OfficeTimePolicy",
-            // requi red : true
+            required : true
         },
  
         shift : {
             type : mongoose.Schema.Types.ObjectId,
             ref : "Shift",
-            // required : true
+            required : true
         },
     
         // Attachments
