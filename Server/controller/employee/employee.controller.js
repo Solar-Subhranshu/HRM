@@ -45,6 +45,7 @@ const registerEmployee = async(req,res)=>{
             designation,
             officeTimePolicy,
             shift,
+            workType,
             aadharCardAttachment,
             panCardAttachment,
             bankAttachment,
@@ -54,7 +55,7 @@ const registerEmployee = async(req,res)=>{
         
         //checking necessary input fields
         if(!employeeCode ||!name ||!father_husbandName || !dateOfBirth || !personalPhoneNum ||!personalEmail ||!panCard||!aadharCard
-            ||!permanentAddress ||!permanentPinCode ||!currentAddress ||!currentPinCode ||!company||!department||!designation||!joiningDate || !aadharCardAttachment || !panCardAttachment || !bankAttachment || !joiningFormAttachment || !otherAttachment){
+            ||!permanentAddress ||!permanentPinCode ||!currentAddress ||!currentPinCode ||!company||!department||!designation||!joiningDate || !workType || !shift || !officeTimePolicy || !aadharCardAttachment || !panCardAttachment || !bankAttachment || !joiningFormAttachment || !otherAttachment){
             return res.status(400).json({
                 success:false,
                 message : "All Fields Are Required!"
@@ -153,6 +154,7 @@ const registerEmployee = async(req,res)=>{
             designation,
             officeTimePolicy,
             shift,
+            workType,
             aadharCardAttachment: aadharCardUrl,
             panCardAttachment: panCardUrl,
             bankAttachment: bankAccountUrl,
@@ -377,6 +379,10 @@ const showAllEmployee= async (req,res) =>{
         .populate({
             path:"shift",
             select:"name"
+        })
+        .populate({
+            path:"workType",
+            select:"workType"
         })
         .select("-createdAt -updatedAt -updated_By -created_By -__v -password -refreshToken ")
 
@@ -613,6 +619,7 @@ const updateEmployee= async(req,res)=>{
             designation,
             officeTimePolicy,
             shift,
+            workType,
             aadharCardAttachment,
             panCardAttachment,
             bankAttachment,
@@ -649,7 +656,6 @@ const updateEmployee= async(req,res)=>{
             await fs.unlink(actualPath);
             const aadharCardImage = await handleBase64Images(aadharCardAttachment, "aadharCardAttachments");
             aadharCardAttachmentUrl = `${req.protocol}://${req.get("host")}/uploads/aadharCardAttachments/${aadharCardImage[0].fileName}`;
-            
         }
         if(Array.isArray(panCardAttachment)){
             const actualPath = absolutePath(panCardAttachmentUrl);
@@ -713,6 +719,7 @@ const updateEmployee= async(req,res)=>{
             designation,
             officeTimePolicy,
             shift,
+            workType,
             aadharCardAttachment:aadharCardAttachmentUrl,
             panCardAttachment:panCardAttachmentUrl,
             bankAttachment:panCardAttachmentUrl,

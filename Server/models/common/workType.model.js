@@ -18,4 +18,4 @@ const workTypeSchema = new mongoose.Schema({
 
 const WorkType = mongoose.model("WorkType",workTypeSchema);
 
-module.export = WorkType;
+module.exports = WorkType;

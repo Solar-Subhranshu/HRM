@@ -5,7 +5,7 @@ const Branch = require("../../models/Company/branch.model");
 const Designation = require("../../models/common/designation.model");
 const Shift = require("../../models/common/shift.model");
 const OfficeTimePolicy = require("../../models/common/officeTimePolicy.model")
-const WorkType = require("../../models/common/workType.model")
+const WorkType = require("../../models/common/workType.model");
 
 const helper = require("../../utils/common.util")
 
@@ -1055,7 +1055,8 @@ const showWorkType = async(req,res)=>{
     } catch (error) {
         return res.status(500).json({
             success:false,
-            message: "Internal Server Error! Can't Show Work-Type"
+            message: "Internal Server Error! Can't Show Work-Type",
+            error:error.message
         });
     }
 }
