@@ -939,7 +939,7 @@ const showOfficeTimePolicy = async (req,res)=> {
         return res.status(200).json({
             success:true,
             message : "All Policy",
-            data : allPolicy
+            data : allPolicy || []
         })
     } catch (error) {
         return res.status(500).json({
@@ -1005,20 +1005,59 @@ const addWorkType = async(req,res) =>{
     try {
         const employeeId = req.employeeId;
         const {workType}= req.body || req.params;
-
         if(!workType){
             return res.status(400).json({
                 success : false,
                 message : "Field Can't be empty"
             });
         }
-
-        const isExisting = await Work
+        const isExisting = await WorkType.findOne({workType:workType});
+        if(isExisting){
+            return res.status(400).json({
+                success:false,
+                message:"Work-Type already exists!"
+            });
+        }
+        const newWorkType = new WorkType({
+            workType,
+            created_By:employeeId
+        });
+        const saveWork = await newWorkType.save();
+        if(!saveWork){
+            return res.status(401).json({
+                success:false,
+                message:"Work Type Couldn't be Saved, Try Again!"
+            });
+        }
+        return res.status(200).json({
+            success:true,
+            message :"Work Type Added Successfully!"
+        });
 
     } catch (error) {
-        
+        return res.status(500).json({
+            success:false,
+            message:"Internal Server Error! Work-Type Not Added!"
+        });
     }
-    
+}
+
+const showWorkType = async(req,res)=>{
+    try {
+        const allWorkType = await WorkType.find().select("-updatedAt -createdAt -__v -created_By -updated_By");
+        
+        return res.status(200).json({
+            success:true,
+            message:"All Work Types",
+            data: allWorkType || []
+        });
+
+    } catch (error) {
+        return res.status(500).json({
+            success:false,
+            message: "Internal Server Error! Can't Show Work-Type"
+        });
+    }
 }
 
 module.exports={
@@ -1049,5 +1088,8 @@ module.exports={
 
     addOfficeTimePolicy,
     showOfficeTimePolicy,
-    updateOfficeTimePolicy
+    updateOfficeTimePolicy,
+
+    addWorkType,
+    showWorkType
 }

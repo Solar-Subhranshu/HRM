@@ -217,7 +217,7 @@ const login = async(req,res) =>{
         //we call this data as admin data !
         //checking if valid id is given
         const adminData = await Employee.findOne({employeeCode:employeeCode}).populate("department");
-        console.log(adminData.department.department);
+        // console.log(adminData.department.department);
         if(adminData.department.department !== 'Admin'){
             return res.status(400).json({
                 success: false,
@@ -644,39 +644,38 @@ const updateEmployee= async(req,res)=>{
         let otherAttachmentUrl=employeeToUpdate.otherAttachment;
 
         //checking each 
-        if(aadharCardAttachment){
+        if(Array.isArray(aadharCardAttachment)){
             const actualPath = absolutePath(aadharCardAttachmentUrl);
             await fs.unlink(actualPath);
-            
-            const aadharCardImage = await handleBase64Images([aadharCardAttachment], "aadharCardAttachments");
+            const aadharCardImage = await handleBase64Images(aadharCardAttachment, "aadharCardAttachments");
             aadharCardAttachmentUrl = `${req.protocol}://${req.get("host")}/uploads/aadharCardAttachments/${aadharCardImage[0].fileName}`;
-            // console.log(aadharCardAttachmentUrl);
+            
         }
-        if(panCardAttachment){
-            // const actualPath = absolutePath(panCardAttachmentUrl);
+        if(Array.isArray(panCardAttachment)){
+            const actualPath = absolutePath(panCardAttachmentUrl);
             await fs.unlink(actualPath);
-            const panCardImage = await handleBase64Images([panCardAttachment], "panCardAttachments");
+            const panCardImage = await handleBase64Images(panCardAttachment, "panCardAttachments");
             panCardAttachmentUrl = `${req.protocol}://${req.get("host")}/uploads/panCardAttachments/${panCardImage[0].fileName}`;
             // console.log(panCardAttachmentUrl);
         }
-        if(bankAttachment){
+        if(Array.isArray(bankAttachment)){
             const actualPath = absolutePath(bankAttachmentUrl);
             await fs.unlink(actualPath);
-            const bankAccountImage = await handleBase64Images([bankAttachment], "bankAttachments");
+            const bankAccountImage = await handleBase64Images(bankAttachment, "bankAttachments");
             bankAttachmentUrl = `${req.protocol}://${req.get("host")}/uploads/bankAttachments/${bankAccountImage[0].fileName}`;
             // console.log(bankAttachmentUrl);
         }
-        if(joiningFormAttachment){
+        if(Array.isArray(joiningFormAttachment)){
             const actualPath = absolutePath(joiningFormAttachmentUrl);
             await fs.unlink(actualPath);
-            const joiningFormImage = await handleBase64Images([joiningFormAttachment], "joiningForms");
+            const joiningFormImage = await handleBase64Images(joiningFormAttachment, "joiningForms");
             joiningFormAttachmentUrl = `${req.protocol}://${req.get("host")}/uploads/joiningForms/${joiningFormImage[0].fileName}`;
             // console.log(joiningFormAttachmentUrl);
         }
-        if(otherAttachment){
+        if(Array.isArray(otherAttachment)){
             const actualPath = absolutePath(otherAttachmentUrl);
             await fs.unlink(actualPath);
-            const otherAttachmentImage= await handleBase64Images([otherAttachment], "otherAttachments");
+            const otherAttachmentImage= await handleBase64Images(otherAttachment, "otherAttachments");
             otherAttachmentUrl = `${req.protocol}://${req.get("host")}/uploads/otherAttachments/${otherAttachmentImage[0].fileName}`;
             // console.log(otherAttachmentUrl);
         }
