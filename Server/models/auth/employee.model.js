@@ -169,6 +169,11 @@ const employeeSchema = new mongoose.Schema({
             ref : "Shift",
             required : true
         },
+        workType:{
+            type: mongoose.Schema.Types.ObjectId,
+            ref:"WorkType",
+            required:true
+        },
     
         // Attachments
 

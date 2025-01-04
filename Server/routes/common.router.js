@@ -28,4 +28,7 @@ router.post("/add-officeTimePolicy",tokenVerify,commonController.addOfficeTimePo
 router.get("/show-officeTimePolicy",commonController.showOfficeTimePolicy);
 router.put("/update-officeTimePolicy",commonController.updateOfficeTimePolicy);
 
+router.post("/add-workType",commonController.addWorkType);
+router.get("/show-workType",commonController.showWorkType);
+
 module.exports = router;
