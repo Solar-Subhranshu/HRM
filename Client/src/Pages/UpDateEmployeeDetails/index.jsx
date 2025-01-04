@@ -16,6 +16,7 @@ function Registration() {
   const [companynamedata, setCompanyName] = useState([]);
   const [branchnamedata, setBranchNameData] = useState([]);
   const [qulificationdata, setQulificationData] = useState([]);
+  const [workTypeData, setWorkTypeData]=useState([]);
   
   const [qualificationId, setQualificationId] = useState("");
   const [companyId, setCompanyId]=useState("");
@@ -70,12 +71,12 @@ function Registration() {
     confirmAccountNumber: "",
     officeTimePolicy: "",
     shift: "",
+    workType : "",
   });
   
   // Fetch data from cookies and set to formData state
   useEffect(() => {
     const employeeData = Cookies.get("EmployeeFormData");
-    console.log("employe data from cookies", employeeData)
     
     if (employeeData) {
       try {
@@ -103,6 +104,7 @@ function Registration() {
           department:parsedData.department._id,
           officeTimePolicy:parsedData.officeTimePolicy._id,
           shift:parsedData.shift._id,
+          workType:parsedData.workType._id,
           reportingManager:parsedData.reportingManager?._id,
           dateOfBirth: parsedData.dateOfBirth ? parsedData.dateOfBirth.split('T')[0] : '',
           joiningDate:parsedData.joiningDate?parsedData.joiningDate.split('T')[0]: "",
@@ -211,6 +213,15 @@ function Registration() {
     }
   };
 
+  const fetchWorkTypeData = async () => {
+    try {
+      const response = await axios.get('http://localhost:8000/common/show-workType');
+      setWorkTypeData(response.data.data);
+    } catch (error) {
+      alert('Unable to Fetch Data work type data');
+    }
+  };
+
   useEffect(() => {
     fetchDepartmentName();
     fetchCompanyNameData();
@@ -218,6 +229,7 @@ function Registration() {
     fetchShiftNameData();
     fetchReportingManagerData();
     fetchOfficeTimePolicyData();
+    fetchWorkTypeData();
   }, []);
 
   useEffect(() => {
@@ -544,7 +556,6 @@ function Registration() {
                   ))}
                 </select>
                 {errors.qualification && <span className="text-red-600">{errors.qualification}</span>}
-                <span>{formData.qualification}</span>
               </div>
               
               {/* degree field  */}
@@ -581,6 +592,28 @@ function Registration() {
                   className="w-full rounded-md border-2 py-1 px-4 focus:outline-none focus:ring-2 focus:ring-black"
                 />
                 {errors.panCard && <span className="text-red-600">{errors.panCard}</span>}
+              </div>
+              
+               {/* Work Type Field   */}
+               <div>
+                <label>
+                  <span>Work Type</span>
+                </label>
+                <select
+                  name='workType'
+                  // value={formData.degree}
+                  className="w-full rounded-md border-2 py-1 px-4 focus:outline-none focus:ring-2 focus:ring-black"
+                  onChange={(event) => {
+                    const { name, value} = event.target;
+                    // console.log("name", name, "value", value);
+                    setFormData((prev) => ({ ...prev, [name] : value}))
+                  }}
+                >
+                  <option>--Select Work Type--</option>
+                  {workTypeData?.map(({_id, workType})=>(
+                    <option key={_id} value={_id} name={workType} selected={formData.workType === _id} >{workType}</option>
+                  ))}
+                </select>
               </div>
 
             </div>

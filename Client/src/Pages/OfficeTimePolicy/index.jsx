@@ -44,12 +44,12 @@ function OfficePolicyTable() {
                 <th className='text-blue-600/100 border border-black'>P hrs</th>
               </thead>
               <tbody >
-                {officePolicy?.map(({_id, policyId, allowedTimeDelay, p_Hr})=>(
+                {officePolicy?.map(({_id, policyName, permittedLateArrival, absent})=>(
                   <tr key={_id}>
                     <td className='border border-gray-400 flex justify-center items-center align-middle h-8'><input type='checkbox'/></td>
-                    <td className='border border-black text-center'>{policyId}</td>
-                    <td className='border border-black text-center'>{allowedTimeDelay}</td>
-                    <td className='border border-black text-center'>{p_Hr !== undefined && p_Hr !== null ? p_Hr : "null"}</td>
+                    <td className='border border-black text-center'>{policyName}</td>
+                    <td className='border border-black text-center'>{permittedLateArrival}</td>
+                    <td className='border border-black text-center'>{absent !== undefined && absent !== null ? absent : "null"}</td>
                   </tr>
                 ))}
               </tbody>

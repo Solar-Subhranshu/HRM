@@ -11,6 +11,7 @@ const EmpPolicyDetailTable =()=> {
     <div className='flex flex-col justify-between gap-8 mt-4'>
         
         {/* first section  */}
+        <form>
         <div className='ml-2 mr-2'>
         <div className='bgMainColor flex  py-3 pl-1 gap-3 justify-between'>
             <div className='flex flex-row pl-2 gap-4'>
@@ -18,7 +19,7 @@ const EmpPolicyDetailTable =()=> {
                 <h4 className='text-white'>Employee Policy details</h4>
             </div>
         </div>
-
+        
         <div className='grid grid-cols-3 gap-4 mt-4'>
             <div className='flex flex-col'>
                 <label className='pb-2'>
@@ -36,28 +37,28 @@ const EmpPolicyDetailTable =()=> {
                     <span className='pl-8'>Permitted Late Arrival</span>
                     <span className='text-red-600'>*</span>
                 </label>
-                
-                <div className='ml-8  mr-20 flex justify-between items-center rounded-md border-2 py-1 px-2 focus:outline-none focus:ring-2 focus:ring-black'>
-                   {<TimeSelector/>}
-                   {<IoIosTimer size={24} />}
-                </div>
+                <input 
+                    type='time'
+                    className="ml-8 mr-20 rounded-md border-2 py-2 px-2 focus:outline-none focus:ring-2 focus:ring-black" 
+                />
+
             </div>
 
             <div className='flex flex-col'>
                 <label className='pb-2'>
                     <span className='pl-8'>Mark As Half Day If Working Hour Less Than</span>
                 </label>
-                <div className='ml-8  mr-20 flex justify-between items-center rounded-md border-2 py-1 px-2 focus:outline-none focus:ring-2 focus:ring-black'>
-                   {<TimeSelector/>}
-                   {<IoIosTimer size={24} />}
-                </div>
+                <input 
+                    type='time'
+                    className="ml-8 mr-20 rounded-md border-2 py-2 px-2 focus:outline-none focus:ring-2 focus:ring-black" 
+                />
             </div>
         </div>
 
         </div>
          
          {/* second section  */}
-        <div className='ml-2 mr-2'>
+        <div className='ml-2 mr-2 mt-6'>
             <div className='bgMainColor flex  py-3 pl-1 gap-3 justify-between'>
             <div className='flex flex-row pl-2 gap-4'>
                 {<FaListUl size={24} />}
@@ -71,10 +72,10 @@ const EmpPolicyDetailTable =()=> {
                     <span className='ml-8'>Late 1 :</span>
                     <span className='ml-8 pb-2'>Late Arrival</span>
                 </div>
-                <div className='ml-8  mr-20 flex justify-between items-center rounded-md border-2 py-1 px-2 focus:outline-none focus:ring-2 focus:ring-black'>
-                   {<TimeSelector/>}
-                   {<IoIosTimer size={24} />}
-                </div>
+                <input 
+                    type='time'
+                    className="ml-8 mr-20 rounded-md border-2 py-2 px-2 focus:outline-none focus:ring-2 focus:ring-black" 
+                />
             </div>
 
             <div className='flex flex-col'>
@@ -83,10 +84,10 @@ const EmpPolicyDetailTable =()=> {
                     <span className='ml-8'>Late 2 :</span>
                     <span className='ml-8 pb-2'>Late Arrival</span>
                 </div>
-                <div className='ml-8  mr-20 flex justify-between items-center rounded-md border-2 py-1 px-2 focus:outline-none focus:ring-2 focus:ring-black'>
-                   {<TimeSelector/>}
-                   {<IoIosTimer size={24} />}
-                </div>
+                <input 
+                    type='time'
+                    className="ml-8 mr-20 rounded-md border-2 py-2 px-2 focus:outline-none focus:ring-2 focus:ring-black" 
+                />
             </div>
 
             <div className='flex flex-col'>
@@ -94,10 +95,10 @@ const EmpPolicyDetailTable =()=> {
                     <span className='ml-8'>Late 3 :</span>
                     <span className='ml-8 pb-2'>Late Arrival</span>
                 </div>
-                <div className='ml-8  mr-20 flex justify-between items-center rounded-md border-2 py-1 px-2 focus:outline-none focus:ring-2 focus:ring-black'>
-                   {<TimeSelector/>}
-                   {<IoIosTimer size={24} />}
-                </div>
+                <input 
+                    type='time'
+                    className="ml-8 mr-20 rounded-md border-2 py-2 px-2 focus:outline-none focus:ring-2 focus:ring-black" 
+                />
             </div>
 
             <div className='flex flex-col'>
@@ -105,10 +106,10 @@ const EmpPolicyDetailTable =()=> {
                     <span className='ml-8'>Late 4 :</span>
                     <span className='ml-8 pb-2'>Late Arrival</span>
                 </div>
-                <div className='ml-8  mr-20 flex justify-between items-center rounded-md border-2 py-1 px-2 focus:outline-none focus:ring-2 focus:ring-black'>
-                   {<TimeSelector/>}
-                   {<IoIosTimer size={24} />}
-                </div>
+                <input 
+                    type='time'
+                    className="ml-8 mr-20 rounded-md border-2 py-2 px-2 focus:outline-none focus:ring-2 focus:ring-black" 
+                />
             </div>
             
             <div className='flex flex-col'>
@@ -160,7 +161,7 @@ const EmpPolicyDetailTable =()=> {
         </div>
 
         {/* third section  */}
-        <div className='ml-2 mr-2'>
+        <div className='ml-2 mr-2 mt-6'>
             <div className='bgMainColor flex  py-3 pl-1 gap-3 justify-between'>
                 <div className='flex flex-row pl-2 gap-4'>
                     {<FaListUl size={24} />}
@@ -240,6 +241,7 @@ const EmpPolicyDetailTable =()=> {
               Register
             </button>
         </div>
+        </form>
 
     </div>
   )
