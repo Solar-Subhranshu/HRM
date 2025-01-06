@@ -4,10 +4,12 @@ const Department = require ("../../models/common/department.model");
 const Branch = require("../../models/Company/branch.model");
 const Designation = require("../../models/common/designation.model");
 const Shift = require("../../models/common/shift.model");
-const OfficeTimePolicy = require("../../models/common/officeTimePolicy.model")
+const OfficeTimePolicy = require("../../models/common/officeTimePolicy.model");
+const SalaryDeductRule =require("../../models/policy/salaryDeductRule");
 const WorkType = require("../../models/common/workType.model");
 
-const helper = require("../../utils/common.util")
+const helper = require("../../utils/common.util");
+const { resolve } = require("path");
 
 const showDegree = async (req,res) =>{
     try {
@@ -877,8 +879,8 @@ const addOfficeTimePolicy = async (req,res)=>{
     try {
         const employeeId=req.employeeId;
         const {policyName,permittedLateArrival,pByTwo,absent,lateComingRule,lateArrival1,lateArrival2,lateArrival3,lateArrival4,
-            dayDeduct1,dayDeduct2,dayDeduct3,dayDeduct4,multiPunch,deductFromAttendance,deductFromLeave,continuous,disContinuous
-        }=req.body || req.params;
+            dayDeduct1,dayDeduct2,dayDeduct3,dayDeduct4,multiPunch,deductFromAttendance,deductFromLeave,continuous,disContinuous,
+            salaryDeductRule}=req.body || req.params;
 
 
         if(!policyName || !permittedLateArrival ||!pByTwo || !absent){
@@ -897,10 +899,10 @@ const addOfficeTimePolicy = async (req,res)=>{
             });
         }
 
-        const existingPolicy = await OfficeTimePolicy.find({policyName:policyName});
+        const existingPolicy = await OfficeTimePolicy.findOne({policyName:policyName});
         // console.log(existingPolicy)
 
-        if(existingPolicy.length!==0){
+        if(existingPolicy){
             return res.status(400).json({
                 success:false,
                 message:"Policy Already Exists!"
@@ -916,7 +918,35 @@ const addOfficeTimePolicy = async (req,res)=>{
             created_By:employeeId
         });
 
-        await newPolicy.save();
+        await newPolicy.save()
+        .then(async (response,error)=> {
+            if(response){
+                if(salaryDeductRule){
+                    // const OfficeTimePolicyId = response._id;
+                    salaryDeductRule.forEach(obj =>{
+                        obj.OfficeTimePolicyId = response._id;
+                    });
+
+                    // console.log(salaryDeductRule);
+                    await SalaryDeductRule.insertMany(salaryDeductRule)
+                    .then((response,err)=>{
+                        if(err){
+                            return res.status(401).json({
+                                success:false,
+                                message:"Something Went wrong while saving data, try later."
+                            });
+                        }
+                    })
+                }
+            }
+            if(error){
+                return res.status(401).json({
+                    success:false,
+                    message:"New office time policy not saved!",
+                    error: error.message
+                });
+            }
+        });
 
         return res.status(200).json({
             success:true,
@@ -954,8 +984,8 @@ const updateOfficeTimePolicy=async (req,res)=>{
     try {
         const employeeId=req.employeeId;
         const {_id,policyName,permittedLateArrival,pByTwo,absent,lateComingRule,lateArrival1,lateArrival2,lateArrival3,lateArrival4,
-            dayDeduct1,dayDeduct2,dayDeduct3,dayDeduct4,multiPunch,deductFromAttendance,deductFromLeave,continuous,disContinuous
-        }=req.body ||req.query;
+            dayDeduct1,dayDeduct2,dayDeduct3,dayDeduct4,multiPunch,deductFromAttendance,deductFromLeave,continuous,disContinuous,
+            salaryDeductRule}=req.body ||req.query;
 
         if(!_id){
             return res.status(400).json({
@@ -984,7 +1014,31 @@ const updateOfficeTimePolicy=async (req,res)=>{
             policyName,permittedLateArrival,pByTwo,absent,lateComingRule,lateArrival1,lateArrival2,lateArrival3,lateArrival4,
             dayDeduct1,dayDeduct2,dayDeduct3,dayDeduct4,multiPunch,deductFromAttendance,deductFromLeave,continuous,disContinuous,
             updated_By:employeeId
-        },{new:true});
+        },{new:true})
+        .then(async (response)=>{
+            console.log('policy updated!');
+            if (salaryDeductRule && Array.isArray(salaryDeductRule)) {
+                const updates = salaryDeductRule.map(rule => ({
+                    updateOne: {
+                        filter: { OfficeTimePolicyId: response._id, _id: rule._id },
+                        update: { $set: rule },
+                    }
+                }));
+            
+                await SalaryDeductRule.bulkWrite(updates)
+                    .then((bulkResponse) => {
+                        console.log("SalaryDeductRule update successful", bulkResponse);
+                    })
+                    .catch((error) => {
+                        return res.status(401).json({
+                            success: false,
+                            message: "Error updating SalaryDeductRule data",
+                            error: error.message,
+                        });
+                    });
+            }
+            
+        })
 
         return res.status(200).json({
             success:true,
