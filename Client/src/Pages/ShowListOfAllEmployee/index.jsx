@@ -19,6 +19,10 @@ function TotalEmployeeTable() {
     navigate('/layout/Registrationform');
   };
 
+  const handleClose = ()=>{
+    navigate('/layout/dashboard');
+  }
+
   const handleUpdateOpenReg = () => {
     if (!selectedEmployee) {
       alert("Please select an employee to update.");
@@ -31,7 +35,7 @@ function TotalEmployeeTable() {
     { key: "name", label: "Employee Name" },
     { key: "employeeCode", label: "Emp. Code" },
     { key: "father_husbandName", label: "Father/Husband Name" },
-    { key: "dob", label: 'Date Of Birth'},
+    { key: "dateOfBirth", label: 'Date Of Birth'},
     { key: "personalPhoneNum", label: "Personal Phone Number" },
     { key: "personalEmail", label: "Personal Email" },
     { key: "panCard", label: "Pancard Number" },
@@ -42,6 +46,7 @@ function TotalEmployeeTable() {
     { key: "permanentPinCode", label: "Permanent Pin Code" },
     { key: "currentAddress", label: "Current Address" },
     { key: "currentPinCode", label: "Current Pin Code" },
+    { key : "workType.workType" , label : "Work Type"},
 
     { key: "bankName", label: "Bank Name" },
     { key: "branchName", label: "Branch Name" },
@@ -213,7 +218,7 @@ function TotalEmployeeTable() {
                     value = value ? value[key] : "N/A";
                   });
 
-                  if ( (col.key === "joiningDate" && value !== "N/A") || (col.key === "lastAppraisalDate" && value !== "N/A") || (col.key === "regisnationDate" && value !== "N/A") ) {
+                  if ( (col.key === "joiningDate" && value !== null) || (col.key === "dateOfBirth" && value !==null) || (col.key === "lastAppraisalDate" && value !== null) || (col.key === "regisnationDate" && value !== null) ) {
                     value = formatDate(value);
                   }
 
@@ -283,7 +288,7 @@ function TotalEmployeeTable() {
         </button>
         <button className="px-6 py-2 bg-green-600 text-white font-semibold rounded-lg shadow-md hover:bg-green-700 transition-all">Export To Excel</button>
         <button onClick={handleUpdateOpenReg} className="px-6 py-2 bg-red-600 text-white font-semibold rounded-lg shadow-md hover:bg-red-700 transition-all">Update</button>
-        <button className="px-6 py-2 bg-red-600 text-white font-semibold rounded-lg shadow-md hover:bg-red-700 transition-all">Close</button>
+        <button onClick={handleClose} className="px-6 py-2 bg-red-600 text-white font-semibold rounded-lg shadow-md hover:bg-red-700 transition-all">Close</button>
       </div>
 
        {/* excel pop model open  */}

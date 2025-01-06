@@ -1,8 +1,12 @@
 import React, { useEffect, useState } from 'react';
 import axios from 'axios';
 import Cookies from "js-cookie";
+import { useNavigate } from 'react-router-dom';
 
 function Registration() {
+
+  const navigate = useNavigate();
+
   const [isImageOpen, setIsImageOpen] = useState(false);
     const [imageSize, setImageSize] = useState(100); // Initial image size in percentage
 
@@ -12,6 +16,7 @@ function Registration() {
   const [companynamedata, setCompanyName] = useState([]);
   const [branchnamedata, setBranchNameData] = useState([]);
   const [qulificationdata, setQulificationData] = useState([]);
+  const [workTypeData, setWorkTypeData]=useState([]);
   
   const [qualificationId, setQualificationId] = useState("");
   const [companyId, setCompanyId]=useState("");
@@ -24,6 +29,8 @@ function Registration() {
   const [selectedDepartmentId, setSelectedDepartmentId] = useState('');
   const [selectedCompanyNameId, setSelectedCompanyNameId] = useState('');
   const [selectedQualificationId, setSelectedQualificationId] = useState();
+
+  const [updatedAttachments, setUpdatedAttachments] = useState([]); // Tracks updated attachments
 
   const [formData, setFormData] = useState({
     employeeCode: "",
@@ -64,25 +71,25 @@ function Registration() {
     confirmAccountNumber: "",
     officeTimePolicy: "",
     shift: "",
+    workType : "",
   });
   
   // Fetch data from cookies and set to formData state
   useEffect(() => {
     const employeeData = Cookies.get("EmployeeFormData");
-    console.log("employe data from cookies", employeeData)
     
     if (employeeData) {
       try {
         const parsedData = JSON.parse(employeeData);
         console.log("parseData",parsedData.joiningFormAttachment)
        
-         // Fetch attachments from cookies (assuming they're stored in Base64 format)
+      // Fetch attachments from cookies (assuming they're stored in Base64 format)
       const attachments = {
         aadharCardAttachment: parsedData.aadharCardAttachment || "",
-        panCardAttachment: Cookies.get("panCardAttachment") || "",
-        bankAttachment: Cookies.get("bankAttachment") || "",
-        joiningFormAttachment: Cookies.get("joiningFormAttachment") || "",
-        otherAttachment: Cookies.get("otherAttachment") || "",
+        panCardAttachment: parsedData.panCardAttachment|| "",
+        bankAttachment: parsedData.bankAttachment || "",
+        joiningFormAttachment: parsedData.joiningFormAttachment || "",
+        otherAttachment: parsedData.otherAttachment || "",
       };
 
        console.log('my attachment ', attachments)
@@ -95,6 +102,9 @@ function Registration() {
           qualification: parsedData.qualification._id,
           company:parsedData.company._id,
           department:parsedData.department._id,
+          officeTimePolicy:parsedData.officeTimePolicy._id,
+          shift:parsedData.shift._id,
+          workType:parsedData.workType._id,
           reportingManager:parsedData.reportingManager?._id,
           dateOfBirth: parsedData.dateOfBirth ? parsedData.dateOfBirth.split('T')[0] : '',
           joiningDate:parsedData.joiningDate?parsedData.joiningDate.split('T')[0]: "",
@@ -109,12 +119,9 @@ function Registration() {
   }, []);
   
   // image are expend logic 
-  
-  
-  
     const handleImageClick = () => {
       setIsImageOpen(true);  // Open the image and increase its size
-      setImageSize(500);     // Increase size to 300% when clicked
+      setImageSize(300);     // Increase size to 300% when clicked
     };
   
     const handleClose = () => {
@@ -206,6 +213,15 @@ function Registration() {
     }
   };
 
+  const fetchWorkTypeData = async () => {
+    try {
+      const response = await axios.get('http://localhost:8000/common/show-workType');
+      setWorkTypeData(response.data.data);
+    } catch (error) {
+      alert('Unable to Fetch Data work type data');
+    }
+  };
+
   useEffect(() => {
     fetchDepartmentName();
     fetchCompanyNameData();
@@ -213,10 +229,10 @@ function Registration() {
     fetchShiftNameData();
     fetchReportingManagerData();
     fetchOfficeTimePolicyData();
+    fetchWorkTypeData();
   }, []);
 
   useEffect(() => {
-    console.log("selectedQualificationId",qualificationId)
     if (departmentId) fetchDeginationData(departmentId);
     if (companyId) fetchBranchNameData(companyId);
     if (qualificationId) fetchDegreeData(qualificationId);
@@ -248,8 +264,6 @@ function Registration() {
   };
  
  
-  
-
   // Handling form data input
   const handleFormData = (e) => {
     const { name, value } = e.target;
@@ -260,9 +274,6 @@ function Registration() {
   };
 
 
-  
-
-  
   // file related change 
   const convertToBase64 = (file) => {
     console.log(convertToBase64)
@@ -296,9 +307,26 @@ function Registration() {
     if (file && validateFile(file)) {
       const base64 = await convertToBase64(file);
       setFormData({ ...formData, [fieldName]: base64 });
+
+
+      // Track updated attachments
+      setUpdatedAttachments((prev) => {
+        if (!prev.includes(fieldName)) {
+          return [...prev, fieldName];
+        }
+        return prev;
+      });
+
     }
   };
  
+  const prepareAttachments = () => {
+    return updatedAttachments.map((field) => ({
+      fieldName: field,
+      fileData: formData[field],
+    }));
+  };
+
   // Handle form submit for updating employee data
   const handleUpdateSubmit = async (e) => {
     e.preventDefault();
@@ -313,7 +341,16 @@ function Registration() {
       return;
     }
 
+    const attachments = prepareAttachments();
+
+
     try {
+       
+      const payload = {
+        ...formData,
+        attachments, // Include only updated attachments
+      };
+
         const response = await axios.patch("http://localhost:8000/auth/empUpdate",formData,{
           headers: {
             "Content-Type": "application/json",
@@ -322,6 +359,7 @@ function Registration() {
 
       if (response.status === 200 || response.status === 201) {
         alert("Employee updated successfully!");
+        navigate('/layout/listofallemployee')
       } else {
         alert("Something went wrong during the update.");
       }
@@ -518,7 +556,6 @@ function Registration() {
                   ))}
                 </select>
                 {errors.qualification && <span className="text-red-600">{errors.qualification}</span>}
-                <span>{formData.qualification}</span>
               </div>
               
               {/* degree field  */}
@@ -555,6 +592,28 @@ function Registration() {
                   className="w-full rounded-md border-2 py-1 px-4 focus:outline-none focus:ring-2 focus:ring-black"
                 />
                 {errors.panCard && <span className="text-red-600">{errors.panCard}</span>}
+              </div>
+              
+               {/* Work Type Field   */}
+               <div>
+                <label>
+                  <span>Work Type</span>
+                </label>
+                <select
+                  name='workType'
+                  // value={formData.degree}
+                  className="w-full rounded-md border-2 py-1 px-4 focus:outline-none focus:ring-2 focus:ring-black"
+                  onChange={(event) => {
+                    const { name, value} = event.target;
+                    // console.log("name", name, "value", value);
+                    setFormData((prev) => ({ ...prev, [name] : value}))
+                  }}
+                >
+                  <option>--Select Work Type--</option>
+                  {workTypeData?.map(({_id, workType})=>(
+                    <option key={_id} value={_id} name={workType} selected={formData.workType === _id} >{workType}</option>
+                  ))}
+                </select>
               </div>
 
             </div>
@@ -783,8 +842,8 @@ function Registration() {
                   className="w-full rounded-md border-2 py-1 px-4 focus:outline-none focus:ring-2 focus:ring-black"
                 >
                   <option>--Select Office Time--</option>
-                  {officeTimePolicy?.map(({policyId, _id})=>(
-                    <option key={_id}>{policyId}</option>
+                  {officeTimePolicy?.map(({policyName, _id})=>(
+                    <option key={_id} selected={formData.officeTimePolicy === _id}>{policyName}</option>
                   ))}
                 </select>
               </div>
@@ -904,7 +963,7 @@ function Registration() {
                 />
                 {errors.aadharCardAttachment && <span className="text-red-600">{errors.aadharCardAttachment}</span>}
                 {/* <span>njfgjfg{parsedData?.joiningFormAttachment}</span> */}
-                {/* {formData?.aadharCardAttachment && (
+                {formData?.aadharCardAttachment && (
                   <div>
                     <img
                       src={formData.aadharCardAttachment} // Replace with your image URL
@@ -923,34 +982,8 @@ function Registration() {
                       Close
                     </button>
                   </div>
-                )} */}
-                 {formData?.aadharCardAttachment && (
-          <div>
-            <img
-              src={formData.aadharCardAttachment} // Use the Base64 image from formData
-              alt="Aadhar Card Preview"
-              onClick={handleImageClick}
-              style={{
-                width: `${imageSize}%`, // Use inline style for dynamic image size
-                transition: "width 0.3s ease-in-out",
-                cursor: "pointer"
-              }}
-            />
-          </div>
-        )}
+                )}
 
-        {/* Close button when image is expanded */}
-        {isImageOpen && (
-          <div className="mt-4">
-            <button
-              onClick={handleClose}
-              className="px-4 py-2 bg-red-600 text-white font-semibold rounded-md hover:bg-red-700 focus:outline-none focus:ring-2 focus:ring-red-500"
-            >
-              Close
-            </button>
-          </div>
-        )}
-    
               </div>
               
               {/* pan card attachments field  */}
@@ -966,15 +999,28 @@ function Registration() {
                   className="w-full rounded-md border-2 py-1 px-4 focus:outline-none focus:ring-2 focus:ring-black"
                 />
                 {errors.panCardAttachment && <span className="text-red-600">{errors.panCardAttachment}</span>}
-                {formData.panCardAttachment && (
+               
+                {formData?.panCardAttachment && (
                   <div>
                     <img
-                      src={formData.panCardAttachment} // Use Base64 data from `formData`
-                      alt="Aadhar Card Preview"
-                      style={{ width: '200px', height: 'auto' }}
+                      src={formData.panCardAttachment} // Replace with your image URL
+                      alt="Image"
+                      onClick={handleImageClick}
+                      className={`cursor-pointer transition-all duration-300 ease-in-out w-[${imageSize}%]`} 
                     />
                   </div>
                 )}
+                 {isImageOpen && (
+                  <div className="mt-4">
+                    <button
+                      onClick={handleClose}
+                      className="px-4 py-2 bg-red-600 text-white font-semibold rounded-md hover:bg-red-700 focus:outline-none focus:ring-2 focus:ring-red-500"
+                    >
+                      Close
+                    </button>
+                  </div>
+                )}
+
               </div>
               
               {/* bank passbook attachments field  */}
@@ -990,13 +1036,25 @@ function Registration() {
                   className="w-full rounded-md border-2 py-1 px-4 focus:outline-none focus:ring-2 focus:ring-black"
                 />
                 {errors.bankAttachment && <span className="text-red-600">{errors.bankAttachment}</span>}
-                {formData.bankAttachment && (
+                
+                {formData?.bankAttachment && (
                   <div>
                     <img
-                      src={formData.bankAttachment} // Use Base64 data from `formData`
-                      alt="Aadhar Card Preview"
-                      style={{ width: '200px', height: 'auto' }}
+                      src={formData.bankAttachment} // Replace with your image URL
+                      alt="Image"
+                      onClick={handleImageClick}
+                      className={`cursor-pointer transition-all duration-300 ease-in-out w-[${imageSize}%]`} 
                     />
+                  </div>
+                )}
+                 {isImageOpen && (
+                  <div className="mt-4">
+                    <button
+                      onClick={handleClose}
+                      className="px-4 py-2 bg-red-600 text-white font-semibold rounded-md hover:bg-red-700 focus:outline-none focus:ring-2 focus:ring-red-500"
+                    >
+                      Close
+                    </button>
                   </div>
                 )}
               </div>
@@ -1014,15 +1072,28 @@ function Registration() {
                   className="w-full rounded-md border-2 py-1 px-4 focus:outline-none focus:ring-2 focus:ring-black"
                 />
                 {errors.joiningFormAttachment && <span className="text-red-600">{errors.joiningFormAttachment}</span>}
-                {formData.joiningFormAttachment && (
+               
+                {formData?.joiningFormAttachment && (
                   <div>
                     <img
-                      src={formData.joiningFormAttachment} // Use Base64 data from `formData`
-                      alt="Aadhar Card Preview"
-                      style={{ width: '200px', height: 'auto' }}
+                      src={formData.joiningFormAttachment} // Replace with your image URL
+                      alt="Image"
+                      onClick={handleImageClick}
+                      className={`cursor-pointer transition-all duration-300 ease-in-out w-[${imageSize}%]`} 
                     />
                   </div>
                 )}
+                 {isImageOpen && (
+                  <div className="mt-4">
+                    <button
+                      onClick={handleClose}
+                      className="px-4 py-2 bg-red-600 text-white font-semibold rounded-md hover:bg-red-700 focus:outline-none focus:ring-2 focus:ring-red-500"
+                    >
+                      Close
+                    </button>
+                  </div>
+                )}
+
               </div>
               
               {/* other document field  */}
@@ -1037,15 +1108,28 @@ function Registration() {
                   className="w-full rounded-md border-2 py-1 px-4 focus:outline-none focus:ring-2 focus:ring-black"
                 />
                 {errors.otherAttachment && <span className="text-red-600">{errors.otherAttachment}</span>}
-                {formData.otherAttachment && (
+                
+                {formData?.otherAttachment && (
                   <div>
                     <img
-                      src={formData.otherAttachment} // Use Base64 data from `formData`
-                      alt="Aadhar Card Preview"
-                      style={{ width: '200px', height: 'auto' }}
+                      src={formData.otherAttachment} // Replace with your image URL
+                      alt="Image"
+                      onClick={handleImageClick}
+                      className={`cursor-pointer transition-all duration-300 ease-in-out w-[${imageSize}%]`} 
                     />
                   </div>
                 )}
+                 {isImageOpen && (
+                  <div className="mt-4">
+                    <button
+                      onClick={handleClose}
+                      className="px-4 py-2 bg-red-600 text-white font-semibold rounded-md hover:bg-red-700 focus:outline-none focus:ring-2 focus:ring-red-500"
+                    >
+                      Close
+                    </button>
+                  </div>
+                )}
+
               </div>
 
             </div>

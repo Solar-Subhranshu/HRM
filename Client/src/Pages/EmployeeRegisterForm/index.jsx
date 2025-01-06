@@ -10,6 +10,8 @@ function Registration() {
   const [qulificationdata, setQulificationData] = useState([]);
   const [degreeData, setDegreeData] = useState([]);
   const [shiftName, setShiftName] = useState([]);
+  const [workTypeData, setWorkTypeData]=useState([]);
+
   const [officeTimePolicy, setOfficeTimePolicy] = useState([]);
   const [reportingManager, setReportingManager] = useState([]);
   const [selectedDepartmentId, setSelectedDepartmentId] = useState('');
@@ -57,6 +59,7 @@ function Registration() {
     shift: "",
     department: "",
     designation: "",
+    workType:''
   });
 
   // Fetching functions
@@ -65,7 +68,7 @@ function Registration() {
       const response = await axios.get('http://localhost:8000/common/show-department');
       setDepartmentName(response.data.data);
     } catch (error) {
-      alert('Error: Unable to fetch data');
+      alert('Error: Unable to fetch Department data');
     }
   };
 
@@ -74,7 +77,7 @@ function Registration() {
       const response = await axios.get(`http://localhost:8000/common/show-designation?departmentId=${_id}`);
       setDeginationData(response.data.data);
     } catch (error) {
-      alert('Error: Unable to fetch data');
+      alert('Error: Unable to fetch Degination Name data');
     }
   };
 
@@ -83,7 +86,7 @@ function Registration() {
       const response = await axios.get('http://localhost:8000/company/show-company');
       setCompanyName(response.data.data);
     } catch (error) {
-      alert('Error: Unable to fetch data');
+      alert('Error: Unable to fetch Company Name data');
     }
   };
 
@@ -92,7 +95,7 @@ function Registration() {
       const response = await axios.get(`http://localhost:8000/branch/show-branch?companyID=${_id}`);
       setBranchNameData(response.data.data);
     } catch (error) {
-      alert('Error: Unable to fetch data');
+      alert('Error: Unable to fetch Branch Name data');
     }
   };
 
@@ -101,7 +104,7 @@ function Registration() {
       const response = await axios.get('http://localhost:8000/common/show-qualification');
       setQulificationData(response.data.data);
     } catch (error) {
-      alert('Error: Unable to fetch data');
+      alert('Error: Unable to fetch  Qualification data');
     }
   };
 
@@ -110,7 +113,7 @@ function Registration() {
       const response = await axios.get(`http://localhost:8000/common/show-degree?qualificationId=${_id}`);
       setDegreeData(response.data.data);
     } catch (error) {
-      alert('Error: Unable to fetch data');
+      alert('Error: Unable to fetch Degree data');
     }
   };
 
@@ -119,7 +122,7 @@ function Registration() {
       const response = await axios.get('http://localhost:8000/common/show-shift');
       setShiftName(response.data.data);
     } catch (error) {
-      alert('Error: Unable to fetch data');
+      alert('Error: Unable to fetch  Shift Name data');
     }
   };
 
@@ -128,7 +131,7 @@ function Registration() {
       const response = await axios.get('http://localhost:8000/auth/show-reporting-manager');
       setReportingManager(response.data.data);
     } catch (error) {
-      alert('Error: Unable to fetch data');
+      alert('Error: Unable to fetch Reporting Manager data ');
     }
   };
 
@@ -137,7 +140,16 @@ function Registration() {
       const response = await axios.get('http://localhost:8000/common/show-officeTimePolicy');
       setOfficeTimePolicy(response.data.data);
     } catch (error) {
-      alert('Unable to Fetch Data');
+      alert('Unable to Fetch office time policy Data');
+    }
+  };
+
+  const fetchWorkTypeData = async () => {
+    try {
+      const response = await axios.get('http://localhost:8000/common/show-workType');
+      setWorkTypeData(response.data.data);
+    } catch (error) {
+      alert('Unable to Fetch Data work type data');
     }
   };
 
@@ -148,6 +160,7 @@ function Registration() {
     fetchShiftNameData();
     fetchReportingManagerData();
     fetchOfficeTimePolicyData();
+    fetchWorkTypeData();
   }, []);
 
   useEffect(() => {
@@ -287,6 +300,7 @@ function Registration() {
           shift: "",
           department: "",
           designation: "",
+          workType:" ",
         });
       } else {
         alert('Something went wrong during registration.');
@@ -519,6 +533,28 @@ function Registration() {
                 {errors.panCard && <span className="text-red-600">{errors.panCard}</span>}
               </div>
 
+              {/* Work Type Field   */}
+              <div>
+                <label>
+                  <span>Work Type</span>
+                </label>
+                <select
+                  name='workType'
+                  // value={formData.degree}
+                  className="w-full rounded-md border-2 py-1 px-4 focus:outline-none focus:ring-2 focus:ring-black"
+                  onChange={(event) => {
+                    const { name, value} = event.target;
+                    // console.log("name", name, "value", value);
+                    setFormData((prev) => ({ ...prev, [name] : value}))
+                  }}
+                >
+                  <option>--Select Work Type--</option>
+                  {workTypeData?.map(({_id, workType})=>(
+                    <option key={_id} value={_id} name={workType}>{workType}</option>
+                  ))}
+                </select>
+              </div>
+
             </div>
           </fieldset>
           
@@ -745,8 +781,8 @@ function Registration() {
                   className="w-full rounded-md border-2 py-1 px-4 focus:outline-none focus:ring-2 focus:ring-black"
                 >
                   <option>--Select Office Time--</option>
-                  {officeTimePolicy?.map(({policyId, _id})=>(
-                    <option key={_id} value={_id}>{policyId}</option>
+                  {officeTimePolicy?.map(({policyName, _id})=>(
+                    <option key={_id} value={_id}>{policyName}</option>
                   ))}
                 </select>
               </div>
