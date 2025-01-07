@@ -58,6 +58,7 @@ const UpdateEmpPolicyDetailTable =()=> {
                         // Set the form data with the API response
                         console.log('Fetched Data:', response.data.data); 
                         const data = response.data.data;
+                        const percen = (data.salaryDeduct[0].salaryCutPercentage).toString();
                         setFormData({
                             policyName: data.policyName || "",
                             permittedLateArrival: data.permittedLateArrival || "",
@@ -77,10 +78,12 @@ const UpdateEmpPolicyDetailTable =()=> {
                             deductFromLeave: data.deductFromLeave || false,
                             continuous: data.continuous || false,
                             disContinuous: data.disContinuous || false,
-                            salaryDeduct: data.salaryDeduct || [{
-                                salaryCutPercentage: "",
-                                noOfLateInMonth: ""
-                            }]
+                            salaryDeductRule: [
+                                {
+                                    salaryCutPercentage: percen || "",
+                                    noOfLateInMonth: data.salaryDeduct[0].noOfLateInMonth || ""
+                                }
+                            ]
                         });
                     } else {
                         alert('Failed to fetch policy data.');
@@ -92,28 +95,33 @@ const UpdateEmpPolicyDetailTable =()=> {
                 });
         } else {
             alert('No policy selected!');
-            navigate('/layout/policytable');
         }
     }, [navigate]);
 
     const handleSubmit = async (e) => {
         e.preventDefault();
         
+    
+
         try {
-          const response = await axios.post("http://localhost:8000/common/add-officeTimePolicy",formData,{
+            const dataToSend = { _id: Cookies.get('selectedPolicyId'), ...formData}
+
+            console.log("Updated Data", dataToSend);
+
+          const response = await axios.put("http://localhost:8000/common/update-officeTimePolicy",dataToSend,{
             headers: {
                 "Content-Type": "application/json",
               },
             });
     
           if (response.status === 200) {
-            alert("Policy saved successfully!");
+            alert("Policy Update successfully!");
           } else {
-            alert("Failed to save policy. Please try again.");
+            alert("Failed to Update policy. Please try again.");
           }
         } catch (error) {
           console.error("Error occurred:", error);
-          alert("An error occurred while saving the policy.");
+          alert("An error occurred while Update the policy.");
         }
     };
     
@@ -137,12 +145,12 @@ const UpdateEmpPolicyDetailTable =()=> {
             }
         } 
         // Handle mutually exclusive options for "Continue" and "Discontinue"
-        else if (name === "continue" || name === "discontinue") {
+        else if (name === "continuous" || name === "disContinuous") {
             setFormData((prev) => ({
                 ...prev,
                 [name]: checked,
-                ...(name === "continue" && { discontinue: false }),
-                ...(name === "discontinue" && { continue: false }),
+                ...(name === "continuous" && { disContinuous: false }),
+                ...(name === "disContinuous" && { continuous: false }),
             }));
         } else {
             setFormData((prev) => ({
@@ -521,8 +529,8 @@ const UpdateEmpPolicyDetailTable =()=> {
                         <div>
                             <input 
                             type="checkbox"
-                            name="continue"
-                            checked={formData.continue}
+                            name="continuous"
+                            checked={formData.continuous}
                             onChange={handleChange}
                             />
                             <label>Continue</label>
@@ -530,8 +538,8 @@ const UpdateEmpPolicyDetailTable =()=> {
                         <div>
                             <input 
                             type="checkbox"
-                            name="discontinue"
-                            checked={formData.discontinue}
+                            name="disContinuous"
+                            checked={formData.disContinuous}
                             onChange={handleChange}
                             />
                             <label>Discontinue</label>
