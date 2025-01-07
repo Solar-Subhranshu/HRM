@@ -9,8 +9,10 @@ const SalaryDeductRule =require("../../models/policy/salaryDeductRule");
 const WorkType = require("../../models/common/workType.model");
 
 const helper = require("../../utils/common.util");
-const { resolve } = require("path");
+const Employee = require("../../models/auth/employee.model");
+// const { resolve } = require("path");
 
+//degree-common operation
 const showDegree = async (req,res) =>{
     try {
         const {qualificationId} = req.query;
@@ -95,7 +97,7 @@ const addDegree = async(req,res) => {
         });
     }
 }
-
+//should not be deleted if it is assigned to any emplpoyee
 const deleteDegree = async (req,res)=>{
     try {
         const {degreeID} = req.body;
@@ -122,6 +124,7 @@ const deleteDegree = async (req,res)=>{
     }
 }
 
+//department-common operations
 const showAllDepts = async(req,res) => {
     try {
         // show all departments except for Admin.
@@ -153,7 +156,6 @@ const showAllDepts = async(req,res) => {
     });        
     }
 };
-
 const addDept = async (req,res) => {
     try{
         const employeeId = req.employeeId;
@@ -201,7 +203,6 @@ const addDept = async (req,res) => {
         })
     }
 };
-
 const updateDept = async (req,res) => {
     try{
     const employeeId = req.employeeId;
@@ -253,7 +254,12 @@ catch(error){
 }
 
 }
+//only for backend
+const deleteDept = async(req,res) => {
+    //should not be deleted if it is assigned to any employee
+}
 
+//branch-common operations
 const addBranch = async (req,res)=>{
     try{
         const employeeId = req.employeeId;
@@ -310,7 +316,6 @@ const addBranch = async (req,res)=>{
         });
     }
 }
-
 const showBranch = async (req,res)=>{
     try{
         const {companyID}=req.query;
@@ -354,7 +359,6 @@ const showBranch = async (req,res)=>{
         });
     }
 }
-
 const updateBranchDetails= async (req,res)=>{
     try {
         const employeeId = req.employeeId;
@@ -414,7 +418,12 @@ const updateBranchDetails= async (req,res)=>{
         });
     }
 }
+//only for backend
+const deleteBranch = async(req,res)=>{
 
+};
+
+//qualification-common operations
 const showAllQualification = async(req,res) => {
     try {
         // show all qualification .
@@ -447,7 +456,6 @@ const showAllQualification = async(req,res) => {
     });        
     }
 };
-
 const addQualification = async (req,res) => {
     try{
         const employeeId = req.employeeId;
@@ -495,7 +503,6 @@ const addQualification = async (req,res) => {
         })
     }
 };
-
 const updateQualification = async (req,res) => {
     try{
     const employeeId = req.employeeId;
@@ -544,8 +551,7 @@ catch(error){
     })
 }
 
-}
-
+};
 const deleteQualification = async (req,res)=>{
     try {
         const {qualificationId} = req.body;
@@ -588,6 +594,7 @@ const deleteQualification = async (req,res)=>{
     }
 }
 
+//designation-common operations
 const addDesignation = async(req,res)=>{
     try{
         const {department,designation}=req.body || req.query;
@@ -629,8 +636,7 @@ const addDesignation = async(req,res)=>{
             error : error.message
         })
     }
-}
-
+};
 const showDesignation = async(req,res)=>{
     try {
         const {departmentId} = req.query;
@@ -652,8 +658,7 @@ const showDesignation = async(req,res)=>{
         });
 
     }
-}
-
+};
 const updateDesignation =async (req,res)=>{
     try {
         const {department,designation,newDesignation}=req.body || req.query;
@@ -785,7 +790,6 @@ const addShift = async (req,res)=>{
     }
     
 }
-
 const showShift = async (req,res)=>{
 
     try {
@@ -807,7 +811,6 @@ const showShift = async (req,res)=>{
         });
     }
 }
-
 const updateShift = async(req,res)=>{
     try {
         const employeeId=req.employeeId;
@@ -873,6 +876,46 @@ const updateShift = async(req,res)=>{
         })
     }
 }
+//only for backend
+const deleteShift = async (req,res)=>{
+    // should not be deleted if shift is assigned to an employee
+    try {
+        const {shiftId}=req.body;
+        if(!shiftId){
+            throw new Error("Shift ID not provided");
+        }
+
+        await Employee.find({shift : shiftId})
+        .populate("department")
+        .then((response)=>{
+            if(response.length!=0){
+                const responseData = response.map(data=>({
+                    employeeCode : data.employeeCode,
+                    Name : data.name,
+                    Dept : data.department.department
+                }))
+                return res.status(403).json({
+                    success:false,
+                    message: "The shift you are trying to delete is assigned to few employees, first change their shift then you may delete it.",
+                    data : responseData
+                });
+            }
+        })
+
+        console.log("Shift not assigned to any employee, good to delete it.");
+        return res.status(200).json({
+            success:true,
+            message:"Shift Not Assigned, Good to delete."
+        });
+
+    } catch (error) {
+        return res.status(500).json({
+            success:false,
+            message:"Internal Server Error, Couldn't Delete Shift",
+            error:error.message
+        });
+    }
+};
 
 // office time policy controllers
 const addOfficeTimePolicy = async (req,res)=>{
@@ -961,7 +1004,6 @@ const addOfficeTimePolicy = async (req,res)=>{
         });
     }
 }
-
 const showOfficeTimePolicy = async (req,res)=> {
     try {
         const allPolicy = await OfficeTimePolicy.find().select("-updatedAt -createdAt -__v -created_By -updated_By");
@@ -979,10 +1021,9 @@ const showOfficeTimePolicy = async (req,res)=> {
         });
     }
 }
-
 const showForUpdateOfficeTimePolicy = async (req,res)=>{
     try { 
-        const {policyId}=req.body;
+        const {policyId}=req.body || req.query;
         if(!policyId){
             throw new Error("Policy id Not Provided");
         }     
@@ -1019,7 +1060,6 @@ const showForUpdateOfficeTimePolicy = async (req,res)=>{
         });
     }
 }
-
 const updateOfficeTimePolicy=async (req,res)=>{
     try {
         const employeeId=req.employeeId;
@@ -1095,6 +1135,7 @@ const updateOfficeTimePolicy=async (req,res)=>{
 }
 
 //strictly for backend
+//should not be deleted if policy is assigned to an employee
 const deleteOfficeTimePolicy = async (req,res)=>{
     try {
         const {policyId} = req.body;
@@ -1160,7 +1201,6 @@ const showSalaryDeductRule = async(req,res)=>{
         })   
     }
 }
-
 const deleteSalaryDeductRule= async(req,res)=>{
     try {
         const {policyId} = req.body || req.params;
@@ -1194,6 +1234,7 @@ const deleteSalaryDeductRule= async(req,res)=>{
 }
 
 // Work Type Controller
+//addWorkType api should not be given to frontend 
 const addWorkType = async(req,res) =>{
     try {
         const employeeId = req.employeeId;
@@ -1234,7 +1275,6 @@ const addWorkType = async(req,res) =>{
         });
     }
 }
-
 const showWorkType = async(req,res)=>{
     try {
         const allWorkType = await WorkType.find().select("-updatedAt -createdAt -__v -created_By -updated_By");
@@ -1279,6 +1319,8 @@ module.exports={
     addShift,
     showShift,
     updateShift,
+    //only for backend
+    deleteShift,
 
     addOfficeTimePolicy,
     showOfficeTimePolicy,

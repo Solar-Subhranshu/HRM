@@ -23,6 +23,8 @@ router.put("/update-dept",commonController.updateDept);
 router.post("/add-shift",tokenVerify,commonController.addShift);
 router.get("/show-shift",commonController.showShift);
 router.put("/update-shift",tokenVerify,commonController.updateShift);
+//only for backend
+router.delete("/delete-shift",tokenVerify,commonController.deleteShift);
 
 router.post("/add-officeTimePolicy",tokenVerify,commonController.addOfficeTimePolicy);
 router.get("/show-officeTimePolicy",commonController.showOfficeTimePolicy);
