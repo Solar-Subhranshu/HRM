@@ -882,31 +882,39 @@ const deleteShift = async (req,res)=>{
     try {
         const {shiftId}=req.body;
         if(!shiftId){
-            throw new Error("Shift ID not provided");
+            return res.status(400).json({
+                success:false,
+                message:"Shift Id Not Provided."
+            });
         }
 
-        await Employee.find({shift : shiftId})
-        .populate("department")
-        .then((response)=>{
-            if(response.length!=0){
-                const responseData = response.map(data=>({
-                    employeeCode : data.employeeCode,
-                    Name : data.name,
-                    Dept : data.department.department
-                }))
-                return res.status(403).json({
-                    success:false,
-                    message: "The shift you are trying to delete is assigned to few employees, first change their shift then you may delete it.",
-                    data : responseData
-                });
-            }
-        })
+        const response = await Employee.find({shift : shiftId}).populate("department");
+        if(response.length!=0){
+            const responseData = response.map(data=>({
+                employeeCode : data.employeeCode,
+                Name : data.name,
+                Dept : data.department.department
+            }))
+            return res.status(403).json({
+                success:false,
+                message: "The shift you are trying to delete is assigned to few employees, first change their shift then you may delete it.",
+                data : responseData
+            });
+        }
 
         console.log("Shift not assigned to any employee, good to delete it.");
-        return res.status(200).json({
-            success:true,
-            message:"Shift Not Assigned, Good to delete."
-        });
+        const isDeleted = await Shift.findByIdAndDelete(shiftId);
+
+        if(isDeleted){
+            // console.log(isDeleted)
+            return res.status(200).json({
+                success:true,
+                message:`Shift : ${isDeleted.name} Deleted Successfully`
+            });
+        }
+        else{
+            throw new Error("Something Went Wrong At Our End, Couldn't Delete Shift!")
+        }
 
     } catch (error) {
         return res.status(500).json({
@@ -1150,14 +1158,22 @@ const deleteOfficeTimePolicy = async (req,res)=>{
                 message:"No data found to delete"
             });
         }
-        await OfficeTimePolicy.findByIdAndDelete({_id:policyId})
-        .then(
+
+        //should not be deleted if policy is assigned to an employee
+
+        const isDeleted = await OfficeTimePolicy.findByIdAndDelete({_id:policyId})
+    
+        if(isDeleted){
             console.log("Policy Deleted Successfully")
-        )
-        return res.status(202).json({
+            return res.status(202).json({
             success:true,
-            message:"Policy deleted Successfully"
+            message:`Policy : ${isDeleted.policyName} deleted Successfully`
         });
+        }
+        else{
+            throw new Error("Something Went Wrong At Our End, Couldn't Delete Policy.")
+        }
+        
     } catch (error) {
         return res.status(500).json({
             success:false,
