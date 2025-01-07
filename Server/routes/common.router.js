@@ -22,13 +22,20 @@ router.put("/update-dept",commonController.updateDept);
 
 router.post("/add-shift",tokenVerify,commonController.addShift);
 router.get("/show-shift",commonController.showShift);
-router.put("/update-shift",commonController.updateShift);
+router.put("/update-shift",tokenVerify,commonController.updateShift);
 
 router.post("/add-officeTimePolicy",tokenVerify,commonController.addOfficeTimePolicy);
 router.get("/show-officeTimePolicy",commonController.showOfficeTimePolicy);
-router.put("/update-officeTimePolicy",commonController.updateOfficeTimePolicy);
+router.put("/update-officeTimePolicy",tokenVerify,commonController.updateOfficeTimePolicy);
+router.get("/showToUpdate-officeTimepolicy",commonController.showForUpdateOfficeTimePolicy);
+//only for backend purpose
+router.delete("/delete-officeTimePolicy",commonController.deleteOfficeTimePolicy);
 
 router.post("/add-workType",commonController.addWorkType);
 router.get("/show-workType",commonController.showWorkType);
+
+//for backend purpose
+router.get("/show-salaryDeductRule",commonController.showSalaryDeductRule);
+router.delete("/delete-salaryDeductRule",commonController.deleteSalaryDeductRule);
 
 module.exports = router;

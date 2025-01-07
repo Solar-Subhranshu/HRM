@@ -971,16 +971,50 @@ const showOfficeTimePolicy = async (req,res)=> {
             message : "All Policy",
             data : allPolicy || []
         })
-
-
-
-
-
-        
     } catch (error) {
         return res.status(500).json({
             success:false,
             message :"Internal Server Error! Can't show Policy",
+            error:error.message
+        });
+    }
+}
+
+const showForUpdateOfficeTimePolicy = async (req,res)=>{
+    try { 
+        const {policyId}=req.body;
+        if(!policyId){
+            throw new Error("Policy id Not Provided");
+        }     
+        const response = await OfficeTimePolicy.findById({_id:policyId}).select("-created_By -createdAt -updatedAt -__v");
+
+        const policyData = response.toObject();
+
+        if(!policyData){
+            return res.status(400).json({
+                success:false,
+                message : "Policy Data Not Found"
+            });
+        }
+        const salaryDeductData = await SalaryDeductRule.find({OfficeTimePolicyId : policyId}).select("-__v");
+        // console.log("Salary Deduct Data Fetched ",salaryDeductData);
+
+        policyData.salaryDeduct = salaryDeductData;
+
+        // console.log(policyData);
+        // console.log(policyData.salaryDeduct);
+
+        return res.status(200).json({
+            success:true,
+            message: `Policy details for ${policyData.policyName}`,
+            data:policyData,
+                
+        });
+
+    } catch (error) {
+        return res.status(500).json({
+            success:false,
+            message:"Internal Server Error, can't show data",
             error:error.message
         });
     }
@@ -1057,6 +1091,105 @@ const updateOfficeTimePolicy=async (req,res)=>{
             message:"Internal Server Error, Couldn't Update.",
             error:error.message
         });
+    }
+}
+
+//strictly for backend
+const deleteOfficeTimePolicy = async (req,res)=>{
+    try {
+        const {policyId} = req.body;
+        
+        if(!policyId){
+            throw new Error("Policy id is not provided");
+        }
+        const isExisting = await OfficeTimePolicy.findById({_id:policyId});
+        if(!isExisting){
+            return res.status(400).json({
+                success:false,
+                message:"No data found to delete"
+            });
+        }
+        await OfficeTimePolicy.findByIdAndDelete({_id:policyId})
+        .then(
+            console.log("Policy Deleted Successfully")
+        )
+        return res.status(202).json({
+            success:true,
+            message:"Policy deleted Successfully"
+        });
+    } catch (error) {
+        return res.status(500).json({
+            success:false,
+            message:"Internal Server Error",
+            error:error.message
+        });
+    }
+}
+
+//salaryDeduct Rule
+const showSalaryDeductRule = async(req,res)=>{
+    
+    try {
+        const {policyId} = req.body || req.params;
+
+        if(!policyId){
+            throw new Error("Policy Id not provided.")
+        }
+    
+        const policySalaryRule = await SalaryDeductRule.find({OfficeTimePolicy : policyId});
+
+        if(policySalaryRule.length===0){
+            return res.status(200).json({
+                success:true,
+                message:"No Data Found for policy id",
+                data: policySalaryRule
+            });
+        }
+
+        return res.status(200).json({
+            success:true,
+            message:"Data Fetched",
+            data: policySalaryRule
+        })
+
+    } catch (error) {
+        return res.status(500).json({
+            success:false,
+            message:"Data Not Fetched AF",
+            error:error.message
+        })   
+    }
+}
+
+const deleteSalaryDeductRule= async(req,res)=>{
+    try {
+        const {policyId} = req.body || req.params;
+        if(!policyId){
+            throw new Error("Policy Id not provided.");
+        }
+
+        const isExisting = await SalaryDeductRule.find({OfficeTimePolicyId : policyId});
+        if(isExisting.length===0){
+            return res.status(400).json({
+                success:false,
+                message: "NO Data to Delete"
+            });
+        }
+        
+        await SalaryDeductRule.deleteMany({OfficeTimePolicyId : policyId})
+        .then(
+            console.log("Fields deleted successfully")
+        )
+        return res.status(202).json({
+            success:true,
+            message: "Data deleted Successfully"
+        });
+    } catch (error) {
+        return res.status(500).json({
+            success:false,
+            message : "Data Not Deleted",
+            error:error.message
+        })
     }
 }
 
@@ -1150,7 +1283,14 @@ module.exports={
     addOfficeTimePolicy,
     showOfficeTimePolicy,
     updateOfficeTimePolicy,
+    showForUpdateOfficeTimePolicy,
+    //only for backend testing
+    deleteOfficeTimePolicy,
 
     addWorkType,
-    showWorkType
+    showWorkType,
+
+    //for backend purpose
+    showSalaryDeductRule,
+    deleteSalaryDeductRule
 }
