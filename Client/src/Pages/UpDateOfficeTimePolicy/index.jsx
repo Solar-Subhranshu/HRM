@@ -1,3 +1,4 @@
+
 import React from 'react';
 import { useState,useEffect } from 'react';
 import { FaListUl } from "react-icons/fa6";
@@ -129,7 +130,7 @@ const EmpPolicyDetailTable =()=> {
             <div className='bgMainColor flex  py-3 pl-1 gap-3 justify-between'>
                 <div className='flex flex-row pl-2 gap-4'>
                     {<FaListUl size={24} />}
-                    <h4 className='text-white'>Employee Policy details</h4>
+                    <h4 className='text-white'>Update Employee Policy details</h4>
                 </div>
             </div>
         

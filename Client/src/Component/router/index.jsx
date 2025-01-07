@@ -12,6 +12,7 @@ import EmployeeRegister from '../../Pages/EmployeeRegisterForm/index'
 import EmployeeUpDateForm from '../../Pages/UpDateEmployeeDetails/index'
 import EmployeeDetailsPage from '../../Component/EmployeeDetails';
 import UpdateShiftDetails from '../../Pages/UpDateShiftDetails';
+import UpdateOfficeTimePolicy from '../../Pages/UpDateOfficeTimePolicy/index'
 import { Routes, Route } from 'react-router-dom';
 
 const Router = () => {
@@ -32,6 +33,7 @@ const Router = () => {
             <Route path='employeeupdateform' element={<EmployeeUpDateForm/>} />
             <Route path='employeeDetails' element={<EmployeeDetailsPage />} />
             <Route path='updateshiftdetails' element={<UpdateShiftDetails/>} />
+            <Route path='updateofficytimepolicy' element={<UpdateOfficeTimePolicy/>} />
           </Route>
         </Routes>
     )

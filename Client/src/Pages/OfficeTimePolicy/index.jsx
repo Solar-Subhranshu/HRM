@@ -26,6 +26,9 @@ function OfficePolicyTable() {
     const handleListOfPolicy= ()=>{
       navigate('/layout/listofpolicytable')
     }
+    const handleUpDatePolicy = ()=>{
+      navigate('/layout/updateofficytimepolicy')
+    }
   return (
     <div className='ml-2 mr-2 mt-4'>
         <div className='bgMainColor flex  py-4 pl-1 gap-3 justify-between'>
@@ -59,6 +62,9 @@ function OfficePolicyTable() {
         <div className='flex justify-center gap-6 mb-4 mt-4'>
           <div>
             <button onClick={handleListOfPolicy} className='px-6 py-2 bg-green-600 text-white font-semibold rounded-lg shadow-md hover:bg-green-700 transition-all' >Add</button>
+          </div>
+          <div>
+            <button onClick={handleUpDatePolicy} className='px-6 py-2 bg-green-600 text-white font-semibold rounded-lg shadow-md  hover:bg-red-700 transition-all' >UpDate</button>
           </div>
           <div>
             <button className='px-6 py-2 bg-red-600 text-white font-semibold rounded-lg shadow-md  hover:bg-red-700 transition-all' >Delete</button>
