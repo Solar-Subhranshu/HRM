@@ -257,6 +257,15 @@ catch(error){
 //only for backend
 const deleteDept = async(req,res) => {
     //should not be deleted if it is assigned to any employee
+    try {
+        const {deptId} = req.body;
+        if(!deptId){
+            throw new Error("Department Id not provided.")
+        }
+        
+    } catch (error) {
+        
+    }
 }
 
 //branch-common operations
@@ -1160,8 +1169,20 @@ const deleteOfficeTimePolicy = async (req,res)=>{
                 message:"No data found to delete"
             });
         }
-
         //should not be deleted if policy is assigned to an employee
+        const response = await Employee.find({officeTimePolicy : policyId}).populate("department");
+        if(response.length!=0){
+            const responseData = response.map(data =>({
+                employeeCode : data.employeeCode,
+                Name : data.name,
+                Dept : data.department.department
+            }));
+            return res.status(403).json({
+                success:false,
+                message: "The Policy you are trying to delete is assigned to few employees, first change their policy then you may delete it.",
+                data : responseData
+            });
+        }
 
         const isDeleted = await OfficeTimePolicy.findByIdAndDelete({_id:policyId})
     
