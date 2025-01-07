@@ -21,3 +21,5 @@ function TableComponent2() {
 }
 
 export default TableComponent2
+
+
