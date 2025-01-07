@@ -34,6 +34,7 @@ const registerEmployee = async(req,res)=>{
             bankAccountHolderName,
             bankAddress,
             reportingManager,
+            joiningHR,
             companyPhoneNum,
             companyEmail,
             joiningDate,
@@ -143,6 +144,7 @@ const registerEmployee = async(req,res)=>{
             bankAccountHolderName,
             bankAddress,
             reportingManager,
+            joiningHR,
             companyPhoneNum,
             companyEmail,
             joiningDate,
@@ -537,25 +539,25 @@ const showSingleEmployee = async(req,res)=>{
     }
 }
 
-const showReportingManager = async (req,res)=>{
+const showJoiningHR = async (req,res)=>{
     try {
         const allEmployees = await Employee.find()
         .populate({
             path:"department"
         });
 
-        const reportingManager = allEmployees.filter(emp=>(emp.department.department==="HR"))
+        const joiningHR = allEmployees.filter(emp=>(emp.department.department==="HR"))
                                             .map(emp=>({
                                             _id:emp._id,
                                             name:emp.name,
                                             department:emp.department.department
                                         }));
-        // console.log(reportingManager);
+        // console.log(joiningHR);
 
         return res.status(200).json({
             success:true,
             message : "List of all HRs",
-            data : reportingManager || []
+            data : joiningHR || []
         })
     } catch (error) {
         return res.status(500).json({
@@ -608,6 +610,7 @@ const updateEmployee= async(req,res)=>{
             bankAccountHolderName,
             bankAddress,
             reportingManager,
+            joiningHR,
             companyPhoneNum,
             companyEmail,
             joiningDate,
@@ -708,6 +711,7 @@ const updateEmployee= async(req,res)=>{
             bankAccountHolderName,
             bankAddress,
             reportingManager,
+            joiningHR,
             companyPhoneNum,
             companyEmail,
             joiningDate,
@@ -748,7 +752,7 @@ module.exports = {
     deactivateEmp,
     showAllEmployee,
     showSingleEmployee,
-    showReportingManager,
+    showJoiningHR,
     addEmployeeByExcel,
     updateEmployee,
     seeEmpBackend

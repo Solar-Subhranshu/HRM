@@ -1,5 +1,4 @@
-const {registerEmployee,login,deactivateEmp,showAllEmployee,showSingleEmployee,
-    seeEmpBackend,showReportingManager,updateEmployee} = require("../controller/Employee/employee.controller");
+const employeeController= require("../controller/Employee/employee.controller");
 
 const {addEmployeeByExcel} = require("../controller/Employee/addEmployeeBYExcel");
     
@@ -14,7 +13,7 @@ router.post("/empRegister",tokenVerify,upload.fields([
             { name: 'bankAttachment', maxCount: 1 },
             { name: 'joiningFormAttachment', maxCount: 1 },
             { name: 'otherAttachment', maxCount: 1 },
-]),registerEmployee);
+]),employeeController.registerEmployee);
 
 router.patch("/empUpdate",tokenVerify,upload.fields([
     { name: 'aadharCardAttachment', maxCount: 1 },
@@ -22,19 +21,19 @@ router.patch("/empUpdate",tokenVerify,upload.fields([
     { name: 'bankAttachment', maxCount: 1 },
     { name: 'joiningFormAttachment', maxCount: 1 },
     { name: 'otherAttachment', maxCount: 1 },
-]),updateEmployee);
+]),employeeController.updateEmployee);
 
-router.post("/add-byExcel",uploadExcel.single('file'),addEmployeeByExcel);
+router.post("/add-byExcel",uploadExcel.single('file'),employeeController.addEmployeeByExcel);
 
-router.put("/deactivateEmp",tokenVerify,deactivateEmp);
-router.get("/showAllEmployee",showAllEmployee);
+router.put("/deactivateEmp",tokenVerify,employeeController.deactivateEmp);
+router.get("/showAllEmployee",employeeController.showAllEmployee);
 
-router.get("/seeEmpBackend",seeEmpBackend);
+router.get("/seeEmpBackend",employeeController.seeEmpBackend);
 
-router.get("/showSingleEmployee",showSingleEmployee);
+router.get("/showSingleEmployee",employeeController.showSingleEmployee);
 
-router.post("/login",login);
+router.post("/login",employeeController.login);
 
-router.get("/show-reporting-manager",showReportingManager)
+router.get("/show-joining-HR",employeeController.showJoiningHR)
 
 module.exports = router;

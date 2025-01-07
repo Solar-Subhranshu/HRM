@@ -117,6 +117,10 @@ const employeeSchema = new mongoose.Schema({
             type:mongoose.Schema.Types.ObjectId,
             ref : "Employee"
         },
+        joiningHR : {
+            type:mongoose.Schema.Types.ObjectId,
+            ref : "Employee"
+        },
         companyPhoneNum : {
             type :Number,
             maxLenght:10,
