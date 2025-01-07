@@ -1,10 +1,14 @@
-
 import React from 'react';
 import { useState,useEffect } from 'react';
 import { FaListUl } from "react-icons/fa6";
 import axios from 'axios';
+import Cookies from 'js-cookie';
+import { useNavigate } from 'react-router-dom';
 
-const EmpPolicyDetailTable =()=> {
+
+const UpdateEmpPolicyDetailTable =()=> {
+    const navigate=useNavigate();
+
     const [ deductDayValues, setDeductDayValues ] = useState(["0%",  "10%", "20%", "30%", "40%", "50%", "60%", "70%", "80%", "90%", "100%"]);
     const [ lateMonth, setLateMonth]=useState([0,1,2,3,4,5,6,7,8,9,10,11]);
     const [ cutDay, setCutDay]=useState(["0%", "25%", "50%", "75%", "100%"])
@@ -34,6 +38,63 @@ const EmpPolicyDetailTable =()=> {
         }]
     });
     
+    
+    
+
+    useEffect(() => {
+        // Get the selected policy ID from cookies
+        const selectedPolicyId = Cookies.get('selectedPolicyId');
+
+        console.log('Selected Policy ID:', selectedPolicyId);
+        
+        if (selectedPolicyId) {
+            // Make the GET request to fetch policy details using the selectedPolicyId
+            axios.get(`http://localhost:8000/common/showToUpdate-officeTimepolicy?policyId=${selectedPolicyId}`)
+                .then((response) => {
+
+                    console.log('API request successful');
+
+                    if (response.data.success) {
+                        // Set the form data with the API response
+                        console.log('Fetched Data:', response.data.data); 
+                        const data = response.data.data;
+                        setFormData({
+                            policyName: data.policyName || "",
+                            permittedLateArrival: data.permittedLateArrival || "",
+                            pByTwo: data.pByTwo || "",
+                            absent: data.absent || "",
+                            lateComingRule: data.lateComingRule || false,
+                            lateArrival1: data.lateArrival1 || "",
+                            lateArrival2: data.lateArrival2 || "",
+                            lateArrival3: data.lateArrival3 || "",
+                            lateArrival4: data.lateArrival4 || "",
+                            dayDeduct1: data.dayDeduct1 || 0,
+                            dayDeduct2: data.dayDeduct2 || 0,
+                            dayDeduct3: data.dayDeduct3 || 0,
+                            dayDeduct4: data.dayDeduct4 || 0,
+                            multiPunch: data.multiPunch || false,
+                            deductFromAttendance: data.deductFromAttendance || false,
+                            deductFromLeave: data.deductFromLeave || false,
+                            continuous: data.continuous || false,
+                            disContinuous: data.disContinuous || false,
+                            salaryDeduct: data.salaryDeduct || [{
+                                salaryCutPercentage: "",
+                                noOfLateInMonth: ""
+                            }]
+                        });
+                    } else {
+                        alert('Failed to fetch policy data.');
+                    }
+                })
+                .catch((error) => {
+                    console.error('Error fetching policy:', error);
+                    alert('Error fetching policy data.');
+                });
+        } else {
+            alert('No policy selected!');
+            navigate('/layout/policytable');
+        }
+    }, [navigate]);
 
     const handleSubmit = async (e) => {
         e.preventDefault();
@@ -495,7 +556,7 @@ const EmpPolicyDetailTable =()=> {
   )
 }
 
-export default EmpPolicyDetailTable
+export default UpdateEmpPolicyDetailTable
 
 
 

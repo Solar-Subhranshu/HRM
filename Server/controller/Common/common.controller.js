@@ -1023,7 +1023,9 @@ const showOfficeTimePolicy = async (req,res)=> {
 }
 const showForUpdateOfficeTimePolicy = async (req,res)=>{
     try { 
-        const {policyId}=req.body || req.query;
+        // const {policyId}= req.body || req.query;
+        const policyId = req.body.policyId || req.query.policyId || req.params.policyId;
+        console.log("policyId", policyId);
         if(!policyId){
             throw new Error("Policy id Not Provided");
         }     
