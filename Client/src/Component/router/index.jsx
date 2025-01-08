@@ -10,7 +10,7 @@ import ShiftDetails from '../../Pages/ShiftDetails/index'
 import ShiftDetailsTable from '../../Component/Common/ShiftDetailsTable/index'
 import EmployeeRegister from '../../Pages/EmployeeRegisterForm/index'
 import EmployeeUpDateForm from '../../Pages/UpDateEmployeeDetails/index'
-import EmployeeDetailsPage from '../../Component/EmployeeDetails';
+import EmployeeDetailsPage from '../../Component/ShowParticularEmployeeDetails/index'
 import UpdateShiftDetails from '../../Pages/UpDateShiftDetails';
 import UpdateOfficeTimePolicy from '../../Pages/UpDateOfficeTimePolicy/index'
 import { Routes, Route } from 'react-router-dom';

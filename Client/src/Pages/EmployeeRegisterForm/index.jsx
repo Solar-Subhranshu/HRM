@@ -13,10 +13,55 @@ function Registration() {
   const [workTypeData, setWorkTypeData]=useState([]);
 
   const [officeTimePolicy, setOfficeTimePolicy] = useState([]);
-  const [reportingManager, setReportingManager] = useState([]);
+  
+  const [joiningHrNameData, setJoiningHrNameData]=useState([]);
+
   const [selectedDepartmentId, setSelectedDepartmentId] = useState('');
   const [selectedCompanyNameId, setSelectedCompanyNameId] = useState('');
   const [selectedQualificationId, setSelectedQualificationId] = useState('');
+
+  const [isOpen, setIsOpen] = useState(false);
+  const [searchTerm, setSearchTerm] = useState('');
+  const [reportingManagers, setReportingManagers] = useState([]);
+  const [selectedManager, setSelectedManager] = useState(null);
+
+  useEffect(() => {
+    // Fetch the reporting managers data from the backend
+    axios.get('http://localhost:8000/auth/showAllEmployee')
+      .then((response) => {
+        setReportingManagers(response.data.data);
+      })
+      .catch((error) => {
+        console.error('Error fetching reporting managers:', error);
+      });
+  }, []);
+
+  // Toggle the dropdown visibility
+  const toggleDropdown = () => {
+    setIsOpen(!isOpen);
+  };
+
+  // Handle search input
+  const handleSearchChange = (e) => {
+    setSearchTerm(e.target.value);
+  };
+
+  // Handle reporting manager selection
+  const handleManagerSelect = (manager) => {
+    setSelectedManager(manager);
+    setFormData((prev) => ({
+      ...prev,
+      reportingManager: manager._id, // Send only the ID to the backend
+    }));
+    setIsOpen(false);  // Close dropdown after selection
+  };
+
+  // Filter reporting managers based on search term
+  const filteredManagers = reportingManagers.filter((manager) =>
+    manager.name.toLowerCase().includes(searchTerm.toLowerCase())
+  );
+
+
 
   const [formData, setFormData] = useState({
     employeeCode: "",
@@ -59,7 +104,8 @@ function Registration() {
     shift: "",
     department: "",
     designation: "",
-    workType:''
+    workType:'',
+    joiningHR : " ",
   });
 
   // Fetching functions
@@ -126,12 +172,12 @@ function Registration() {
     }
   };
 
-  const fetchReportingManagerData = async () => {
+  const fetchJoiningHrNameData = async () => {
     try {
-      const response = await axios.get('http://localhost:8000/auth/show-reporting-manager');
-      setReportingManager(response.data.data);
+      const response = await axios.get('http://localhost:8000/auth/show-joining-HR');
+      setJoiningHrNameData(response.data.data);
     } catch (error) {
-      alert('Error: Unable to fetch Reporting Manager data ');
+      alert('Error: Unable to fetch Hr Name data ');
     }
   };
 
@@ -158,7 +204,7 @@ function Registration() {
     fetchCompanyNameData();
     fetchQulificationData();
     fetchShiftNameData();
-    fetchReportingManagerData();
+    fetchJoiningHrNameData();
     fetchOfficeTimePolicyData();
     fetchWorkTypeData();
   }, []);
@@ -191,6 +237,8 @@ function Registration() {
     if (!formData.bankAttachment) newErrors.bankAttachment = 'Bank details are required';
     if (!formData.joiningFormAttachment) newErrors.joiningFormAttachment = 'Joining form is required';
     if (!formData.otherAttachment) newErrors.otherAttachment = 'Other documents are required';
+    if (!formData.reportingManager) newErrors.reportingManager = 'Reporting Manager is required';
+    if (!formData.joiningHR) newErrors.joiningHR = 'Joining Hr Name is required';
     return newErrors;
   };
 
@@ -301,6 +349,7 @@ function Registration() {
           department: "",
           designation: "",
           workType:" ",
+          joiningHR: " ",
         });
       } else {
         alert('Something went wrong during registration.');
@@ -660,13 +709,14 @@ function Registration() {
             <legend className='font-semibold text-lg ml-8' style={{color : '#740FD6'}}> &nbsp;&nbsp; Other Details &nbsp;&nbsp;</legend>
             <div className='grid gap-3 m-6 md:grid-cols-4'>
 
-              {/* Reporting manager field    */}
+              {/* Hr Name field    */}
               <div>
                 <label>
-                  <span>Reporting Manager</span>
+                  <span>Joining Hr Name</span>
+                  <span className='text-red-600'>*</span>
                 </label>
                 <select 
-                    name="reportingManager"
+                    name="joiningHR"
                     onChange={(e) => {
                       setFormData(prevState => ({
                         ...prevState,
@@ -675,13 +725,75 @@ function Registration() {
                   
                     }}
                   className="w-full rounded-md border-2 py-1 px-4 focus:outline-none focus:ring-2 focus:ring-black">
-                  <option>--Select Reporting Manager--</option>
-                  {reportingManager?.map(({name, _id})=>(
+                  <option>--Select Joining Hr--</option>
+                  {joiningHrNameData?.map(({name, _id})=>(
                     <option key={_id} value={_id}>{name}</option>
                   ))}
                 </select>
+                {errors.joiningHR && (
+                    <p className="text-red-600">{errors.joiningHR}</p>
+                  )}
               </div>
-              
+
+              {/* Reporting Manager field    */}
+              <div className="relative">
+                <label >
+                  <span>Reporting Manager</span>
+                  <span className='text-red-600'>*</span>
+                </label>
+                <button
+                  className="inline-flex justify-between items-center w-full px-4 py-2 text-sm font-medium text-gray-600 bg-white border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-2 focus:ring-blue-500"
+                  onClick={toggleDropdown}
+                  type="button"
+                >
+                  <span>
+                    {selectedManager ? selectedManager.name : 'Select Reporting Manager'}
+                  </span>
+                  <svg
+                    xmlns="http://www.w3.org/2000/svg"
+                    className="w-5 h-5 ml-2 -mr-1"
+                    viewBox="0 0 20 20"
+                    fill="currentColor"
+                    aria-hidden="true"
+                  >
+                    <path
+                      fillRule="evenodd"
+                      d="M6.293 9.293a1 1 0 011.414 0L10 11.586l2.293-2.293a1 1 0 111.414 1.414l-3 3a1 1 0 01-1.414 0l-3-3a1 1 0 010-1.414z"
+                      clipRule="evenodd"
+                    />
+                  </svg>
+                </button>
+
+                {isOpen && (
+                  <div className="absolute z-10 right-0 mt-2 rounded-md shadow-lg bg-white ring-1 ring-black ring-opacity-5 w-full max-h-60 overflow-y-auto">
+                    <input
+                      className="block w-full px-4 py-2 text-gray-800 border border-gray-300 rounded-t-md focus:outline-none focus:ring-2 focus:ring-blue-500"
+                      type="text"
+                      placeholder="Search managers"
+                      value={searchTerm}
+                      onChange={handleSearchChange}
+                    />
+                    {filteredManagers.length > 0 ? (
+                      filteredManagers.map((manager) => (
+                        <button
+                          key={manager._id}
+                          className="w-full text-left px-4 py-2 text-gray-700 hover:bg-gray-100 focus:bg-gray-100"
+                          onClick={() => handleManagerSelect(manager)}
+                        >
+                          {manager.name}
+                        </button>
+                      ))
+                    ) : (
+                      <p className="px-4 py-2 text-gray-500">No results found</p>
+                    )}
+                  </div>
+                )}
+                  {errors.reportingManager && (
+                    <p className="mt-1  text-red-600">{errors.reportingManager}</p>
+                  )}
+              </div>
+
+       
               {/* employee code field  */}
               <div>
                 <label>
