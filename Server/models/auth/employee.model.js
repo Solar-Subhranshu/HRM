@@ -115,11 +115,13 @@ const employeeSchema = new mongoose.Schema({
 
         reportingManager : {
             type:mongoose.Schema.Types.ObjectId,
-            ref : "Employee"
+            ref : "Employee",
+            required:true
         },
         joiningHR : {
             type:mongoose.Schema.Types.ObjectId,
-            ref : "Employee"
+            ref : "Employee",
+            required:true
         },
         companyPhoneNum : {
             type :Number,

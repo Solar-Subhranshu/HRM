@@ -19,6 +19,8 @@ router.put("/update-qualifiaction",commonController.updateQualification);
 router.get("/show-department",commonController.showAllDepts);
 router.post("/add-department",tokenVerify,commonController.addDept);
 router.put("/update-dept",commonController.updateDept);
+//only for backend
+router.delete("/delete-department",commonController.deleteDept);
 
 router.post("/add-shift",tokenVerify,commonController.addShift);
 router.get("/show-shift",commonController.showShift);

@@ -375,6 +375,10 @@ const showAllEmployee= async (req,res) =>{
             select:"name"
         })
         .populate({
+            path:"joiningHR",
+            select:"name"
+        })
+        .populate({
             path:"officeTimePolicy",
             select:"policyName"
         })

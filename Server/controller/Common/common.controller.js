@@ -262,9 +262,40 @@ const deleteDept = async(req,res) => {
         if(!deptId){
             throw new Error("Department Id not provided.")
         }
+        const response = await Employee.find({department : deptId}).populate("department");
+        if(response.length!=0){
+            const responseData = response.map(data=>({
+                employeeCode : data.employeeCode,
+                name : data.name,
+                dept : data.department.department
+            }));
+
+            return res.status(403).json({
+                success:false,
+                message:"The department you are trying to delete is assigned to few employees, first change their department then you may delete it.",
+                data : responseData
+            });
+        }
         
+        const isDeleted = await Department.findByIdAndDelete(deptId);
+        if(isDeleted){
+
+            const relatedDesignation = await Designation.deleteMany({department:deptId});
+            
+            return res.status(201).json({
+                success:true,
+                message :`Department : ${isDeleted.department} Deleted Successfully along with ${relatedDesignation.deletedCount}.`
+            });
+        }
+        else{
+            throw new Error("Something went Wrong, Couldn't Delete Department")
+        }
     } catch (error) {
-        
+        return res.status(500).json({
+            success:false,
+            message : "Internal Server Error. Couldn't Delete Department",
+            error : error.message
+        });
     }
 }
 
@@ -565,22 +596,24 @@ const deleteQualification = async (req,res)=>{
     try {
         const {qualificationId} = req.body;
 
-        let flag=false;
-        
-        await Qualification.findByIdAndDelete(qualificationId)
-        .then((response,error)=>{
-            if(response){
-             flag=true   
-            }
-            if(error){
-                return res.status(400).json({
-                    success:true,
-                    message: "Qualification Not Deleted."
-                });
-            }
-        });
+        const response = await Employee.find({qualification : qualificationId}).populate("department");
+        if(response.length!=0){
+            const responseData = response.map(data=>({
+                employeeCode : data.employeeCode,
+                name : data.name,
+                dept : data.department.department
+            }));
 
-        if(flag){
+            return res.status(403).json({
+                success:false,
+                message:"The qualification you are trying to delete is assigned to few employees, first change their qualification then you may delete it.",
+                data : responseData
+            });
+        }
+        
+        const isDeleted = await Qualification.findByIdAndDelete(qualificationId);
+
+        if(isDeleted){
             const relatedDegree = await Degree.deleteMany({qualificationID:qualificationId});
 
             return res.status(200).json({
@@ -588,17 +621,17 @@ const deleteQualification = async (req,res)=>{
                 message:`Qualification deleted successfully along with ${relatedDegree.deletedCount} related Degree.`
             });
         }
-
-        // return res.status(200).json({
-        //     success:true,
-        //     message: "Qualification Deleted Successfully."
-        // });
-        
-
+        else{
+            return res.status(400).json({
+            success:false,
+            message: "Qualification Not Deleted."
+            });
+        }
     } catch (error) {
         return res.status(500).json({
             success:false,
-            message: "Internal Server Error! Qualification Not Deleted !."
+            message: "Internal Server Error! Qualification Not Deleted !.",
+            error: error.message
         });
     }
 }
@@ -1337,6 +1370,8 @@ module.exports={
     showAllDepts,
     addDept,
     updateDept,
+    // only for backend
+    deleteDept,
 
     showDegree,
     addDegree,
