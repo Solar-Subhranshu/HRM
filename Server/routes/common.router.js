@@ -5,7 +5,7 @@ const commonController = require("../controller/Common/common.controller");
 
 router.get("/show-degree",commonController.showDegree);
 router.post("/add-degree",tokenVerify,commonController.addDegree);
-router.delete("/delete-degree",commonController.deleteDegree);
+router.delete("/delete-degree",tokenVerify,commonController.deleteDegree);
 
 router.get("/show-designation",commonController.showDesignation);
 router.post("/add-designation",tokenVerify,commonController.addDesignation);
@@ -13,14 +13,14 @@ router.put("/update-designation",commonController.updateDesignation);
 
 router.get("/show-qualification",commonController.showAllQualification);
 router.post("/add-qualifiaction",tokenVerify,commonController.addQualification);
-router.delete("/delete-qualifiaction",commonController.deleteQualification);
+router.delete("/delete-qualifiaction",tokenVerify,commonController.deleteQualification);
 router.put("/update-qualifiaction",commonController.updateQualification);
 
 router.get("/show-department",commonController.showAllDepts);
 router.post("/add-department",tokenVerify,commonController.addDept);
-router.put("/update-dept",commonController.updateDept);
+router.put("/update-dept",tokenVerify,commonController.updateDept);
 //only for backend
-router.delete("/delete-department",commonController.deleteDept);
+router.delete("/delete-department",tokenVerify,commonController.deleteDept);
 
 router.post("/add-shift",tokenVerify,commonController.addShift);
 router.get("/show-shift",commonController.showShift);
@@ -33,13 +33,13 @@ router.get("/show-officeTimePolicy",commonController.showOfficeTimePolicy);
 router.put("/update-officeTimePolicy",tokenVerify,commonController.updateOfficeTimePolicy);
 router.get("/showToUpdate-officeTimepolicy",commonController.showForUpdateOfficeTimePolicy);
 //only for backend purpose
-router.delete("/delete-officeTimePolicy",commonController.deleteOfficeTimePolicy);
+router.delete("/delete-officeTimePolicy",tokenVerify,commonController.deleteOfficeTimePolicy);
 
 router.post("/add-workType",commonController.addWorkType);
 router.get("/show-workType",commonController.showWorkType);
 
 //for backend purpose
 router.get("/show-salaryDeductRule",commonController.showSalaryDeductRule);
-router.delete("/delete-salaryDeductRule",commonController.deleteSalaryDeductRule);
+router.delete("/delete-salaryDeductRule",tokenVerify,commonController.deleteSalaryDeductRule);
 
 module.exports = router;
