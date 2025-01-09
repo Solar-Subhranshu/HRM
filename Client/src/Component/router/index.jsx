@@ -1,6 +1,6 @@
 import React from 'react';
 import Layout from '../Layout/index';
-import LoginPage from '../FrontPage'
+import LoginPage from '../../Pages/FrontPage/index'
 import Dashboard from '../../Pages/Dashboard/index'
 import DepartmentTable from '../../Pages/ListOfDepartment/index'
 import ListofAllEmployee from '../../Pages/ShowListOfAllEmployee/index'

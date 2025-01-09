@@ -143,7 +143,7 @@ function TotalEmployeeTable() {
 
   return (
     <div className="ml-2 mr-2 flex flex-col mt-4 ">
-      <div className="sticky top-0 bgMainColor flex py-4 pl-1 gap-3 justify-between z-10">
+      <div className="sticky top-0 bgMainColor flex py-4 pl-1 gap-3 justify-between z-6 rounded-md">
         <div className="flex flex-row pl-2 gap-4">
           <FaListUl size={24} />
           <h4 className="text-white">List of Employee (Total Employee)</h4>
@@ -171,8 +171,8 @@ function TotalEmployeeTable() {
         </div>
       </div>
 
-      <div className=" flex-1 overflow-y-auto overflow-x-auto">
-        <table className="table-auto w-full border border-black text-sm">
+      <div className=" flex-1  overflow-auto min-h-[calc(100%-167px)]">
+        <table className="table-auto w-full border border-black text-sm ">
           <thead className="bg-gray-200">
             <tr>
               <th className="text-blue-600 border border-black px-2 py-1">Select</th>
@@ -188,7 +188,7 @@ function TotalEmployeeTable() {
           </thead>
           <tbody>
             {currentRows.map((employee) => (
-              <tr key={employee._id} className="hover:bg-gray-100" 
+              <tr key={employee._id} className="hover:bg-gray-200" 
                 onClick={() => {
                   const data = JSON.stringify(employee);
                   Cookies.set('EmployeeDetails', data);
@@ -231,7 +231,7 @@ function TotalEmployeeTable() {
                           <img
                             src={value}
                             alt={`${col.label}`}
-                            className="h-16 w-16 object-cover"
+                            className="h-14 w-14 object-cover"
                           />
                         ) : (
                           "No Image"
@@ -239,11 +239,14 @@ function TotalEmployeeTable() {
                       </td>
                     );
                   }
-
+                  
+                  // Handle large text columns
+                  const cellClass =col.key === "bankAddress" || col.key === "permanentAddress"? "table-cell-multiline": "table-cell";
                   return (
                     <td
                       key={col.key}
-                      className="border border-black px-2 py-1 text-left"
+                      // className="border border-black px-2 py-1 text-left"
+                      className={`border border-black px-2 py-1 text-left ${cellClass}`}
                     >
                       {value || "N/A"}
                     </td>
@@ -278,7 +281,7 @@ function TotalEmployeeTable() {
       </div>
       
       {/* all action button  */}
-      <div className="flex justify-center gap-6 mb-4 mt-auto">
+      <div className="flex justify-center gap-6 mb-4  bottom-0  sticky">
         <button onClick={handleEmployeeRegisterForm} className="px-6 py-2 bg-green-600 text-white font-semibold rounded-lg shadow-md hover:bg-green-700 transition-all">Add</button>
         <button
           onClick={() => setIsModalOpen(true)}
@@ -325,4 +328,7 @@ function TotalEmployeeTable() {
 }
 
 export default TotalEmployeeTable;
+
+
+
 
