@@ -23,7 +23,7 @@ router.patch("/empUpdate",tokenVerify,upload.fields([
     { name: 'otherAttachment', maxCount: 1 },
 ]),employeeController.updateEmployee);
 
-router.post("/add-byExcel",uploadExcel.single('file'),employeeController.addEmployeeByExcel);
+router.post("/add-byExcel",uploadExcel.single('file'),addEmployeeByExcel);
 
 router.put("/deactivateEmp",tokenVerify,employeeController.deactivateEmp);
 router.get("/showAllEmployee",employeeController.showAllEmployee);

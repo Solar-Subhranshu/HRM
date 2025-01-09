@@ -9,8 +9,7 @@ const SalaryDeductRule =require("../../models/policy/salaryDeductRule");
 const WorkType = require("../../models/common/workType.model");
 
 const helper = require("../../utils/common.util");
-const Employee = require("../../models/auth/employee.model");
-// const { resolve } = require("path");
+// const Employee = require("../../models/auth/employee.model");
 
 //degree-common operation
 const showDegree = async (req,res) =>{
@@ -262,18 +261,13 @@ const deleteDept = async(req,res) => {
         if(!deptId){
             throw new Error("Department Id not provided.")
         }
-        const response = await Employee.find({department : deptId}).populate("department");
-        if(response.length!=0){
-            const responseData = response.map(data=>({
-                employeeCode : data.employeeCode,
-                name : data.name,
-                dept : data.department.department
-            }));
 
+        const response = await helper.isAssignedToEmployee({department:deptId});
+        if(!response.success){
             return res.status(403).json({
-                success:false,
-                message:"The department you are trying to delete is assigned to few employees, first change their department then you may delete it.",
-                data : responseData
+                success: response.success,
+                message: response.message,
+                data : response.data
             });
         }
         
@@ -596,21 +590,15 @@ const deleteQualification = async (req,res)=>{
     try {
         const {qualificationId} = req.body;
 
-        const response = await Employee.find({qualification : qualificationId}).populate("department");
-        if(response.length!=0){
-            const responseData = response.map(data=>({
-                employeeCode : data.employeeCode,
-                name : data.name,
-                dept : data.department.department
-            }));
-
+        const response = await helper.isAssignedToEmployee({qualification : qualificationId});
+        if(!response.success){
             return res.status(403).json({
-                success:false,
-                message:"The qualification you are trying to delete is assigned to few employees, first change their qualification then you may delete it.",
-                data : responseData
+                success: response.success,
+                message: response.message,
+                data : response.data
             });
         }
-        
+
         const isDeleted = await Qualification.findByIdAndDelete(qualificationId);
 
         if(isDeleted){
@@ -930,17 +918,12 @@ const deleteShift = async (req,res)=>{
             });
         }
 
-        const response = await Employee.find({shift : shiftId}).populate("department");
-        if(response.length!=0){
-            const responseData = response.map(data=>({
-                employeeCode : data.employeeCode,
-                Name : data.name,
-                Dept : data.department.department
-            }))
+        const response = await helper.isAssignedToEmployee({shift : shiftId});
+        if(!response.success){
             return res.status(403).json({
-                success:false,
-                message: "The shift you are trying to delete is assigned to few employees, first change their shift then you may delete it.",
-                data : responseData
+                success: response.success,
+                message: response.message,
+                data : response.data
             });
         }
 
@@ -1203,17 +1186,12 @@ const deleteOfficeTimePolicy = async (req,res)=>{
             });
         }
         //should not be deleted if policy is assigned to an employee
-        const response = await Employee.find({officeTimePolicy : policyId}).populate("department");
-        if(response.length!=0){
-            const responseData = response.map(data =>({
-                employeeCode : data.employeeCode,
-                Name : data.name,
-                Dept : data.department.department
-            }));
+        const response = await helper.isAssignedToEmployee({officeTimePolicy : policyId});
+        if(!response.success){
             return res.status(403).json({
-                success:false,
-                message: "The Policy you are trying to delete is assigned to few employees, first change their policy then you may delete it.",
-                data : responseData
+                success: response.success,
+                message: response.message,
+                data : response.data
             });
         }
 
@@ -1367,6 +1345,7 @@ const showWorkType = async(req,res)=>{
 }
 
 module.exports={
+    
     showAllDepts,
     addDept,
     updateDept,

@@ -1,3 +1,6 @@
+const Employee = require("../models/auth/employee.model");
+
+//validates if the time format is 24Hr as (HH:MM)
 const timeFormatValidator = (...args)=>{
     //trimming values and checking their length
     let faultMsg="";
@@ -22,7 +25,7 @@ const timeFormatValidator = (...args)=>{
     else
         return `Fail ! ${faultMsg} format is wrong. Please provide in HH:MM`
 }
-
+//extracts time duration in minutes from 24Hr format time
 const timeDurationInMinutes = (start,end)=>{
     // Expected Format 24Hr Format (HH:MM)
     if(start.length<4 || start.length>5 || end.length<4 || end.length>5){
@@ -41,8 +44,41 @@ const timeDurationInMinutes = (start,end)=>{
     let durationMinutes = totalEndMinutes - totalStartMinutes;
     return durationMinutes;
 }
+//checks if the field is assigned to an employee or not -to check before delete operation
+const isAssignedToEmployee = async (query)=>{
+    try {
+        const response = await Employee.find(query).populate("department");
+        if(response.length!=0){
+            const responseData = response.map(data=>({
+                employeeCode : data.employeeCode,
+                name : data.name,
+                dept : data.department.department
+            }));
+            return {
+                success:false,
+                message:"The field-data you are trying to delete is assigned to few employees, first change their field-data then you may delete it.",
+                data : responseData
+            };
+        }
+        else{
+            return {
+                success:true,
+                message: "Good to delete"
+            }
+        }
+    } catch (error) {
+        return {
+            success:false,
+            message : error.message,
+            data : []
+        }
+    }
+    
+}
+
 
 module.exports={
     timeFormatValidator,
-    timeDurationInMinutes
+    timeDurationInMinutes,
+    isAssignedToEmployee
 }

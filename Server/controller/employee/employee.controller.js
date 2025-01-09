@@ -528,6 +528,8 @@ const showSingleEmployee = async(req,res)=>{
             });
         }
 
+        console.log(employeeData);
+
         return res.status(200).json({
             success:true,
             message:"Employee Found!",
