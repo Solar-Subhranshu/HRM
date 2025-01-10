@@ -7,8 +7,6 @@ const path = require("path")
 require("./db/db");
 require("./middlewares/multer.middleware")
 const authEmpRoute = require("./routes/authEmp.route");
-const companyRoute= require("./routes/company.route");
-const branchRoute =require("./routes/branch.route");
 const commonRoute = require('./routes/common.router');
 
 const PORT = process.env.PORT || 5000;
@@ -21,9 +19,8 @@ app.use(cors({
 }));
 app.use(express.urlencoded({ extended:true }));
 app.use("/auth", authEmpRoute);
-app.use("/company",companyRoute);
 app.use("/common",commonRoute);
-app.use("/branch",branchRoute);
+
 
 app.use("/uploads", express.static(path.join(__dirname, "uploads")));
 

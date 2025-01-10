@@ -22,6 +22,16 @@ router.put("/update-dept",tokenVerify,commonController.updateDept);
 //only for backend
 router.delete("/delete-department",tokenVerify,commonController.deleteDept);
 
+router.get("/show-company",commonController.showCompany);
+router.post("/add-company",tokenVerify,commonController.addCompany);
+router.put("/update-company",tokenVerify,commonController.updateCompanyName);
+
+router.get("/show-branch",commonController.showBranch);
+router.post("/add-branch",tokenVerify,commonController.addBranch);
+router.put("/update-branch",tokenVerify,commonController.updateBranchDetails);
+router.get("/show-all-companyDetails",commonController.showAllBranch);
+
+
 router.post("/add-shift",tokenVerify,commonController.addShift);
 router.get("/show-shift",commonController.showShift);
 router.put("/update-shift",tokenVerify,commonController.updateShift);
