@@ -597,6 +597,7 @@ const updateBranchDetails= async (req,res)=>{
         });
     }
 }
+//showes all branches along with their company name -> for dashboard purpose. 
 const showAllBranch = async (req,res)=>{
     try{
     
