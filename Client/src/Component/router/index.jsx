@@ -13,6 +13,7 @@ import EmployeeUpDateForm from '../../Pages/UpDateEmployeeDetails/index'
 import EmployeeDetailsPage from '../../Component/ShowParticularEmployeeDetails/index'
 import UpdateShiftDetails from '../../Pages/UpDateShiftDetails';
 import UpdateOfficeTimePolicy from '../../Pages/UpDateOfficeTimePolicy/index'
+import CompanyBranchTable from '../../Pages/CompanyBranchtable/index'
 import { Routes, Route } from 'react-router-dom';
 
 const Router = () => {
@@ -34,6 +35,8 @@ const Router = () => {
             <Route path='employeeDetails' element={<EmployeeDetailsPage />} />
             <Route path='updateshiftdetails' element={<UpdateShiftDetails/>} />
             <Route path='updateofficytimepolicy' element={<UpdateOfficeTimePolicy/>} />
+            <Route path='companybranchtable' element={<CompanyBranchTable/>} />
+            
           </Route>
         </Routes>
     )

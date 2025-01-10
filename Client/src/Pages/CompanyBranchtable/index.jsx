@@ -3,6 +3,7 @@ import { FaListUl } from "react-icons/fa6";
 import axios from "axios";
 
 function AddNewCompany() {
+    
   const [companynamedata, setCompanyName] = useState([]);
   const [inputData, setInputData] = useState({
     name: "",
@@ -85,7 +86,7 @@ function AddNewCompany() {
       console.log(showAllCompanyDetails);
 
     } catch (error) {
-      alert("Unable to  fetch all company data", error);
+      alert("Unable to fetch all company  data", error);
     }
   };
 
@@ -111,9 +112,9 @@ function AddNewCompany() {
   }, [isBranchModalOpen]);
 
   return (
-    <div className="ml-1 w-[calc(100%-30%)]">
+    <div className="pl-2 pr-2 w-full mt-4">
       {/* Header Section */}
-      <div className="bgMainColor flex py-4 pl-1 gap-3">
+      <div className="bgMainColor flex py-4  gap-3 ">
         <FaListUl size={24} />
         <h4 className="text-white">List of Company</h4>
       </div>
@@ -171,12 +172,28 @@ function AddNewCompany() {
         >
           Add New Company
         </button>
+
+        <button
+          className="bg-gradient-to-r from-blue-500 to-purple-600 text-white font-semibold py-2 px-6 rounded-lg shadow-md hover:shadow-lg transform hover:scale-105 transition duration-300"
+          onClick={openCompanyModal}
+        >
+          Update Company
+        </button>
+
         <button
           className="bg-gradient-to-r from-green-500 to-teal-600 text-white font-semibold py-2 px-6 rounded-lg shadow-md hover:shadow-lg transform hover:scale-105 transition duration-300"
           onClick={openBranchModal}
         >
           Add New Branch
         </button>
+
+        <button
+          className="bg-gradient-to-r from-green-500 to-teal-600 text-white font-semibold py-2 px-6 rounded-lg shadow-md hover:shadow-lg transform hover:scale-105 transition duration-300"
+          onClick={openBranchModal}
+        >
+          Update Branch
+        </button>
+
       </div>
 
       {/* Add New Company Modal */}

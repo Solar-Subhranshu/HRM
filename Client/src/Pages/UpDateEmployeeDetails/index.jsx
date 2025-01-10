@@ -32,6 +32,49 @@ function Registration() {
 
   const [updatedAttachments, setUpdatedAttachments] = useState([]); // Tracks updated attachments
 
+  const [isOpen, setIsOpen] = useState(false);
+  const [searchTerm, setSearchTerm] = useState('');
+  const [reportingManagers, setReportingManagers] = useState([]);
+  const [selectedManager, setSelectedManager] = useState(null);
+
+   const [joiningHrNameData, setJoiningHrNameData]=useState([]);
+
+  useEffect(() => {
+    // Fetch the reporting managers data from the backend
+    axios.get('http://localhost:8000/auth/showAllEmployee')
+      .then((response) => {
+        setReportingManagers(response.data.data);
+      })
+      .catch((error) => {
+        console.error('Error fetching reporting managers:', error);
+      });
+  }, []);
+
+  // Toggle the dropdown visibility
+  const toggleDropdown = () => {
+    setIsOpen(!isOpen);
+  };
+
+  // Handle search input
+  const handleSearchChange = (e) => {
+    setSearchTerm(e.target.value);
+  };
+
+  // Handle reporting manager selection
+  const handleManagerSelect = (manager) => {
+    setSelectedManager(manager);
+    setFormData((prev) => ({
+      ...prev,
+      reportingManager: manager?._id, // Send only the ID to the backend
+    }));
+    setIsOpen(false);  // Close dropdown after selection
+  };
+
+  // Filter reporting managers based on search term
+  const filteredManagers = reportingManagers.filter((manager) =>
+    manager.name.toLowerCase().includes(searchTerm.toLowerCase())
+  );
+
   const [formData, setFormData] = useState({
     employeeCode: "",
     name: "",
@@ -72,11 +115,13 @@ function Registration() {
     officeTimePolicy: "",
     shift: "",
     workType : "",
+    joiningHR : ''
   });
   
   // Fetch data from cookies and set to formData state
   useEffect(() => {
     const employeeData = Cookies.get("EmployeeFormData");
+    console.log('My data', JSON.parse(employeeData));
     
     if (employeeData) {
       try {
@@ -94,20 +139,21 @@ function Registration() {
 
        console.log('my attachment ', attachments)
         setQualificationId(parsedData?.qualification?._id)
-        setCompanyId(parsedData.company._id);
-        setDepartmentId(parsedData.department._id);
+        setCompanyId(parsedData?.company?._id);
+        setDepartmentId(parsedData?.department?._id);
         setFormData((prev) => ({
           ...prev,
           ...parsedData,
-          qualification: parsedData.qualification._id,
-          company:parsedData.company._id,
-          department:parsedData.department._id,
-          officeTimePolicy:parsedData.officeTimePolicy._id,
-          shift:parsedData.shift._id,
-          workType:parsedData.workType._id,
-          reportingManager:parsedData.reportingManager?._id,
-          dateOfBirth: parsedData.dateOfBirth ? parsedData.dateOfBirth.split('T')[0] : '',
-          joiningDate:parsedData.joiningDate?parsedData.joiningDate.split('T')[0]: "",
+          qualification: parsedData?.qualification?._id,
+          company:parsedData?.company?._id,
+          department:parsedData?.department?._id,
+          officeTimePolicy:parsedData?.officeTimePolicy?._id,
+          shift:parsedData?.shift?._id,
+          workType:parsedData?.workType?._id,
+          reportingManager:parsedData?.reportingManager?._id,
+          joiningHR:parsedData?.joiningHR?._id,
+          dateOfBirth: parsedData?.dateOfBirth ? parsedData?.dateOfBirth.split('T')[0] : '',
+          joiningDate:parsedData?.joiningDate?parsedData?.joiningDate.split('T')[0]: "",
           lastAppraisalDate:parsedData.lastAppraisalDate?parsedData.lastAppraisalDate.split('T')[0] : '',
           regisnationDate:parsedData.regisnationDate?parsedData.regisnationDate.split('T')[0] : '',
           ...attachments,
@@ -136,7 +182,7 @@ function Registration() {
       const response = await axios.get('http://localhost:8000/common/show-department');
       setDepartmentName(response.data.data);
     } catch (error) {
-      alert('Error: Unable to fetch data');
+      alert('Error: Unable to fetch department Name data');
     }
   };
 
@@ -145,25 +191,25 @@ function Registration() {
       const response = await axios.get(`http://localhost:8000/common/show-designation?departmentId=${_id}`);
       setDeginationData(response.data.data);
     } catch (error) {
-      alert('Error: Unable to fetch data');
+      alert('Error: Unable to fetch  degination data');
     }
   };
 
   const fetchCompanyNameData = async () => {
     try {
-      const response = await axios.get('http://localhost:8000/company/show-company');
+      const response = await axios.get('http://localhost:8000/common/show-company');
       setCompanyName(response.data.data);
     } catch (error) {
-      alert('Error: Unable to fetch data');
+      alert('Error: Unable to fetch company name data');
     }
   };
 
   const fetchBranchNameData = async (_id) => {
     try {
-      const response = await axios.get(`http://localhost:8000/branch/show-branch?companyID=${_id}`);
+      const response = await axios.get(`http://localhost:8000/common/show-branch?companyID=${_id}`);
       setBranchNameData(response.data.data);
     } catch (error) {
-      alert('Error: Unable to fetch data');
+      alert('Error: Unable to fetch branch name data');
     }
   };
 
@@ -172,7 +218,7 @@ function Registration() {
       const response = await axios.get('http://localhost:8000/common/show-qualification');
       setQulificationData(response.data.data);
     } catch (error) {
-      alert('Error: Unable to fetch data');
+      alert('Error: Unable to fetch qualification name data');
     }
   };
 
@@ -182,7 +228,7 @@ function Registration() {
       const response = await axios.get(`http://localhost:8000/common/show-degree?qualificationId=${_id}`);
       setDegreeData(response.data.data);
     } catch (error) {
-      alert('Error: Unable to fetch data');
+      alert('Error: Unable to fetch degree data');
     }
   };
 
@@ -191,18 +237,11 @@ function Registration() {
       const response = await axios.get('http://localhost:8000/common/show-shift');
       setShiftName(response.data.data);
     } catch (error) {
-      alert('Error: Unable to fetch data');
+      alert('Error: Unable to fetch show shift data');
     }
   };
 
-  const fetchReportingManagerData = async () => {
-    try {
-      const response = await axios.get('http://localhost:8000/auth/show-reporting-manager');
-      setReportingManager(response.data.data);
-    } catch (error) {
-      alert('Error: Unable to fetch data');
-    }
-  };
+  
 
   const fetchOfficeTimePolicyData = async () => {
     try {
@@ -221,13 +260,23 @@ function Registration() {
       alert('Unable to Fetch Data work type data');
     }
   };
+  
+  const fetchJoiningHrNameData = async () => {
+    try {
+      const response = await axios.get('http://localhost:8000/auth/show-joining-HR');
+      setJoiningHrNameData(response.data.data);
+    } catch (error) {
+      alert('Error: Unable to fetch Hr Name data ');
+    }
+  };
 
   useEffect(() => {
     fetchDepartmentName();
     fetchCompanyNameData();
     fetchQulificationData();
     fetchShiftNameData();
-    fetchReportingManagerData();
+    fetchJoiningHrNameData();
+
     fetchOfficeTimePolicyData();
     fetchWorkTypeData();
   }, []);
@@ -351,7 +400,9 @@ function Registration() {
         attachments, // Include only updated attachments
       };
 
-        const response = await axios.patch("http://localhost:8000/auth/empUpdate",formData,{
+      console.log(payload);
+
+        const response = await axios.patch("http://localhost:8000/auth/empUpdate",payload,{
           headers: {
             "Content-Type": "application/json",
           },
@@ -720,29 +771,91 @@ function Registration() {
           <fieldset className='border-2  rounded-md mb-4' style={{ borderColor: '#740FD6'}}>
             <legend className='font-semibold text-lg ml-8' style={{color : '#740FD6'}}> &nbsp;&nbsp; Other Details &nbsp;&nbsp;</legend>
             <div className='grid gap-3 m-6 md:grid-cols-4'>
-
-              {/* Reporting manager field    */}
+               
+               {/* Hr Name field    */}
               <div>
                 <label>
-                  <span>Reporting Manager</span>
+                  <span>Joining Hr Name</span>
+                  <span className='text-red-600'>*</span>
                 </label>
                 <select 
-                    name="reportingManager"
+                    name="joiningHR"
                     onChange={(e) => {
                       setFormData(prevState => ({
                         ...prevState,
                         [e.target.name]: e.target.value
                       }));
+                  
                     }}
                   className="w-full rounded-md border-2 py-1 px-4 focus:outline-none focus:ring-2 focus:ring-black">
-                  <option>--Select Reporting Manager--</option>
-                  {reportingManager?.map(({name, _id})=>(
-                    <option key={_id} value={_id} selected={formData.reportingManager === _id} >{name}</option>
+                  <option>--Select Joining Hr--</option>
+                  {joiningHrNameData?.map(({name, _id})=>(
+                    <option key={_id} value={_id} selected={formData.joiningHR === _id}>{name}</option>
                   ))}
                 </select>
-                {/* <span>{formData.qualification}</span> */}
+                {errors.joiningHR && (
+                    <p className="text-red-600">{errors.joiningHR}</p>
+                  )}
               </div>
-              
+
+               {/* Reporting Manager field    */}
+              <div className="relative">
+                <label >
+                  <span>Reporting Manager</span>
+                  <span className='text-red-600'>*</span>
+                </label>
+                <button
+                  className="inline-flex justify-between items-center w-full px-4 py-2 text-sm font-medium text-gray-600 bg-white border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-2 focus:ring-blue-500"
+                  onClick={toggleDropdown}
+                  type="button"
+                >
+                  <span>
+                    {selectedManager ? selectedManager?.name : 'Select Reporting Manager'}
+                  </span>
+                  <svg
+                    xmlns="http://www.w3.org/2000/svg"
+                    className="w-5 h-5 ml-2 -mr-1"
+                    viewBox="0 0 20 20"
+                    fill="currentColor"
+                    aria-hidden="true"
+                  >
+                    <path
+                      fillRule="evenodd"
+                      d="M6.293 9.293a1 1 0 011.414 0L10 11.586l2.293-2.293a1 1 0 111.414 1.414l-3 3a1 1 0 01-1.414 0l-3-3a1 1 0 010-1.414z"
+                      clipRule="evenodd"
+                    />
+                  </svg>
+                </button>
+
+                {isOpen && (
+                  <div className="absolute z-10 right-0 mt-2 rounded-md shadow-lg bg-white ring-1 ring-black ring-opacity-5 w-full max-h-60 overflow-y-auto">
+                    <input
+                      className="block w-full px-4 py-2 text-gray-800 border border-gray-300 rounded-t-md focus:outline-none focus:ring-2 focus:ring-blue-500"
+                      type="text"
+                      placeholder="Search managers"
+                      value={searchTerm}
+                      onChange={handleSearchChange}
+                    />
+                    {filteredManagers.length > 0 ? (
+                      filteredManagers.map((manager) => (
+                        <button
+                          key={manager?._id}
+                          className="w-full text-left px-4 py-2 text-gray-700 hover:bg-gray-100 focus:bg-gray-100"
+                          onClick={() => handleManagerSelect(manager)}
+                        >
+                          {manager?.name}
+                        </button>
+                      ))
+                    ) : (
+                      <p className="px-4 py-2 text-gray-500">No results found</p>
+                    )}
+                  </div>
+                )}
+                  {errors.reportingManager && (
+                    <p className="mt-1  text-red-600">{errors.reportingManager}</p>
+                  )}
+              </div>
+
               {/* employee code field  */}
               <div>
                 <label>
