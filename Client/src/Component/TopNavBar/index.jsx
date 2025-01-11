@@ -17,6 +17,10 @@ function Navbars() {
     navigate('/layout/departmenttable');
   };
 
+  const handleCompanybranchClick = ()=>{
+    navigate('/layout/companybranchtable');
+  }
+
   const handleEmployeeListClick= ()=>{
     navigate('/layout/listofallemployee');
   }
@@ -108,7 +112,7 @@ function Navbars() {
               <div className="absolute text-left left-0 bg-white text-black shadow-lg rounded-sm z-10 inline-block ">
                 <ul className="">
                   <li className="hover:bg-gray-200 py-1 px-2 rounded border-b-2" >
-                    <a href="#">Company</a>
+                    <a href="#" onClick={handleCompanybranchClick}>Company</a>
                   </li>
                   <li className="hover:bg-gray-200 py-1 px-2 rounded">
                     <a href="#" >Branch</a>

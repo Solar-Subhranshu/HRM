@@ -129,7 +129,7 @@ function Registration() {
 
   const fetchCompanyNameData = async () => {
     try {
-      const response = await axios.get('http://localhost:8000/company/show-company');
+      const response = await axios.get('http://localhost:8000/common/show-company');
       setCompanyName(response.data.data);
     } catch (error) {
       alert('Error: Unable to fetch Company Name data');
@@ -138,7 +138,7 @@ function Registration() {
 
   const fetchBranchNameData = async (_id) => {
     try {
-      const response = await axios.get(`http://localhost:8000/branch/show-branch?companyID=${_id}`);
+      const response = await axios.get(`http://localhost:8000/common/show-branch?companyID=${_id}`);
       setBranchNameData(response.data.data);
     } catch (error) {
       alert('Error: Unable to fetch Branch Name data');
