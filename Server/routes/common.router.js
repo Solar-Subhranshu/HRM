@@ -10,11 +10,13 @@ router.delete("/delete-degree",tokenVerify,commonController.deleteDegree);
 router.get("/show-designation",commonController.showDesignation);
 router.post("/add-designation",tokenVerify,commonController.addDesignation);
 router.put("/update-designation",commonController.updateDesignation);
+//for backend
+router.delete("/delete-designation",tokenVerify,commonController.deleteDesignation);
 
 router.get("/show-qualification",commonController.showAllQualification);
 router.post("/add-qualifiaction",tokenVerify,commonController.addQualification);
-router.delete("/delete-qualifiaction",tokenVerify,commonController.deleteQualification);
 router.put("/update-qualifiaction",commonController.updateQualification);
+router.delete("/delete-qualifiaction",tokenVerify,commonController.deleteQualification);
 
 router.get("/show-department",commonController.showAllDepts);
 router.post("/add-department",tokenVerify,commonController.addDept);
@@ -25,12 +27,15 @@ router.delete("/delete-department",tokenVerify,commonController.deleteDept);
 router.get("/show-company",commonController.showCompany);
 router.post("/add-company",tokenVerify,commonController.addCompany);
 router.put("/update-company",tokenVerify,commonController.updateCompanyName);
+//for backend
+router.delete("/delete-company",tokenVerify,commonController.deleteCompany);
 
 router.get("/show-branch",commonController.showBranch);
 router.post("/add-branch",tokenVerify,commonController.addBranch);
 router.put("/update-branch",tokenVerify,commonController.updateBranchDetails);
 router.get("/show-all-companyDetails",commonController.showAllBranch);
-
+//only for backend
+router.delete("/delete-branch",commonController.deleteBranch);
 
 router.post("/add-shift",tokenVerify,commonController.addShift);
 router.get("/show-shift",commonController.showShift);

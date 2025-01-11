@@ -11,7 +11,7 @@ const OfficeTimePolicy = require("../../models/common/officeTimePolicy.model");
 const WorkType = require("../../models/common/workType.model");
 
 const generateRandomNumbers = require("../../utils/randomNumGenerator");
-// const xlsx = require("xlsx");
+const xlsx = require("xlsx");
 
 const addEmployeeByExcel = async(req,res) =>{
     try {
@@ -116,30 +116,34 @@ const addEmployeeByExcel = async(req,res) =>{
         if(insertableEntries){
             console.log(`You have ${insertableEntries.length} insertable-Enteries.`)
         }
+
+        // const worksheet1 = invalidEntries.length>0 ? xlsx.utils.json_to_sheet(invalidEntries) : null;
+        // const worksheet2 = duplicateEntries.length>0 ? xlsx.utils.json_to_sheet(duplicateEntries) : null;
         
+        // let workbook=null;
+        // if(worksheet1 || worksheet2){
+        //     workbook = xlsx.utils.book_new();
+        //     if(worksheet1) xlsx.utils.book_append_sheet(workbook,worksheet1,"Invalid Enteries");
+        //     if(worksheet2) xlsx.utils.book_append_sheet(workbook,worksheet2,"Duplicate Enteries");
+        // }
 
-        // if(invalidEntries.length>0){
-        //     console.log(`You have ${invalidEntries.length} invalid-Enteries`);
-        //     const worksheet1 = invalidEntries.length>0 ? xlsx.utils.json_to_sheet(invalidEntries) : null;
-        //     const worksheet2 = xlsx.utils.json_to_sheet(duplicateEntriesEntries);
-
-        //     const workbook = xlsx.utils.book_new();
-        //     xlsx.utils.book_append_sheet(workbook,worksheet1,"Invalid Enteries");
-        //     xlsx.utils.book_append_sheet(workbook,worksheet2,"Duplicate Enteries");
-
-        //     const buffer = xlsx.write(workbook,{bookType:'xlsx', type:'buffer'});
-
-        //     res.setHeader('Content-Disposition', 'attachment; filename="Invalid_Entries.xlsx"');
+        // let myBuffer=null;
+        // if(workbook){
+        //     myBuffer = xlsx.write(workbook,{bookType:'xlsx', type:'buffer'});
+        //     res.setHeader('Content-Disposition', 'attachment; filename="Rejected_Entries.xlsx"');
         //     res.setHeader('Content-Type', 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet');
         // }
-    
+
         if(insertableEntries>0){
             const insertResponse = await Employee.insertMany(insertableEntries);
+
             if(insertResponse){
                 return res.status(201).json({
                     success:true,
                     message:"Excel-Data Saved Successfully to Database.",
-                });
+                    invalid_data: invalidEntries.length>0 ? invalidEntries : [],
+                    duplicate_data: duplicateEntries.length>0 ? duplicateEntries : []
+                }); 
             }
             else{
                 throw new Error("Insert Operation Failed! Excel-Data Not Saved! Try Again");
@@ -148,10 +152,11 @@ const addEmployeeByExcel = async(req,res) =>{
         else{
             return res.status(400).json({
                 success:false,
-                message: "The uploaded excel does not have any valid insertable entry. "
-            })
+                message: "The uploaded excel does not have any valid insertable entry. ",
+                invalid_data: invalidEntries.length>0 ? invalidEntries : [],
+                duplicate_data: duplicateEntries.length>0 ? duplicateEntries : []
+            });
         }
-        
     } catch (error) {
         console.log(error)
         return res.status(400).json({

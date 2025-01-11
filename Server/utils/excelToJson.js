@@ -9,8 +9,6 @@ const excelToJSON = async(buffer)=>{
             defval : "",
             raw:true
         });
-
-        
         return excelData;
     }
     catch(error){

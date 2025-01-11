@@ -12,6 +12,8 @@ const WorkType = require("../../models/common/workType.model");
 const helper = require("../../utils/common.util");
 // const Employee = require("../../models/auth/employee.model");
 
+//test
+
 //degree-common operation
 const showDegree = async (req,res) =>{
     try {
@@ -100,21 +102,32 @@ const addDegree = async(req,res) => {
 //should not be deleted if it is assigned to any emplpoyee
 const deleteDegree = async (req,res)=>{
     try {
-        const {degreeID} = req.body;
-
-        const isDeleted = await Degree.findByIdAndDelete(degreeID);
-
-        if(!isDeleted){
+        const {degreeId} = req.body;
+        if(!degreeId){
             return res.status(400).json({
                 success:false,
-                message:"Degree not deleted, Try Again!"
-            })
+                message : "Degree-Id not provided!"
+            });
         }
+        const response = await helper.isAssignedToEmployee({degree:degreeId});
+        if(!response.success){
+            return res.status(403).json({
+                success: response.success,
+                message: response.message,
+                data : response.data
+            });
+        }
+        const isDeleted = await Degree.findByIdAndDelete(degreeId);
 
-        return res.status(200).json({
-            success:true,
-            message : "Degree Deleted Successfully!"
-        });
+        if(isDeleted){
+            return res.status(201).json({
+                success:true,
+                message:`Degree : ${isDeleted.name} Deleted Successfully.`
+            });
+        }
+        else{
+            throw new Error("Something went Wrong, Couldn't Delete Degree. Maybe it's already deleted.");
+        }
     } catch (error) {
         return res.status(500).json({
             success:false,
@@ -260,7 +273,10 @@ const deleteDept = async(req,res) => {
     try {
         const {deptId} = req.body;
         if(!deptId){
-            throw new Error("Department Id not provided.")
+            return res.status(400).json({
+                success:false,
+                message : "Department-Id not provided!"
+            });
         }
 
         const response = await helper.isAssignedToEmployee({department:deptId});
@@ -274,16 +290,15 @@ const deleteDept = async(req,res) => {
         
         const isDeleted = await Department.findByIdAndDelete(deptId);
         if(isDeleted){
-
             const relatedDesignation = await Designation.deleteMany({department:deptId});
             
             return res.status(201).json({
                 success:true,
-                message :`Department : ${isDeleted.department} Deleted Successfully along with ${relatedDesignation.deletedCount}.`
+                message :`Department : ${isDeleted.department} Deleted Successfully along with ${relatedDesignation.deletedCount} Designations.`
             });
         }
         else{
-            throw new Error("Something went Wrong, Couldn't Delete Department")
+            throw new Error("Something went Wrong, Couldn't Delete Department. Maybe it's Already Deleted.")
         }
     } catch (error) {
         return res.status(500).json({
@@ -434,6 +449,44 @@ const updateCompanyName= async (req,res)=>{
             success:false,
             message:"Internal Server Error! Company Details could not be updated!",
             error : error.message
+        });
+    }
+}
+//only for backend
+const deleteCompany = async(req,res)=>{
+    try {
+        const {companyId} = req.body;
+        if(!companyId){
+            return res.status(400).jaon({
+                success:false,
+                message:"Company-Id not provided!"
+            });
+        }
+
+        const response = await helper.isAssignedToEmployee({company:companyId});
+        if(!response.success){
+            return res.status(403).json({
+                success: response.success,
+                message: response.message,
+                data : response.data
+            });
+        }
+
+        const isDeleted = await Company.findByIdAndDelete(companyId);
+        
+        if(isDeleted){
+            const isRelatedBranchDeleted = await Branch.deleteMany({companyID:companyId});
+            
+            return res.status(201).json({
+                success:true,
+                message :`Company : ${isDeleted.name} Deleted Successfully along with ${isRelatedBranchDeleted.deletedCount} Branches.`
+            });
+        }
+    } catch (error) {
+        return res.status(500).json({
+            success:false,
+            message : "Internal Server Error, Couldn't Delete Company.",
+            error:error.message
         });
     }
 }
@@ -633,8 +686,42 @@ const showAllBranch = async (req,res)=>{
     }
 }
 //only for backend
-const deleteBranch = async(req,res)=>{
+const deleteBranch = async(req,res)=>{  
+    try {
+        const {branchId} = req.body || req.query;
+        if(!branchId){
+            return res.status(400).json({
+                success:false,
+                message : "Branch-Id not provided!"
+            });
+        }
 
+        const response = await helper.isAssignedToEmployee({branch:branchId});
+        if(!response.success){
+            return res.status(403).json({
+                success: response.success,
+                message: response.message,
+                data : response.data
+            });
+        }
+
+        const isDeleted = await Branch.findByIdAndDelete(branchId);
+        if(isDeleted){
+            return res.status(201).json({
+                success:true,
+                message :`Branch : ${isDeleted.name} Deleted Successfully.`
+            });
+        }
+        else{
+            throw new Error("Something went Wrong, Couldn't Delete Branch. Maybe it's already deleted.");
+        }
+    } catch (error) {
+        return res.status(500).json({
+            success:false,
+            message : "Internal Server Error, Couldn't Delete Branch.",
+            error:error.message
+        });
+    }
 };
 
 //qualification-common operations
@@ -769,6 +856,12 @@ catch(error){
 const deleteQualification = async (req,res)=>{
     try {
         const {qualificationId} = req.body;
+        if(!qualificationId){
+            return res.status(400).json({
+                success: false,
+                message : "Qualification Id not provided!"
+            });
+        }
 
         const response = await helper.isAssignedToEmployee({qualification : qualificationId});
         if(!response.success){
@@ -849,9 +942,9 @@ const addDesignation = async(req,res)=>{
 };
 const showDesignation = async(req,res)=>{
     try {
-        const {departmentId} = req.query;
+        const {departmentId} = req.query || req.body;
         // console.log(departmentId)
-        const allDesignation = await Designation.find({ department: departmentId});
+        const allDesignation = await Designation.find({ department: departmentId}).select("-created_By -createdAt -updatedAt -updated_By -__v");
 
         if(allDesignation){
             return res.status(200).json({
@@ -880,6 +973,8 @@ const updateDesignation =async (req,res)=>{
             });
         }
 
+        console.log("check the thing ",department, designation,newDesignation);
+        
         if(designation === newDesignation){
             return res.status(400).json({
                 success:false,
@@ -888,7 +983,8 @@ const updateDesignation =async (req,res)=>{
         }
 
         // const isExisting = await Designation.findOne({department:department , designation:designation});
-
+ 
+        
         const updatingDesignation = await Designation.findOneAndUpdate(
             {department:department , designation:designation},
             {designation:newDesignation},
@@ -911,6 +1007,46 @@ const updateDesignation =async (req,res)=>{
         return res.status(500).json({
             success : false,
             message:'Internal Server Error.',
+            error:error.message
+        });
+    }
+}
+//for backend
+const deleteDesignation = async(req,res)=>{
+    try {
+        const {designationId} = req.body;
+        if(!designationId){
+            return res.status(400).json({
+                success : false,
+                message : "Designation Id not provided!"
+            });
+        }
+
+        const response = await helper.isAssignedToEmployee({designation : designationId});
+        if(!response.success){
+            return res.status(403).json({
+                success: response.success,
+                message: response.message,
+                data : response.data
+            });
+        }
+
+        const isDeleted = await Designation.findByIdAndDelete(designationId);
+
+        if(isDeleted){
+            return res.status(201).json({
+                success:true,
+                message:"Designation Deleted Successfully !"
+            });
+        }
+        else{
+            throw new Error("Something went Wrong, Couldn't Delete Designation. Maybe it's already deleted.")
+        }
+
+    } catch (error) {
+        return res.status(500).json({
+            success:false,
+            message : "Internal Server Error, Couldn't Delete Designation.",
             error:error.message
         });
     }
@@ -1539,11 +1675,15 @@ module.exports={
     addCompany,
     showCompany,
     updateCompanyName,
+    //only for backend
+    deleteCompany,
 
     addBranch,
     showBranch,
     updateBranchDetails,
     showAllBranch,
+    // only for backend
+    deleteBranch,
 
     showAllQualification,
     addQualification,
@@ -1553,6 +1693,8 @@ module.exports={
     addDesignation,
     showDesignation,
     updateDesignation,
+    //only for backend
+    deleteDesignation,
 
     addShift,
     showShift,
