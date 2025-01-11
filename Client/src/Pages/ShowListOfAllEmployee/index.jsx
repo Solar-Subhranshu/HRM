@@ -6,14 +6,22 @@ import { useNavigate } from 'react-router-dom';
 
 function TotalEmployeeTable() {
   const navigate = useNavigate();
+
   const [selectedEmployee, setSelectedEmployee] = useState(null);
   const [allEmployeeData, setAllEmployeeData] = useState([]);
   const [selectedFile, setSelectedFile] = useState(null);
-  const [isModalOpen, setIsModalOpen] = useState(false);
+  //const [isModalOpen, setIsModalOpen] = useState(false);
   const [isActiveFilter, setIsActiveFilter] = useState(null);
   const [searchTerm, setSearchTerm] = useState("");
   const [currentPage, setCurrentPage] = useState(1);
   const [rowsPerPage] = useState(8);
+  
+  const [duplicateData, setDuplicateData] = useState([]);
+const [invalidData, setInvalidData] = useState([]);
+const [isModalOpen, setIsModalOpen] = useState(false);
+
+
+   
 
   const handleEmployeeRegisterForm = () => {
     navigate('/layout/Registrationform');
@@ -93,29 +101,53 @@ function TotalEmployeeTable() {
     fetchAllEmployeeData();
   }, [isActiveFilter]);
 
+
+  
   const handleFileUpload = async () => {
     if (!selectedFile) {
       alert("Please select a file to upload.");
       return;
     }
-    
+  
     const formData = new FormData();
     formData.append("file", selectedFile);
-
+  
     try {
-      const response = await axios.post("http://localhost:8000/auth/importExcel", formData, {
+      const response = await axios.post("http://localhost:8000/auth/add-byExcel", formData, {
         headers: {
           "Content-Type": "multipart/form-data",
         },
       });
-      alert(response.data.message || "File imported successfully!");
-      setIsModalOpen(false);
-      fetchAllEmployeeData();
+  
+      const { success, message, invalid_data, duplicate_data } = response.data;
+  
+      if (!success) {
+        // Store duplicate and invalid data in cookies
+        Cookies.set('duplicateData', JSON.stringify(duplicate_data || []), { expires: 7 });
+        Cookies.set('invalidData', JSON.stringify(invalid_data || []), { expires: 7 });
+  
+        // Navigate to the error page
+        navigate('/layout/invalid-duplicate-data');
+      } else {
+        alert(message || "File imported successfully!");
+      }
+  
+      fetchAllEmployeeData(); // Refresh employee data
     } catch (error) {
-      console.error("Error uploading file:", error);
-      alert("Error: Unable to import the file.");
+      if (error.response?.data?.message) {
+        console.log("my error is ");
+        alert(`Error: ${error.response.data.message}`);
+      } else {
+        console.error("Error uploading file:", error);
+        alert("Error: Unable to import the file.");
+      }
     }
   };
+
+  
+
+  
+  
 
   const formatDate = (dateString) => {
     const date = new Date(dateString);
@@ -322,7 +354,9 @@ function TotalEmployeeTable() {
           </div>
         </div>
       )}
-
+      
+      
+      
     </div>
   );
 }

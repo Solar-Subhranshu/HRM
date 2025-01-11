@@ -14,6 +14,8 @@ import EmployeeDetailsPage from '../../Component/ShowParticularEmployeeDetails/i
 import UpdateShiftDetails from '../../Pages/UpDateShiftDetails';
 import UpdateOfficeTimePolicy from '../../Pages/UpDateOfficeTimePolicy/index'
 import CompanyBranchTable from '../../Pages/CompanyBranchtable/index'
+
+import DuplicateAndInvalidempData from '../../Pages/DuplicateAndInvalidEmployee/index'
 import { Routes, Route } from 'react-router-dom';
 
 const Router = () => {
@@ -36,6 +38,7 @@ const Router = () => {
             <Route path='updateshiftdetails' element={<UpdateShiftDetails/>} />
             <Route path='updateofficytimepolicy' element={<UpdateOfficeTimePolicy/>} />
             <Route path='companybranchtable' element={<CompanyBranchTable/>} />
+            <Route path='invalid-duplicate-data' element={<DuplicateAndInvalidempData/>} />
             
           </Route>
         </Routes>

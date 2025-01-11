@@ -230,6 +230,7 @@ function AddNewCompany() {
               </tr>
             </thead>
           </table>
+          
           <div className="max-h-[200px] overflow-y-auto">
             <table className="table-auto w-full border-collapse border border-black">
               <tbody>
