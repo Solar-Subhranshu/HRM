@@ -103,6 +103,7 @@ const [isModalOpen, setIsModalOpen] = useState(false);
 
 
   
+  //  import form excel 
   const handleFileUpload = async () => {
     if (!selectedFile) {
       alert("Please select a file to upload.");
@@ -112,6 +113,10 @@ const [isModalOpen, setIsModalOpen] = useState(false);
     const formData = new FormData();
     formData.append("file", selectedFile);
   
+    console.log("my form data", formData);
+  
+    console.log("Sending file upload request");
+  
     try {
       const response = await axios.post("http://localhost:8000/auth/add-byExcel", formData, {
         headers: {
@@ -119,30 +124,51 @@ const [isModalOpen, setIsModalOpen] = useState(false);
         },
       });
   
+      console.log("Response status:", response.status); 
+
+      console.log("Response data:", response.data);
+  
       const { success, message, invalid_data, duplicate_data } = response.data;
   
-      if (!success) {
-        // Store duplicate and invalid data in cookies
-        Cookies.set('duplicateData', JSON.stringify(duplicate_data || []), { expires: 7 });
-        Cookies.set('invalidData', JSON.stringify(invalid_data || []), { expires: 7 });
+      console.log("Success:", success); 
+      
+      console.log("Message:", message); 
   
-        // Navigate to the error page
-        navigate('/layout/invalid-duplicate-data');
+      if (!success || message === "The uploaded excel does not have any valid insertable entry.") {
+        navigate('/layout/invalid-duplicate-data', {
+          state: {
+            duplicateData: duplicate_data || [],  // Ensure default empty array
+            invalidData: invalid_data || [],      // Ensure default empty array
+          },
+        });
       } else {
         alert(message || "File imported successfully!");
       }
   
       fetchAllEmployeeData(); // Refresh employee data
     } catch (error) {
+      // Default empty array if the variables are not available in the error case
+      const { duplicate_data = [], invalid_data = [] } = error.response?.data || {};
+  
       if (error.response?.data?.message) {
-        console.log("my error is ");
         alert(`Error: ${error.response.data.message}`);
       } else {
         console.error("Error uploading file:", error);
         alert("Error: Unable to import the file.");
       }
+  
+      // Navigate to the error page with fallback empty arrays
+      navigate('/layout/invalid-duplicate-data', {
+        state: {
+          duplicateData: duplicate_data,
+          invalidData: invalid_data,
+        },
+      });
     }
   };
+  
+  
+
 
   
 
