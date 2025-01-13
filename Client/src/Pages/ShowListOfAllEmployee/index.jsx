@@ -3,6 +3,7 @@ import Cookies from 'js-cookie';
 import { FaListUl } from "react-icons/fa6";
 import axios from 'axios';
 import { useNavigate } from 'react-router-dom';
+import { GoSearch } from "react-icons/go";
 
 function TotalEmployeeTable() {
   const navigate = useNavigate();
@@ -206,26 +207,34 @@ const [isModalOpen, setIsModalOpen] = useState(false);
           <FaListUl size={24} />
           <h4 className="text-white">List of Employee (Total Employee)</h4>
         </div>
-        <div className="flex gap-4 items-center">
+        <div className="flex gap-3 items-center">
           <button
             onClick={() => setIsActiveFilter(true)}
-            className={`px-8 py-2 ${isActiveFilter === true ? 'bg-green-700' : 'bg-green-600'} text-white font-semibold rounded-lg shadow-md hover:bg-green-700 transition-all`}
+            className={`px-6 py-2 ${isActiveFilter === true ? 'bg-green-700' : 'bg-green-600'} text-white font-semibold rounded-lg shadow-md hover:bg-green-700 transition-all`}
           >
             Active
           </button>
           <button
             onClick={() => setIsActiveFilter(false)}
-            className={`px-8 py-2 ${isActiveFilter === false ? 'bg-red-700' : 'bg-red-600'} text-white font-semibold rounded-lg shadow-md hover:bg-red-700 transition-all`}
+            className={`px-4 py-2 ${isActiveFilter === false ? 'bg-red-700' : 'bg-red-600'} text-white font-semibold rounded-lg shadow-md hover:bg-red-700 transition-all`}
           >
             Resigned Staff
           </button>
-          <input
-            type="text"
-            placeholder="Search by Name or Code"
-            className="px-4 py-2 border rounded-xl"
-            value={searchTerm}
-            onChange={(e) => setSearchTerm(e.target.value)}
-          />
+
+          {/* search bar section */}
+          <div className="relative  max-w-md mx-auto">
+            <input
+              type="text"
+              placeholder="Search by Name or Code"
+              className=" pl-10 mr-2 pr-4 py-2 border border-gray-300 rounded-3xl text-gray-800 focus:outline-none focus:ring-0 focus:border-gray-400"
+              value={searchTerm}
+              onChange={(e) => setSearchTerm(e.target.value)}
+            />
+            <span className="absolute top-1/2 left-3 transform -translate-y-1/2 text-gray-500">
+              <GoSearch size={20} />
+            </span>
+          </div>
+
         </div>
       </div>
 
