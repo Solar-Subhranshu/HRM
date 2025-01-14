@@ -41,6 +41,13 @@ function Navbars() {
     navigate('/layout/Registrationform')
   }
 
+  const handleManualPunchClick = ()=>{
+    navigate('/layout/manualpunch')
+  }
+  
+  const handleDailyUpdateClick = ()=>{
+    navigate('/layout/dailyreportcomponent')
+  }
   return (
     <div className="shadow-md shadow-gray-400">
       <nav className="bg-white py-2 bgMainColor">
@@ -158,7 +165,7 @@ function Navbars() {
               <div className="absolute text-left left-0 bg-white text-black shadow-lg rounded-sm z-10 inline-block ">
                 <ul className="">
                   <li className="hover:bg-gray-200 py-1 px-2 rounded border-b-2" >
-                    <a href="#">Daily Update</a>
+                    <a href="" onClick={handleDailyUpdateClick}>Daily Update</a>
                   </li>
                   <li className="hover:bg-gray-200 py-1 px-2 rounded">
                     <a href="#" >Daily Present</a>
@@ -233,8 +240,8 @@ function Navbars() {
             {isDropdownOpen[4] &&(
                <div className="absolute text-left left-0 bg-white text-black shadow-lg rounded-sm z-10 inline-block ">
                <ul className="">
-                 <li className="hover:bg-gray-200 py-1 px-2 rounded border-b-2" >
-                   <a href="#" className="whitespace-nowrap">User Manager</a>
+                 <li  className="hover:bg-gray-200 py-1 px-2 rounded border-b-2" >
+                   <a onClick={handleManualPunchClick} href="" className="whitespace-nowrap">User Manager</a>
                  </li>
                  <li className="hover:bg-gray-200 py-1 px-2 rounded">
                    <a href="#" className="whitespace-nowrap">Change Password</a>
