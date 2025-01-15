@@ -55,8 +55,17 @@ const registerEmployee = async(req,res)=>{
         }=req.body;
         
         //checking necessary input fields
-        if(!employeeCode ||!name ||!father_husbandName || !dateOfBirth || !personalPhoneNum ||!personalEmail ||!panCard||!aadharCard
-            ||!permanentAddress ||!permanentPinCode ||!currentAddress ||!currentPinCode ||!company||!department||!designation||!joiningDate || !workType || !shift || !officeTimePolicy || !aadharCardAttachment || !panCardAttachment || !bankAttachment || !joiningFormAttachment || !otherAttachment){
+        if(!employeeCode || !name || !father_husbandName 
+            || !dateOfBirth || !personalPhoneNum || !personalEmail 
+            || !panCard || !aadharCard || !qualification || !degree
+            || !permanentAddress || !permanentPinCode ||!currentAddress 
+            || !currentPinCode || !reportingManager || !joiningHR 
+            || !joiningDate 
+            || !company || !branch || !department || !designation 
+            || !workType || !shift || !officeTimePolicy 
+            || !aadharCardAttachment || !panCardAttachment 
+            || !bankAttachment || !joiningFormAttachment 
+            || !otherAttachment){
             return res.status(400).json({
                 success:false,
                 message : "All Fields Are Required!"

@@ -11,34 +11,21 @@ const attendanceSchema = new mongoose.Schema({
         required:true
     },
     punchInTime:{
-        type:String,
+        type:Date,
         required:true
     },
     punchOutTime:{
-        type:String,
-        required:true
+        type:Date,
+        // required:true
     },
-    totalHours:{
-        type:String,
-        required:true
+    totalMinutes:{
+        type:Number,  
+        // required:true
     },
     status:{
         type:String,
-        enum:["Present","Absent","On-Leave"]
-    },
-    shift:{
-        type:mongoose.Schema.Types.ObjectId,
-        ref:"Shift",
-        required:true
-    },
-    officeTimePolicy:{
-        type:mongoose.Schema.Types.ObjectId,
-        ref:"OfficeTimePolicy",
-        required:true
-    },
-    created_By:{
-        type:mongoose.Schema.Types.ObjectId,
-        ref:"Employee"
+        enum:["Present","Absent","Work-off" ],
+        default:'Absent'
     },
     updated_By:{
         type:mongoose.Schema.Types.ObjectId,

@@ -13,6 +13,7 @@ const WorkType = require("../../models/common/workType.model");
 const generateRandomNumbers = require("../../utils/randomNumGenerator");
 const xlsx = require("xlsx");
 
+//here we are not inserting images through excel.
 const addEmployeeByExcel = async(req,res) =>{
     try {
         const JSON_Data = await excelToJSON(req.file.buffer);
