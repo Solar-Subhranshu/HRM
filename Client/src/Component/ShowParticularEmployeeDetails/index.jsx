@@ -33,7 +33,7 @@ const EmployeeDetails = () => {
       {/* <pre>{JSON.stringify(getEmployeeDetailsData, null, 2)}</pre> */}
 
       {/* First Column */}
-      <div className="w-full md:w-1/2 lg:w-1/3 p-4 bg-white rounded-lg shadow-md mb-6">
+      <div className="w-full md:w-1/2 lg:w-1/3 p-4 bg-white rounded-lg shadow-md mb-6 border-2 border-gray-500">
 
       <div className="flex justify-between ">
           <p className="text-lg font-semibold text-gray-800">Employee Name:</p>
@@ -119,7 +119,7 @@ const EmployeeDetails = () => {
       </div>
 
       {/* Second Column */}
-      <div className="w-full md:w-1/2 lg:w-1/3 p-4 bg-white rounded-lg shadow-md mb-6">
+      <div className="w-full md:w-1/2 lg:w-1/3 p-4 bg-white rounded-lg shadow-md mb-6 border-2 border-gray-500 ">
         <div className="flex justify-between">
           <p className="text-lg font-semibold text-gray-800">Bank Name:</p>
           <span className="font-normal">{getEmployeeDetailsData?.bankName}</span>
@@ -207,7 +207,7 @@ const EmployeeDetails = () => {
      
 
       {/* Images Section */}
-      <div className="w-full md:w-1/2 lg:w-1/3 p-4 bg-white rounded-lg shadow-md mb-6">
+      <div className="w-full md:w-1/2 lg:w-1/3 p-4 bg-white rounded-lg shadow-md mb-6 border-2 border-gray-500 ">
         <h2 className="text-lg font-semibold text-gray-800 mb-4">Attachments</h2>
         <div className="grid grid-cols-2 gap-4">
           {getEmployeeDetailsData.aadharCardAttachment && (

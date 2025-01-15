@@ -3,17 +3,26 @@ import Cookies from 'js-cookie';
 import { FaListUl } from "react-icons/fa6";
 import axios from 'axios';
 import { useNavigate } from 'react-router-dom';
+import { GoSearch } from "react-icons/go";
 
 function TotalEmployeeTable() {
   const navigate = useNavigate();
+
   const [selectedEmployee, setSelectedEmployee] = useState(null);
   const [allEmployeeData, setAllEmployeeData] = useState([]);
   const [selectedFile, setSelectedFile] = useState(null);
-  const [isModalOpen, setIsModalOpen] = useState(false);
+  //const [isModalOpen, setIsModalOpen] = useState(false);
   const [isActiveFilter, setIsActiveFilter] = useState(null);
   const [searchTerm, setSearchTerm] = useState("");
   const [currentPage, setCurrentPage] = useState(1);
   const [rowsPerPage] = useState(8);
+  
+  const [duplicateData, setDuplicateData] = useState([]);
+const [invalidData, setInvalidData] = useState([]);
+const [isModalOpen, setIsModalOpen] = useState(false);
+
+
+   
 
   const handleEmployeeRegisterForm = () => {
     navigate('/layout/Registrationform');
@@ -93,29 +102,79 @@ function TotalEmployeeTable() {
     fetchAllEmployeeData();
   }, [isActiveFilter]);
 
+
+  
+  //  import form excel 
   const handleFileUpload = async () => {
     if (!selectedFile) {
       alert("Please select a file to upload.");
       return;
     }
-    
+  
     const formData = new FormData();
     formData.append("file", selectedFile);
-
+  
+    console.log("my form data", formData);
+  
+    console.log("Sending file upload request");
+  
     try {
-      const response = await axios.post("http://localhost:8000/auth/importExcel", formData, {
+      const response = await axios.post("http://localhost:8000/auth/add-byExcel", formData, {
         headers: {
           "Content-Type": "multipart/form-data",
         },
       });
-      alert(response.data.message || "File imported successfully!");
-      setIsModalOpen(false);
-      fetchAllEmployeeData();
+  
+      console.log("Response status:", response.status); 
+
+      console.log("Response data:", response.data);
+  
+      const { success, message, invalid_data, duplicate_data } = response.data;
+  
+      console.log("Success:", success); 
+      
+      console.log("Message:", message); 
+  
+      if (!success || message === "The uploaded excel does not have any valid insertable entry.") {
+        navigate('/layout/invalid-duplicate-data', {
+          state: {
+            duplicateData: duplicate_data || [],  // Ensure default empty array
+            invalidData: invalid_data || [],      // Ensure default empty array
+          },
+        });
+      } else {
+        alert(message || "File imported successfully!");
+      }
+  
+      fetchAllEmployeeData(); // Refresh employee data
     } catch (error) {
-      console.error("Error uploading file:", error);
-      alert("Error: Unable to import the file.");
+      // Default empty array if the variables are not available in the error case
+      const { duplicate_data = [], invalid_data = [] } = error.response?.data || {};
+  
+      if (error.response?.data?.message) {
+        alert(`Error: ${error.response.data.message}`);
+      } else {
+        console.error("Error uploading file:", error);
+        alert("Error: Unable to import the file.");
+      }
+  
+      // Navigate to the error page with fallback empty arrays
+      navigate('/layout/invalid-duplicate-data', {
+        state: {
+          duplicateData: duplicate_data,
+          invalidData: invalid_data,
+        },
+      });
     }
   };
+  
+  
+
+
+  
+
+  
+  
 
   const formatDate = (dateString) => {
     const date = new Date(dateString);
@@ -148,26 +207,34 @@ function TotalEmployeeTable() {
           <FaListUl size={24} />
           <h4 className="text-white">List of Employee (Total Employee)</h4>
         </div>
-        <div className="flex gap-4 items-center">
+        <div className="flex gap-3 items-center">
           <button
             onClick={() => setIsActiveFilter(true)}
-            className={`px-8 py-2 ${isActiveFilter === true ? 'bg-green-700' : 'bg-green-600'} text-white font-semibold rounded-lg shadow-md hover:bg-green-700 transition-all`}
+            className={`px-6 py-2 ${isActiveFilter === true ? 'bg-green-700' : 'bg-green-600'} text-white font-semibold rounded-lg shadow-md hover:bg-green-700 transition-all`}
           >
             Active
           </button>
           <button
             onClick={() => setIsActiveFilter(false)}
-            className={`px-8 py-2 ${isActiveFilter === false ? 'bg-red-700' : 'bg-red-600'} text-white font-semibold rounded-lg shadow-md hover:bg-red-700 transition-all`}
+            className={`px-4 py-2 ${isActiveFilter === false ? 'bg-red-700' : 'bg-red-600'} text-white font-semibold rounded-lg shadow-md hover:bg-red-700 transition-all`}
           >
             Resigned Staff
           </button>
-          <input
-            type="text"
-            placeholder="Search by Name or Code"
-            className="px-4 py-2 border rounded-xl"
-            value={searchTerm}
-            onChange={(e) => setSearchTerm(e.target.value)}
-          />
+
+          {/* search bar section */}
+          <div className="relative  max-w-md mx-auto">
+            <input
+              type="text"
+              placeholder="Search by Name or Code"
+              className=" pl-10 mr-2 pr-4 py-2 border border-gray-300 rounded-3xl text-gray-800 focus:outline-none focus:ring-0 focus:border-gray-400"
+              value={searchTerm}
+              onChange={(e) => setSearchTerm(e.target.value)}
+            />
+            <span className="absolute top-1/2 left-3 transform -translate-y-1/2 text-gray-500">
+              <GoSearch size={20} />
+            </span>
+          </div>
+
         </div>
       </div>
 
@@ -322,7 +389,9 @@ function TotalEmployeeTable() {
           </div>
         </div>
       )}
-
+      
+      
+      
     </div>
   );
 }
