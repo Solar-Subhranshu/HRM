@@ -78,7 +78,7 @@ const downloadDailyReport = async(req,res)=>{
         });
         
         //selected employee
-        if(empArr && Array.isArray(empArr)){
+        if(empArr && Array.isArray(empArr) && empArr.length!=0){
             let generalData = responseRecord.filter((record) => {
                 return empArr.some((emp) => {
                     return (emp._id === record.employeeId._id.toString())
