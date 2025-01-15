@@ -6,8 +6,8 @@ const xlsx = require("xlsx");
 
 function calcLate(shiftStartTime,punchInTime){
 
-    console.log("shiftStartTime ",shiftStartTime);
-    console.log("punchInTime ",punchInTime);
+    // console.log("shiftStartTime ",shiftStartTime);
+    // console.log("punchInTime ",punchInTime);
     if(shiftStartTime=="" || (shiftStartTime instanceof Date))
     {return `00:00`}
 
