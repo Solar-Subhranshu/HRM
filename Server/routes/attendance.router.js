@@ -14,6 +14,6 @@ router.get("/view-attendance",attendanceController.viewAttendance);
 router.post("/add-manualEntry",tokenVerify,manualPunchController.addManualPunch);
 
 //reports
-router.get("/daily-report-download",reportController.downloadDailyReport);
+router.post("/daily-report-download",reportController.downloadDailyReport);
 
 module.exports = router;
