@@ -15,6 +15,8 @@ function DailyReport() {
   const [selectAll, setSelectAll] = useState(false);
   const [fewSelect, setFewSelect] = useState(false);
   const [selectedEmployees, setSelectedEmployees] = useState([]);
+  const [selectedDate, setSelectedDate] = useState("");
+  const [reportType, setReportType] = useState("");
 
   const fetchAllEmployeeNameWithId = async () => {
     try {
@@ -61,6 +63,107 @@ function DailyReport() {
     }
   };
 
+ 
+  
+  // const handleShowReport = async () => {
+  //   if (!selectedDate || !reportType) {
+  //     alert("Please select a date and report type.");
+  //     return;
+  //   }
+  
+  //   const empArr = selectedEmployees.map((id) => ({ _id: id }));
+  
+  //   const data = {
+  //     date: selectedDate,
+  //     reportType,
+  //     empArr: empArr,
+  //   };
+  
+  //   try {
+  //     const response = await axios.post("http://localhost:8000/attendance/daily-report-download", data, {
+  //       responseType: "blob", // Ensure the response is treated as a Blob
+  //     });
+  
+  //     // Create a Blob from the response data
+  //     const blob = new Blob([response.data], { type: "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet" });
+  
+  //     // Create a temporary URL for the Blob
+  //     const url = window.URL.createObjectURL(blob);
+  
+  //     // Create a temporary anchor element to trigger the download
+  //     const link = document.createElement("a");
+  //     link.href = url;
+  //     link.setAttribute("download", `Daily_Report_${selectedDate}.xlsx`); // Set the file name
+  //     document.body.appendChild(link);
+  //     link.click();
+  
+  //     // Clean up the temporary URL and anchor element
+  //     link.parentNode.removeChild(link);
+  //     window.URL.revokeObjectURL(url);
+  
+  //     alert("Report successfully downloaded.");
+  //   } catch (error) {
+  //     console.error("Error downloading report:", error);
+  //     alert("Failed to download the report.");
+  //   }
+  // };
+  
+
+  const handleShowReport = async () => {
+    if (!selectedDate || !reportType) {
+      alert("Please select a date and report type.");
+      return;
+    }
+  
+    const empArr = selectedEmployees.map((id) => ({ _id: id }));
+  
+    const data = {
+      date: selectedDate,
+      reportType,
+      empArr: empArr,
+    };
+  
+    try {
+      const response = await axios.post("http://localhost:8000/attendance/daily-report-download", data, {
+        responseType: "blob", // Ensure the response is treated as a Blob
+      });
+  
+      // Create a Blob from the response data
+      const blob = new Blob([response.data], { type: "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet" });
+  
+      // Dynamically generate the file name
+      const formattedDate = selectedDate.replace(/-/g, "_"); // Replace dashes with underscores
+      const fileName = `${reportType}_Entries_${formattedDate}.xlsx`;
+  
+      // Create a temporary URL for the Blob
+      const url = window.URL.createObjectURL(blob);
+  
+      // Create a temporary anchor element to trigger the download
+      const link = document.createElement("a");
+      link.href = url;
+      link.setAttribute("download", fileName); // Use the dynamic file name
+      document.body.appendChild(link);
+      link.click();
+  
+      // Clean up the temporary URL and anchor element
+      link.parentNode.removeChild(link);
+      window.URL.revokeObjectURL(url);
+
+      // Reset fields
+    setSelectedDate("");
+    setReportType("");
+    setSelectedEmployees([]);
+    setSelectAll(false);
+    setFewSelect(false);
+  
+      alert("Report successfully downloaded.");
+    } catch (error) {
+      console.error("Error downloading report:", error);
+      alert("Failed to download the report.");
+    }
+  };
+  
+
   useEffect(() => {
     fetchAllEmployeeNameWithId();
   }, []);
@@ -80,6 +183,8 @@ function DailyReport() {
               <label>Report Date</label>
               <input
                 type="date"
+                value={selectedDate} // Bind the input value to the state
+                onChange={(e) => setSelectedDate(e.target.value)}
                 className="w-full rounded-md border py-2 px-6 focus:outline-none focus:ring-2 focus:ring-purple-500"
               />
             </div>
@@ -149,24 +254,24 @@ function DailyReport() {
         {/* all check box  Section */}
         <div className="flex ml-8 justify-between w-full mr-8 mt-4">
           <div className="ml-8 gap-1 flex">
-            <input type="checkbox" />
+            <input type="checkbox" checked={reportType === "Absent"} onChange={() => setReportType("Absent")} />
             <label>Absent Report</label>
           </div>
 
           <div className="gap-1 flex">
-            <input type="checkbox" />
+            <input type="checkbox" checked={reportType === "Present"} onChange={() => setReportType("Present")} />
             <label>Present Report</label>
           </div>
 
           <div className="mr-12 flex gap-1">
-            <input type="checkbox" />
+            <input type="checkbox" checked={reportType === "Mis-Punch"} onChange={() => setReportType("Mis-Punch")} />
             <label>Mis-Punch Report</label>
           </div>
         </div>
 
         {/* button part  */}
         <div className="mt-6 flex gap-6 mb-2">
-          <button  className="font-semibold mr-2 text-white bg-gradient-to-r from-green-400 via-green-500 to-green-600 hover:bg-gradient-to-br focus:ring-4 focus:outline-none focus:ring-green-300 dark:focus:ring-green-800  rounded-lg text-sm px-5 py-2.5 text-center me-2 mb-2">Show Report</button>
+          <button onClick={handleShowReport}  className="font-semibold mr-2 text-white bg-gradient-to-r from-green-400 via-green-500 to-green-600 hover:bg-gradient-to-br focus:ring-4 focus:outline-none focus:ring-green-300 dark:focus:ring-green-800  rounded-lg text-sm px-5 py-2.5 text-center me-2 mb-2">Show Report</button>
           <button onClick={handleCloseClick}  className="font-semibold  text-white bg-gradient-to-r from-cyan-400 via-cyan-500 to-cyan-600 hover:bg-gradient-to-br focus:ring-4 focus:outline-none focus:ring-cyan-300 dark:focus:ring-cyan-800  rounded-lg text-sm px-10 py-2.5 text-center me-2 mb-2">Close</button>
         </div>
 
