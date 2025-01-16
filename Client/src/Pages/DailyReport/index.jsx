@@ -65,50 +65,6 @@ function DailyReport() {
 
  
   
-  // const handleShowReport = async () => {
-  //   if (!selectedDate || !reportType) {
-  //     alert("Please select a date and report type.");
-  //     return;
-  //   }
-  
-  //   const empArr = selectedEmployees.map((id) => ({ _id: id }));
-  
-  //   const data = {
-  //     date: selectedDate,
-  //     reportType,
-  //     empArr: empArr,
-  //   };
-  
-  //   try {
-  //     const response = await axios.post("http://localhost:8000/attendance/daily-report-download", data, {
-  //       responseType: "blob", // Ensure the response is treated as a Blob
-  //     });
-  
-  //     // Create a Blob from the response data
-  //     const blob = new Blob([response.data], { type: "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet" });
-  
-  //     // Create a temporary URL for the Blob
-  //     const url = window.URL.createObjectURL(blob);
-  
-  //     // Create a temporary anchor element to trigger the download
-  //     const link = document.createElement("a");
-  //     link.href = url;
-  //     link.setAttribute("download", `Daily_Report_${selectedDate}.xlsx`); // Set the file name
-  //     document.body.appendChild(link);
-  //     link.click();
-  
-  //     // Clean up the temporary URL and anchor element
-  //     link.parentNode.removeChild(link);
-  //     window.URL.revokeObjectURL(url);
-  
-  //     alert("Report successfully downloaded.");
-  //   } catch (error) {
-  //     console.error("Error downloading report:", error);
-  //     alert("Failed to download the report.");
-  //   }
-  // };
-  
-
   const handleShowReport = async () => {
     if (!selectedDate || !reportType) {
       alert("Please select a date and report type.");
@@ -150,11 +106,11 @@ function DailyReport() {
       window.URL.revokeObjectURL(url);
 
       // Reset fields
-    setSelectedDate("");
-    setReportType("");
-    setSelectedEmployees([]);
-    setSelectAll(false);
-    setFewSelect(false);
+      setSelectedDate("");
+      setReportType(""); 
+      setSelectedEmployees([]);
+      setSelectAll(false);
+      setFewSelect(false);
   
       alert("Report successfully downloaded.");
     } catch (error) {
