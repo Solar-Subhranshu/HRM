@@ -13,7 +13,7 @@ const handleBase64Images = async (photos, folder) => {
         throw new Error("You can only upload up to 4 images.");
     }
 
-    const allowedFormats = ["jpeg", "jpg", "png"]; 
+    // const allowedFormats = ["jpeg", "jpg", "png","pdf"]; 
     const uploadDir = path.join(__dirname, `../uploads/${folder}`);
     
 
@@ -24,28 +24,45 @@ const handleBase64Images = async (photos, folder) => {
 
     for (const [index, base64Image] of photos.entries()) {
       // Check if the base64 image has the correct prefix for image type
-      const match = base64Image.match(/^data:image\/([a-zA-Z0-9]+);base64,/);
+      // const match = base64Image.match(/^data:image\/([a-zA-Z0-9]+|application\/pdf);base64,/);
+      // /^data:image\/([a-zA-Z0-9]+);base64,/
+      const match = base64Image.match(/^data:(image\/(jpeg|jpg|png)|application\/pdf);base64,/);
+      console.log('hi-1')
 
       if (!match) {
         throw new Error(`Image ${index + 1} does not have a valid base64 format.`);
       }
+      console.log('hi-2');
+      // console.log(match)
 
-      const ext = match[1].toLowerCase();
+      const allowedFormats = ["jpeg", "jpg", "png","pdf"];
 
+      const mimeType = match[1]; // Extract MIME type
+      const ext = mimeType.includes("image/") ? match[2] : "pdf";
+      // mimeType.toLowerCase();
+      // .split("/")[1]
+      console.log('hi-3')
       // Validate the image format
       if (!allowedFormats.includes(ext)) {
-        throw new Error(`Invalid format for image ${index + 1}. Allowed formats are jpeg, jpg, png.`);
+        throw new Error(`Invalid format for image ${index + 1}. Allowed formats are jpeg, jpg, png, pdf.`);
       }
+
+      // console.log('hi-4')
 
       const imageData = base64Image.replace(/^data:image\/\w+;base64,/, "");
       const fileName = `${Date.now()}_${index + 1}.${ext}`;
       const filePath = path.join(uploadDir, fileName);
+
+      // console.log('hi-5')
 
       try {
         // Ensure the base64 data is valid
         const buffer = Buffer.from(imageData, "base64");
         await fs.writeFile(filePath, buffer); // Write the buffer to a file
         savedFiles.push({ fileName, filePath });
+
+        // console.log('hi-6')
+
       } catch (err) {
         throw new Error(`Error writing image ${index + 1} to disk: ${err.message}`);
       }

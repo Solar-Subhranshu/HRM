@@ -13,7 +13,7 @@ const attendanceRoute = require('./routes/attendance.router');
 const PORT = process.env.PORT || 5000;
 
 app.use(cookieParser());
-app.use(express.json({limit: '5mb'}));
+app.use(express.json({limit: '20mb'}));
 app.use(cors({
     origin: true,
     credentials:true

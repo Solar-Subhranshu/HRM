@@ -1162,6 +1162,13 @@ const updateShift = async(req,res)=>{
         const employeeId=req.employeeId;
         let {_id,name,startTime,endTime,markAsAbsent,isNightShift,weekOff,maxEarlyAllowed,maxLateAllowed} = req.body ||req.query;
 
+        if(!_id){
+            return res.status(400).json({
+                success:false,
+                message:"Can't Proceed without id"
+            });
+        }
+
         if(!name ||!startTime ||!endTime ||!markAsAbsent ||!weekOff || !maxEarlyAllowed || !maxLateAllowed){
             return res.status(400).json({
                 success:false,
@@ -1270,8 +1277,23 @@ const deleteShift = async (req,res)=>{
 const addOfficeTimePolicy = async (req,res)=>{
     try {
         const employeeId=req.employeeId;
-        const {policyName,permittedLateArrival,pByTwo,absent,lateComingRule,lateArrival1,lateArrival2,lateArrival3,lateArrival4,
-            dayDeduct1,dayDeduct2,dayDeduct3,dayDeduct4,multiPunch,deductFromAttendance,deductFromLeave,continuous,disContinuous,
+        const {policyName,
+            permittedLateArrival,
+            pByTwo,
+            absent,
+            lateComingRule,
+            lateArrival1,
+            lateArrival2,
+            lateArrival3,lateArrival4,
+            dayDeduct1,
+            dayDeduct2,
+            dayDeduct3,
+            dayDeduct4,
+            multiPunch,
+            deductFromAttendance,
+            deductFromLeave,
+            continuous,
+            disContinuous,
             salaryDeductRule}=req.body || req.params;
 
 
@@ -1414,9 +1436,26 @@ const showForUpdateOfficeTimePolicy = async (req,res)=>{
 const updateOfficeTimePolicy=async (req,res)=>{
     try {
         const employeeId=req.employeeId;
-        const {_id,policyName,permittedLateArrival,pByTwo,absent,lateComingRule,lateArrival1,lateArrival2,lateArrival3,lateArrival4,
-            dayDeduct1,dayDeduct2,dayDeduct3,dayDeduct4,multiPunch,deductFromAttendance,deductFromLeave,continuous,disContinuous,
-            salaryDeductRule}=req.body ||req.query;
+        const {_id,
+                policyName,
+                permittedLateArrival,
+                pByTwo,
+                absent,
+                lateComingRule,
+                lateArrival1,
+                lateArrival2,
+                lateArrival3,
+                lateArrival4,
+                dayDeduct1,
+                dayDeduct2,
+                dayDeduct3,
+                dayDeduct4,
+                multiPunch,
+                deductFromAttendance,
+                deductFromLeave,
+                continuous,
+                disContinuous,
+                salaryDeductRule}=req.body ||req.query;
 
         if(!_id){
             return res.status(400).json({

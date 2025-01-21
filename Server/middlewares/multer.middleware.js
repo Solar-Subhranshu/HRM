@@ -26,6 +26,22 @@ const storage = multer.diskStorage({
         case 'otherAttachment':
             folderPath = 'uploads/otherAttachments';
             break;
+        case 'photoAttachment':
+            folderPath = 'uploads/photoAttachments';
+            break;
+        case 'class10Attachment':
+            folderPath = 'uploads/class10Attachments';
+            break;
+        case 'class12Attachment':
+            folderPath = 'uploads/class12Attachments';
+            break;
+        case 'graduationAttachment':
+            folderPath = 'uploads/graduationAttachments';
+            break;
+        case 'postGraduationAttachment':
+          folderPath = 'uploads/postGraduationAttachments';
+          break;
+        
         default:
             folderPath = 'uploads/others';
       }
