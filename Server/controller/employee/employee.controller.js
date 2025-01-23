@@ -775,7 +775,6 @@ module.exports = {
     showAllEmployee,
     showSingleEmployee,
     showJoiningHR,
-    addEmployeeByExcel,
     updateEmployee,
     seeEmpBackend
 };

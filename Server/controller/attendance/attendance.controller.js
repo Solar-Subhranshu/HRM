@@ -33,6 +33,13 @@ const recordAttendance = async(req,res)=>{
                         .populate("officeTimePolicy")
                         .populate("shift")
                         .select("-password -__v");
+                        
+        if(!employee.isActive){
+            return res.status(400).json({
+                success:false,
+                message:"Employee is not active anymore. Can't record attendance."
+            });
+        }
 
         console.log(employee)
         //check if the employee is eligible to mark attendance
@@ -47,16 +54,8 @@ const recordAttendance = async(req,res)=>{
             });
         }
 
-        //stop execution here for testing purpose
-        throw new Error("Execution Stopped HERE!")
-
-        if(!employee.isActive){
-            return res.status(400).json({
-                success:false,
-                message:"Employee is not active anymore. Can't record attendance."
-            });
-        }
-
+        // //stop execution here for testing purpose
+        // throw new Error("Execution Stopped HERE!")
 
         //attendance logic
         let attendanceRecord = await Attendance.findOne({
@@ -65,11 +64,21 @@ const recordAttendance = async(req,res)=>{
         });
 
         if(!attendanceRecord){
+            //check for time-policy and set penalty status if time-policy is violated.
+            let allowedIn = commonUtil.timeDurationInMinutes(employee.shift.startTime,'00:00') + commonUtil.timeDurationInMinutes(employee.officeTimePolicy.permittedLateArrival,'00:00');
+            if(commonUtil.timeDurationInMinutes(allowedIn,moment(currentTimestamp).format("HH:mm"))>0){
+                // late-in = penalty
+                if(employee.officeTimePolicy.lateComingRule){
+                    //check in for late coming rule.     
+
+                }
+            }
+
             attendanceRecord = new Attendance({
                 employeeId:employeeId,
                 date:currentDate,
                 punchInTime:currentTimestamp,
-                status:'Present',
+                // status:'Present',
             });
             const isSaved = await attendanceRecord.save();
             if(isSaved){
@@ -95,9 +104,27 @@ const recordAttendance = async(req,res)=>{
 
             attendanceRecord.punchOutTime = currentTimestamp;
 
-            const punchIn = moment(attendanceRecord.punchInTime);
-            const punchOut = moment(attendanceRecord.punchOutTime);
-            const totalMinutes = punchOut.diff(punchIn, "minutes");
+            //calculate total work minutes
+            // if punch-in is before shift time, then total work minutes will be calculated from shift-start-time.
+            // if punch-out is after shift time, then we will use shift-end-time.
+
+            let punchIn, punchOut;
+            if(commonUtil.timeDurationInMinutes(employee.shift.startTime,moment(attendanceRecord.punchInTime).format("HH:mm"))<0)
+            {
+                punchIn = employee.shift.startTime;
+            }
+            else{
+                punchIn = moment(attendanceRecord.punchInTime).format("HH:mm");
+            }
+
+            if(commonUtil.timeDurationInMinutes(employee.shift.endTime,moment(attendanceRecord.punchInTime).format("HH:mm"))>0){
+                punchOut = employee.shift.endTime;
+            }
+            else{
+                punchOut = moment(attendanceRecord.punchOutTime).format("HH:mm");
+            }
+
+            const totalMinutes = commonUtil.timeDurationInMinutes(punchIn,punchOut);
 
             attendanceRecord.totalMinutes = totalMinutes;
             attendanceRecord.updated_By= employeeId;
@@ -115,9 +142,23 @@ const recordAttendance = async(req,res)=>{
         if(employee.officeTimePolicy.multiPunch){
             attendanceRecord.punchOutTime = currentTimestamp;
 
-            const punchIn = moment(attendanceRecord.punchInTime);
-            const punchOut = moment(attendanceRecord.punchOutTime);
-            const totalMinutes = punchOut.diff(punchIn, "minutes");
+            let punchIn, punchOut;
+            if(commonUtil.timeDurationInMinutes(employee.shift.startTime,moment(attendanceRecord.punchInTime).format("HH:mm"))<0)
+            {
+                punchIn = employee.shift.startTime;
+            }
+            else{
+                punchIn = moment(attendanceRecord.punchInTime).format("HH:mm");
+            }
+
+            if(commonUtil.timeDurationInMinutes(employee.shift.endTime,moment(attendanceRecord.punchInTime).format("HH:mm"))>0){
+                punchOut = employee.shift.endTime;
+            }
+            else{
+                punchOut = moment(attendanceRecord.punchOutTime).format("HH:mm");
+            }
+
+            const totalMinutes = commonUtil.timeDurationInMinutes(punchIn,punchOut);
 
             attendanceRecord.totalMinutes = totalMinutes;
             attendanceRecord.updated_By= employeeId;

@@ -18,9 +18,20 @@ const attendanceSchema = new mongoose.Schema({
         type:Date,
         // required:true
     },
+    // to store the total valid time worked on that day.
     totalMinutes:{
         type:Number,  
         // required:true
+    },
+
+    penalty:{
+        type:{
+            isPenalized: Boolean, // True if penalty is applied
+            reason: String, // E.g., "Late Arrival", "Short Working Hours"
+            deduction: Number // Salary deduction percentage
+        },
+        
+        default: { isPenalized: false, reason: "", deduction: 0 }
     },
 
     //we will not store status statically in DB but computing it dynamically when needed,

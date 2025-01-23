@@ -170,7 +170,7 @@ const joiningFormSchema = new mongoose.Schema({
         required:true
     },
 
-    //upload qualification
+    //upload qualification 
     class10Attachment:{
         type:String
     },
