@@ -33,14 +33,14 @@ const attendanceSchema = new mongoose.Schema({
         
         default: { isPenalized: false, reason: "", deduction: 0 }
     },
-
-    //we will not store status statically in DB but computing it dynamically when needed,
+    
+    
     //so that we do not need to keep updating the DB when changes occur in office-policy and shift timings 
-    // status:{
-    //     type:String,
-    //     enum:["Present","Absent","Work-off","P/2","On-Leave"],
-    //     default:'Absent'
-    // },
+    status:{
+        type:String,
+        enum:["Present","Absent","Work-off","P/2","On-Leave"],
+        default:'Absent'
+    },
     
     updated_By:{
         type:mongoose.Schema.Types.ObjectId,
