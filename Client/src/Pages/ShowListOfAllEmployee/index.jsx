@@ -11,15 +11,15 @@ function TotalEmployeeTable() {
   const [selectedEmployee, setSelectedEmployee] = useState(null);
   const [allEmployeeData, setAllEmployeeData] = useState([]);
   const [selectedFile, setSelectedFile] = useState(null);
-  //const [isModalOpen, setIsModalOpen] = useState(false);
+
   const [isActiveFilter, setIsActiveFilter] = useState(null);
   const [searchTerm, setSearchTerm] = useState("");
   const [currentPage, setCurrentPage] = useState(1);
   const [rowsPerPage] = useState(8);
   
   const [duplicateData, setDuplicateData] = useState([]);
-const [invalidData, setInvalidData] = useState([]);
-const [isModalOpen, setIsModalOpen] = useState(false);
+  const [invalidData, setInvalidData] = useState([]);
+  const [isModalOpen, setIsModalOpen] = useState(false);
 
 
    
@@ -169,13 +169,6 @@ const [isModalOpen, setIsModalOpen] = useState(false);
   };
   
   
-
-
-  
-
-  
-  
-
   const formatDate = (dateString) => {
     const date = new Date(dateString);
     return date.toLocaleDateString();
@@ -201,11 +194,11 @@ const [isModalOpen, setIsModalOpen] = useState(false);
 
 
   return (
-    <div className="ml-2 mr-2 flex flex-col mt-4 ">
-      <div className="sticky top-0 bgMainColor flex py-4 pl-1 gap-3 justify-between z-6 rounded-md">
+    <div className="ml-2 mr-2 flex flex-col mt-2 md:mt-4 ">
+      <div className="sticky top-0 bgMainColor flex py-4 pl-1 gap-3 justify-between z-6 rounded-md ">
         <div className="flex flex-row pl-2 gap-4">
           <FaListUl size={24} />
-          <h4 className="text-white">List of Employee (Total Employee)</h4>
+          <h4 className="text-white ">List of Employee (Total Employee)</h4>
         </div>
         <div className="flex gap-3 items-center">
           <button
@@ -216,7 +209,7 @@ const [isModalOpen, setIsModalOpen] = useState(false);
           </button>
           <button
             onClick={() => setIsActiveFilter(false)}
-            className={`px-4 py-2 ${isActiveFilter === false ? 'bg-red-700' : 'bg-red-600'} text-white font-semibold rounded-lg shadow-md hover:bg-red-700 transition-all`}
+            className={`px-4 py-2 ${isActiveFilter === false ? 'bg-red-700' : 'bg-red-600'} text-white font-normal  md:font-semibold rounded-lg shadow-md hover:bg-red-700 transition-all`}
           >
             Resigned Staff
           </button>
@@ -226,7 +219,7 @@ const [isModalOpen, setIsModalOpen] = useState(false);
             <input
               type="text"
               placeholder="Search by Name or Code"
-              className=" pl-10 mr-2 pr-4 py-2 border border-gray-300 rounded-3xl text-gray-800 focus:outline-none focus:ring-0 focus:border-gray-400"
+              className=" pl-10 mr-2 pr-4 py-2 border border-gray-300 rounded-md text-gray-800 focus:outline-none focus:ring-0 focus:border-gray-400"
               value={searchTerm}
               onChange={(e) => setSearchTerm(e.target.value)}
             />
@@ -238,8 +231,8 @@ const [isModalOpen, setIsModalOpen] = useState(false);
         </div>
       </div>
 
-      <div className=" flex-1  overflow-auto min-h-[calc(100%-167px)]">
-        <table className="table-auto w-full border border-black text-sm ">
+      <div className=" flex-1  overflow-auto h-[calc(100vh-14rem)] relative">
+        <table className="table-auto w-full border border-black text-sm relative">
           <thead className="bg-gray-200">
             <tr>
               <th className="text-blue-600 border border-black px-2 py-1">Select</th>
@@ -253,7 +246,7 @@ const [isModalOpen, setIsModalOpen] = useState(false);
               ))}
             </tr>
           </thead>
-          <tbody>
+          <tbody className=''>
             {currentRows.map((employee) => (
               <tr key={employee._id} className="hover:bg-gray-200" 
                 onClick={() => {
@@ -293,7 +286,7 @@ const [isModalOpen, setIsModalOpen] = useState(false);
                     ["aadharCardAttachment", "panCardAttachment", "bankAttachment", "joiningFormAttachment", "otherAttachment"].includes(col.key)
                   ) {
                     return (
-                      <td key={col.key} className="border border-black px-2 py-1 text-left">
+                      <td key={col.key} className="border  border-black px-2 py-1 text-left">
                         {value !== "N/A" && value ? (
                           <img
                             src={value}
