@@ -1162,6 +1162,13 @@ const updateShift = async(req,res)=>{
         const employeeId=req.employeeId;
         let {_id,name,startTime,endTime,markAsAbsent,isNightShift,weekOff,maxEarlyAllowed,maxLateAllowed} = req.body ||req.query;
 
+        if(!_id){
+            return res.status(400).json({
+                success:false,
+                message:"Can't Proceed without id"
+            });
+        }
+
         if(!name ||!startTime ||!endTime ||!markAsAbsent ||!weekOff || !maxEarlyAllowed || !maxLateAllowed){
             return res.status(400).json({
                 success:false,
@@ -1270,9 +1277,29 @@ const deleteShift = async (req,res)=>{
 const addOfficeTimePolicy = async (req,res)=>{
     try {
         const employeeId=req.employeeId;
-        const {policyName,permittedLateArrival,pByTwo,absent,lateComingRule,lateArrival1,lateArrival2,lateArrival3,lateArrival4,
-            dayDeduct1,dayDeduct2,dayDeduct3,dayDeduct4,multiPunch,deductFromAttendance,deductFromLeave,continuous,disContinuous,
-            salaryDeductRule}=req.body || req.params;
+        const {policyName,
+            permittedLateArrival,
+            pByTwo,
+            absent,
+            multiPunch,
+            lateComingRule,
+        }=req.body;
+
+        let { lateArrival1,
+            lateArrival2,
+            lateArrival3,
+            lateArrival4,
+            dayDeduct1,
+            dayDeduct2,
+            dayDeduct3,
+            dayDeduct4,
+
+            deductFromAttendance,
+            deductFromLeave,
+            allowedLateDaysInMonth,
+            salaryCutPercentage,
+            continuous,
+        }=req.body;
 
 
         if(!policyName || !permittedLateArrival ||!pByTwo || !absent){
@@ -1301,44 +1328,104 @@ const addOfficeTimePolicy = async (req,res)=>{
             });
         }
 
+        //imp- validation
+        //check for late-coming rule
+        if(lateComingRule){
+            //check all the fields required in lateComingRule
+            if( !allowedLateDaysInMonth || !salaryCutPercentage){
+                return res.status(400).json({
+                    success:false,
+                    message:"If late coming setting is enabled then late days allowed and salary cut percentage is required."
+                });
+            }
+
+            if(!deductFromLeave && !deductFromAttendance){
+                return res.status(400).json({
+                    success:false,
+                    message:"If late coming setting is enabled then either of deduct from attendance or deduct from leave is required."
+                });
+            }
+
+            if(deductFromAttendance && deductFromLeave){
+                return res.status(400).json({
+                    success:false,
+                    message:"If late coming setting is enabled then both deduct from attendance and deduct from leave can't be selected at same time."
+                });
+            }
+
+            lateArrival1=null;
+            lateArrival2=null;
+            lateArrival3=null;
+            lateArrival4=null;
+
+            dayDeduct1=null;
+            dayDeduct2=null;
+            dayDeduct3=null;
+            dayDeduct4=null;
+        }
+
+        if(lateArrival1 || lateArrival2 || lateArrival3 || lateArrival4){
+            deductFromAttendance=false;
+            deductFromLeave=false;
+            allowedLateDaysInMonth=null;
+            salaryCutPercentage=null;
+            continuous=false;
+
+            if(lateArrival1 && (helper.timeDurationInMinutes('00:00',lateArrival1)>59)){
+                return res.status(400).json({
+                    success:false,
+                    message:"Late Rule 1 can not have time more than 59 minutes"
+                });
+            }
+            if(lateArrival2 && ((60>helper.timeDurationInMinutes('00:00',lateArrival2))||(helper.timeDurationInMinutes('00:00',lateArrival2)>120))){
+                console.log(helper.timeDurationInMinutes('00:00',lateArrival2));
+                return res.status(400).json({
+                    success:false,
+                    message:"Late Rule 2 can not have time more than 2 hrs and less than 1 hr"
+                });
+            }
+            if(lateArrival3 && ((120>helper.timeDurationInMinutes('00:00',lateArrival3))||(helper.timeDurationInMinutes('00:00',lateArrival3)>180))){
+                console.log(120<helper.timeDurationInMinutes('00:00',lateArrival3)<180)
+                return res.status(400).json({
+                    success:false,
+                    message:"Late Rule 3 can not have time more than 3 hrs and less than 2 hr"
+                });
+            }
+            if(lateArrival4 && ((1>helper.timeDurationInMinutes('00:00',lateArrival4)) || (helper.timeDurationInMinutes('00:00',lateArrival4)>240))){
+                return res.status(400).json({
+                    success:false,
+                    message:"Late Rule 4 can not have time more than 4 hrs and less than 1 min"
+                });
+            }
+        }
+
         const newPolicy= new OfficeTimePolicy({
             policyName,
             permittedLateArrival,
             pByTwo,
-            absent,lateComingRule,lateArrival1,lateArrival2,lateArrival3,lateArrival4,
-            dayDeduct1,dayDeduct2,dayDeduct3,dayDeduct4,multiPunch,deductFromAttendance,deductFromLeave,continuous,disContinuous,
+            absent,
+            multiPunch,
+
+            lateArrival1,
+            lateArrival2,
+            lateArrival3,
+            lateArrival4,
+            
+            dayDeduct1,
+            dayDeduct2,
+            dayDeduct3,
+            dayDeduct4,
+
+            lateComingRule,
+            deductFromAttendance,
+            deductFromLeave,
+            allowedLateDaysInMonth,
+            salaryCutPercentage,
+            continuous,
             created_By:employeeId
         });
 
-        await newPolicy.save()
-        .then(async (response,error)=> {
-            if(response){
-                if(salaryDeductRule){
-                    // const OfficeTimePolicyId = response._id;
-                    salaryDeductRule.forEach(obj =>{
-                        obj.OfficeTimePolicyId = response._id;
-                    });
-
-                    // console.log(salaryDeductRule);
-                    await SalaryDeductRule.insertMany(salaryDeductRule)
-                    .then((response,err)=>{
-                        if(err){
-                            return res.status(401).json({
-                                success:false,
-                                message:"Something Went wrong while saving data, try later."
-                            });
-                        }
-                    })
-                }
-            }
-            if(error){
-                return res.status(401).json({
-                    success:false,
-                    message:"New office time policy not saved!",
-                    error: error.message
-                });
-            }
-        });
+        await newPolicy.save();
 
         return res.status(200).json({
             success:true,
@@ -1380,26 +1467,17 @@ const showForUpdateOfficeTimePolicy = async (req,res)=>{
         }     
         const response = await OfficeTimePolicy.findById({_id:policyId}).select("-created_By -createdAt -updatedAt -__v");
 
-        const policyData = response.toObject();
-
-        if(!policyData){
+        if(!response){
             return res.status(400).json({
                 success:false,
                 message : "Policy Data Not Found"
             });
         }
-        const salaryDeductData = await SalaryDeductRule.find({OfficeTimePolicyId : policyId}).select("-__v");
-        // console.log("Salary Deduct Data Fetched ",salaryDeductData);
-
-        policyData.salaryDeduct = salaryDeductData;
-
-        // console.log(policyData);
-        // console.log(policyData.salaryDeduct);
 
         return res.status(200).json({
             success:true,
-            message: `Policy details for ${policyData.policyName}`,
-            data:policyData,
+            message: `Policy details for ${response.policyName}`,
+            data:response.toObject(),
                 
         });
 
@@ -1414,9 +1492,29 @@ const showForUpdateOfficeTimePolicy = async (req,res)=>{
 const updateOfficeTimePolicy=async (req,res)=>{
     try {
         const employeeId=req.employeeId;
-        const {_id,policyName,permittedLateArrival,pByTwo,absent,lateComingRule,lateArrival1,lateArrival2,lateArrival3,lateArrival4,
-            dayDeduct1,dayDeduct2,dayDeduct3,dayDeduct4,multiPunch,deductFromAttendance,deductFromLeave,continuous,disContinuous,
-            salaryDeductRule}=req.body ||req.query;
+        const {_id,
+                policyName,
+                permittedLateArrival,
+                pByTwo,
+                absent,
+                multiPunch,
+                lateComingRule,
+        }=req.body;
+        let {lateArrival1,
+                lateArrival2,
+                lateArrival3,
+                lateArrival4,
+                dayDeduct1,
+                dayDeduct2,
+                dayDeduct3,
+                dayDeduct4,
+
+                deductFromAttendance,
+                deductFromLeave,
+                allowedLateDaysInMonth,
+                salaryCutPercentage,
+                continuous,
+            }=req.body;
 
         if(!_id){
             return res.status(400).json({
@@ -1441,35 +1539,101 @@ const updateOfficeTimePolicy=async (req,res)=>{
              });
          }
 
+         //imp- validation
+        //check for late-coming rule
+        if(lateComingRule){
+            //check all the fields required in lateComingRule
+            if( !allowedLateDaysInMonth || !salaryCutPercentage){
+                return res.status(400).json({
+                    success:false,
+                    message:"If late coming setting is enabled then late days allowed and salary cut percentage is required."
+                });
+            }
+
+            if(!deductFromLeave && !deductFromAttendance){
+                return res.status(400).json({
+                    success:false,
+                    message:"If late coming setting is enabled then either of deduct from attendance or deduct from leave is required."
+                });
+            }
+
+            if(deductFromAttendance && deductFromLeave){
+                return res.status(400).json({
+                    success:false,
+                    message:"If late coming setting is enabled then both deduct from attendance and deduct from leave can't be selected at same time."
+                });
+            }
+
+            lateArrival1=null;
+            lateArrival2=null;
+            lateArrival3=null;
+            lateArrival4=null;
+
+            dayDeduct1=null;
+            dayDeduct2=null;
+            dayDeduct3=null;
+            dayDeduct4=null;
+        }
+
+        if(lateArrival1 || lateArrival2 || lateArrival3 || lateArrival4){
+            deductFromAttendance=false;
+            deductFromLeave=false;
+            allowedLateDaysInMonth=null;
+            salaryCutPercentage=null;
+            continuous=false;
+
+            if(lateArrival1 && (helper.timeDurationInMinutes('00:00',lateArrival1)>59)){
+                return res.status(400).json({
+                    success:false,
+                    message:"Late Rule 1 can not have time more than 59 minutes"
+                });
+            }
+            if(lateArrival2 && ((60>helper.timeDurationInMinutes('00:00',lateArrival2))||(helper.timeDurationInMinutes('00:00',lateArrival2)>120))){
+                console.log(helper.timeDurationInMinutes('00:00',lateArrival2));
+                return res.status(400).json({
+                    success:false,
+                    message:"Late Rule 2 can not have time more than 2 hrs and less than 1 hr"
+                });
+            }
+            if(lateArrival3 && ((120>helper.timeDurationInMinutes('00:00',lateArrival3))||(helper.timeDurationInMinutes('00:00',lateArrival3)>180))){
+                console.log(120<helper.timeDurationInMinutes('00:00',lateArrival3)<180)
+                return res.status(400).json({
+                    success:false,
+                    message:"Late Rule 3 can not have time more than 3 hrs and less than 2 hr"
+                });
+            }
+            if(lateArrival4 && ((1>helper.timeDurationInMinutes('00:00',lateArrival4)) || (helper.timeDurationInMinutes('00:00',lateArrival4)>240))){
+                return res.status(400).json({
+                    success:false,
+                    message:"Late Rule 4 can not have time more than 4 hrs and less than 1 min"
+                });
+            }
+        }
+
         await OfficeTimePolicy.findByIdAndUpdate({_id:_id},{
-            policyName,permittedLateArrival,pByTwo,absent,lateComingRule,lateArrival1,lateArrival2,lateArrival3,lateArrival4,
-            dayDeduct1,dayDeduct2,dayDeduct3,dayDeduct4,multiPunch,deductFromAttendance,deductFromLeave,continuous,disContinuous,
+            policyName,
+            permittedLateArrival,
+            pByTwo,
+            absent,
+            multiPunch,
+
+            lateArrival1,
+            lateArrival2,
+            lateArrival3,
+            lateArrival4,
+            dayDeduct1,
+            dayDeduct2,
+            dayDeduct3,
+            dayDeduct4,
+
+            lateComingRule,
+            deductFromAttendance,
+            deductFromLeave,
+            allowedLateDaysInMonth,
+            salaryCutPercentage,
+            continuous,
             updated_By:employeeId
         },{new:true})
-        .then(async (response)=>{
-            console.log('policy updated!');
-            if (salaryDeductRule && Array.isArray(salaryDeductRule)) {
-                const updates = salaryDeductRule.map(rule => ({
-                    updateOne: {
-                        filter: { OfficeTimePolicyId: response._id, _id: rule._id },
-                        update: { $set: rule },
-                    }
-                }));
-            
-                await SalaryDeductRule.bulkWrite(updates)
-                    .then((bulkResponse) => {
-                        console.log("SalaryDeductRule update successful", bulkResponse);
-                    })
-                    .catch((error) => {
-                        return res.status(401).json({
-                            success: false,
-                            message: "Error updating SalaryDeductRule data",
-                            error: error.message,
-                        });
-                    });
-            }
-            
-        })
 
         return res.status(200).json({
             success:true,
@@ -1535,7 +1699,6 @@ const deleteOfficeTimePolicy = async (req,res)=>{
 
 //salaryDeduct Rule
 const showSalaryDeductRule = async(req,res)=>{
-    
     try {
         const {policyId} = req.body || req.params;
 

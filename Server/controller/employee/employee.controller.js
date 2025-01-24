@@ -194,7 +194,8 @@ const registerEmployee = async(req,res)=>{
             if(error){
                 return res.status(401).json({
                     success:false,
-                    message : "Something Went Wrong, Employee Not Registered."
+                    message : "Something Went Wrong, Employee Not Registered.",
+                    error:error
                 });
             }
         })
@@ -646,6 +647,12 @@ const updateEmployee= async(req,res)=>{
         } = req.body;
 
         // const attachedFiles=req.files;
+        if(!employeeCode){
+            return res.status(400).json({
+                success:false,
+                message:"Employee Code is Required."
+            });
+        }
         
         const employeeToUpdate= await Employee.findOne({employeeCode:employeeCode});
         if(!employeeToUpdate){
@@ -768,7 +775,6 @@ module.exports = {
     showAllEmployee,
     showSingleEmployee,
     showJoiningHR,
-    addEmployeeByExcel,
     updateEmployee,
     seeEmpBackend
 };

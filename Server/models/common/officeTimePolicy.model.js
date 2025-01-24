@@ -5,25 +5,28 @@ const officeTimePolicySchema = new mongoose.Schema({
         type:String,
         required:true
     },
-    //time
+    //time in HH:MM
     permittedLateArrival:{
         type:String,
         required:true
     },
-    //time
+    //time in HH:MM
     absent:{
         type:String,
         required:true
     },
-    //time
+    //time in HH:MM 
     pByTwo:{
         type:String,
         required:true
     },
-    lateComingRule:{
+    
+    multiPunch:{
         type:Boolean,
-        default:false
+        default:true
     },
+
+    //if late coming rule = false
     //time
     lateArrival1:{
         type: String,
@@ -52,11 +55,12 @@ const officeTimePolicySchema = new mongoose.Schema({
     dayDeduct4:{
         type:Number
     },
-    multiPunch:{
+
+    //if (late comming setting) = true 
+    lateComingRule:{
         type:Boolean,
         default:false
     },
-
     deductFromAttendance:{
         type:Boolean,
         default:false
@@ -65,14 +69,20 @@ const officeTimePolicySchema = new mongoose.Schema({
         type:Boolean,
         default:false
     },
+    allowedLateDaysInMonth:{
+        type:Number
+    },
+    salaryCutPercentage:{
+        type:Number
+    },
     continuous:{
         type:Boolean,
         default:false
     },
-    disContinuous:{
-        type:Boolean,
-        default:false
-    },
+    // disContinuous:{
+    //     type:Boolean,
+    //     default:false
+    // },
     created_By:{
         type : mongoose.Schema.Types.ObjectId,
         ref : "Employee"

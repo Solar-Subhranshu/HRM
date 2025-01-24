@@ -1,5 +1,5 @@
 const employeeController= require("../controller/Employee/employee.controller");
-
+const joiningFormController = require("../controller/joiningForm/joiningForm.controller");
 const {addEmployeeByExcel} = require("../controller/Employee/addEmployeeBYExcel");
     
 const router = require("express").Router();
@@ -34,6 +34,20 @@ router.get("/showSingleEmployee",employeeController.showSingleEmployee);
 
 router.post("/login",employeeController.login);
 
-router.get("/show-joining-HR",employeeController.showJoiningHR)
+router.get("/show-joining-HR",employeeController.showJoiningHR);
+
+//joining form
+router.post("/add-joiningForm",upload.fields([
+    { name: 'aadharCardAttachment', maxCount: 1 },
+    { name: 'panCardAttachment', maxCount: 1 },
+    { name: 'bankAttachment', maxCount: 1 },
+    { name: 'joiningFormAttachment', maxCount: 1 },
+    { name: 'photoAttachment', maxCount: 1 },
+    { name: 'class10Attachment', maxCount: 1 },
+    { name: 'class12Attachment', maxCount: 1 },
+    { name: 'graduationAttachment', maxCount: 1 },
+    { name: 'postGraduationAttachment', maxCount: 1 },
+]),joiningFormController.addJoiningForm);
+router.get("/show-joiningFormData",joiningFormController.showJoiningFormData);
 
 module.exports = router;

@@ -20,6 +20,7 @@ const shiftSchema = new mongoose.Schema({
     markAsAbsent :{
         type:String,
         enum :["AAA","L-WO-L"],
+        default:'L-WO-L'
     },
     isNightShift:{
         type:Boolean,

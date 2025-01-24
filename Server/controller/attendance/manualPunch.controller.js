@@ -15,8 +15,16 @@ const addManualPunch = async(req,res)=>{
                 message:"Selecting Employee-Id, Date, Manual Punch-in and Punch-out Required!"
             });
         }
+
+        const isExisting = await ManualPunch.findOne({employeeId,date});
+        if(isExisting){
+            return res.status(400).json({
+                success:false,
+                message:"Manual Punch for this Employee on this date already exist. So, you can not add for same date and employee, but you may update it."
+            });
+        }
+
         const attendanceRecord = await Attendance.findOne({employeeId,date}).lean();
-        
         // console.log(attendanceRecord);
 
         if(attendanceRecord){
@@ -24,34 +32,19 @@ const addManualPunch = async(req,res)=>{
             const prevPunchInTime = attendanceRecord.punchInTime;
             const prevPunchOutTime = attendanceRecord.punchOutTime;
             
-            console.log("Hi-1");
-            
             // manipulating attendance record
             attendanceRecord.punchInTime = manualPunchInTime;
             attendanceRecord.punchOutTime = manualPunchOutTime;
 
-            console.log("Hi-1.2",typeof(attendanceRecord.punchInTime));
-            console.log("Hi-1.2",attendanceRecord.punchInTime);
-
             const punchIn = moment(`${attendanceRecord.punchInTime}`);
-            console.log("Hi-1.2.1");
             const punchOut = moment(attendanceRecord.punchOutTime);
-
-            console.log("Hi-1.3");
             const totalMinutes = punchOut.diff(punchIn, "minutes");
-
-            console.log("Hi-2");
 
             attendanceRecord.totalMinutes = totalMinutes;
             //spicy
             attendanceRecord.updated_By= empID;
 
-            console.log("Hi-3");
-            return;
-            
             const isRecordSaved = await attendanceRecord.save();
-            // console.log(isRecordSaved)
-            console.log("Hi-4");
 
             if(isRecordSaved){
                 // saving manual-entry
@@ -88,7 +81,7 @@ const addManualPunch = async(req,res)=>{
                 date,
                 punchInTime : manualPunchInTime,
                 punchOutTime : manualPunchOutTime,
-                status:"Present",
+                // status:"Present",
                 totalMinutes,
                 updated_By:empID
             });
@@ -127,6 +120,98 @@ const addManualPunch = async(req,res)=>{
 
 }
 
+const viewManualPunchEnteries = async(req,res)=>{
+    try {
+        let {startDate,endDate}=req.body;
+        if(!startDate || !endDate){
+            return res.status(400).json({
+                success:false,
+                message:"To-Date and From-Date required."
+            });
+        }
+
+        if(!(startDate instanceof Date) || !(endDate instanceof Date)){
+            startDate = new Date(startDate);
+            endDate = new Date(endDate);
+            console.log(startDate,endDate)
+        }
+
+        const query={
+            date:{
+                $gte: startDate, 
+                $lt: endDate
+            }
+        };
+
+        const response = await ManualPunch.find(query).lean()
+        .populate(
+            {path:"employeeId",
+             select:"name employeeCode"   
+        })
+
+        return res.status(200).json({
+            success:true,
+            message:"Records",
+            data:response || []
+        })
+
+    } catch (error) {
+        return res.status(400).json({
+            success:false,
+            message:"Internal Server Error!",
+            error:error.message
+        });
+    }
+}
+
+const deleteManualPunch = async(req,res)=>{
+    /*
+    if manual punch is deleted then set the attendance to its previous values, from manualPunch.prevPunchInTime and manualPunch.prevPunchOutTime
+    */
+    try {
+        const {manualPunchId}=req.query;
+        if(!manualPunchId){
+            return res.status(400).json({
+                success:false,
+                message:"Manual-Punch Id is required."
+            });
+        }
+
+        const isExisting = await ManualPunch.findById(manualPunchId);
+        if(isExisting){
+            const attendanceRecord = await Attendance.findById(isExisting.attendanceId);
+            if(!isExisting.prevPunchInTime){
+                // means person didn't punch 
+                //means he was absent = delete the record.
+                await Attendance.findByIdAndDelete(isExisting.attendanceId);
+            }
+            else{
+                attendanceRecord.punchInTime=isExisting.prevPunchInTime;
+                attendanceRecord.punchOutTime=isExisting.prevPunchOutTime;
+            }   
+        }
+        else{
+            throw new Error("The Manual Punch you are trying to delete does not exist in DB, maybe already deleted!")
+        }
+
+        await ManualPunch.findByIdAndDelete(manualPunchId);
+        
+        return res.status(201).json({
+            success:true,
+            message:"Manual Punch Deleted Successfuly.",
+            deletedItem:isDeleted
+        });
+    } catch (error) {
+        return res.status(500).json({
+            success:false,
+            message:"Internal Server Error",
+            error:error.message
+        });
+    }
+}
+
 module.exports = {
-    addManualPunch
+    addManualPunch,
+    viewManualPunchEnteries,
+    deleteManualPunch
 }

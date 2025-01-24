@@ -4,8 +4,8 @@ const Employee = require("../../models/auth/employee.model");
 const moment = require("moment");
 const xlsx = require("xlsx");
 
+//calculates late time (difference between shift-time and punch-in time)
 function calcLate(shiftStartTime,punchInTime){
-
     // console.log("shiftStartTime ",shiftStartTime);
     // console.log("punchInTime ",punchInTime);
     if(shiftStartTime=="" || (shiftStartTime instanceof Date))
@@ -205,6 +205,59 @@ const downloadDailyReport = async(req,res)=>{
     }
 }
 
+const downloadMonthlyReport = async(req,res)=>{
+    try {
+        // month-> "January 2025"  in this format
+        const {month}= req.body;
+        if(!month){
+            return res.status(400).json({
+                success:false,
+                message:"Month is required"
+            });
+        }
+
+        const date = new Date(month);
+        const firstDay = new Date(date.getFullYear(), date.getMonth(), 1);
+        const lastDay = new Date(date.getFullYear(), date.getMonth() + 1, 1);
+ 
+        // const employee = await Employee.find().lean();
+        const query = { date: { 
+                            $gte: firstDay, 
+                            $lt: lastDay
+                        }};
+        
+        const attendance = await Attendance.find(query)
+        .populate({
+            path:"employeeId",
+            select:"name employeeCode department designation officeTimePolicy shift"
+        })
+        .select("-createdAt -updatedAt -updated_By -__v ").lean();
+        
+        if(!attendance){
+            return res.status(400).json({
+                success:false,
+                message:"No record found."
+            });
+        }
+
+        return res.status(200).json({
+            success:true,
+            message:`Attendance Report for the month ${month}`,
+            data : attendance
+        });
+          
+
+    } catch (error) {
+        return res.status(500).json({
+            success:false,
+            message:"Internal Server Error",
+            error:error.message
+        });
+    }
+}
+
+
 module.exports = {
-    downloadDailyReport
+    downloadDailyReport,
+    downloadMonthlyReport
 }
