@@ -16,6 +16,9 @@ import UpdateOfficeTimePolicy from '../../Pages/UpDateOfficeTimePolicy/index'
 import CompanyBranchTable from '../../Pages/CompanyBranchtable/index'
 import ManualPunch from '../../Pages/ManualPunch/index'
 import DailyReportPage from '../../Pages/DailyReport/index'
+import TestPage from '../../Pages/TestPage/index'
+
+import Errorpage from '../../Pages/404ErrorPage/index'
 
 import DuplicateAndInvalidempData from '../../Pages/DuplicateAndInvalidEmployee/index'
 import { Routes, Route } from 'react-router-dom';
@@ -43,6 +46,9 @@ const Router = () => {
             <Route path='invalid-duplicate-data' element={<DuplicateAndInvalidempData/>} />
             <Route path='manualpunch' element={<ManualPunch />} />
             <Route path='dailyreportcomponent' element={<DailyReportPage/>} />
+            <Route path='testpage' element={<TestPage/>} />
+
+            <Route path='*' element={<Errorpage/>} />
             
           </Route>
         </Routes>

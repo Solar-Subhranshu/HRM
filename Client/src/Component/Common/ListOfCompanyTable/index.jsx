@@ -34,7 +34,7 @@ function AddNewCompany() {
         <table className="table-auto w-full border border-black">
           <thead className="border border-black">
             <tr>
-              <th className="text-blue-600/100 border border-black w-16">Select</th>
+              {/* <th className="text-blue-600/100 border border-black w-16">Select</th> */}
               <th className="text-blue-600/100 border border-black">Company</th>
               <th className="text-blue-600/100 border border-black">Branch</th>
               <th className="text-blue-600/100 border border-black">Address</th>
@@ -45,12 +45,12 @@ function AddNewCompany() {
           
           <div className="max-h-[200px] overflow-y-auto ">
           <table className="table-auto w-full border border-black">
-          <tbody>
+          <tbody className="">
             {showAllCompanyDetails.map(({ _id, address, name, companyID,pin }) => (
               <tr key={_id}>
-                <td className="border-t border-gray-300 flex justify-center items-center align-middle h-8 ">
+                {/* <td className="border border-gray-300 flex justify-center items-center align-middle h-8 ">
                   <input type="checkbox" />
-                </td>
+                </td> */}
                 <td className="border border-black">{companyID?.name}</td>
                 <td className="border border-black">{name}</td>
                 <td className="border border-black">{address}</td>

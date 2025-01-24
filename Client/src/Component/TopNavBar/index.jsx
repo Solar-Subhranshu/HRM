@@ -24,6 +24,11 @@ function Navbars() {
   const handleEmployeeListClick= ()=>{
     navigate('/layout/listofallemployee');
   }
+
+  const handleTest = ()=>{
+    navigate('/layout/testpage')
+  }
+
   
   const handleOfficeTimePolicyClick= ()=>{
     navigate('/layout/officetimepolicytable')
@@ -48,6 +53,9 @@ function Navbars() {
   const handleDailyUpdateClick = ()=>{
     navigate('/layout/dailyreportcomponent')
   }
+
+  
+  
   return (
     <div className="shadow-md shadow-gray-400">
       <nav className="bg-white py-2 bgMainColor">
@@ -90,7 +98,7 @@ function Navbars() {
                     <a href="#" className="whitespace-nowrap  ">Add Edit Machine</a>
                     </li>
                     <li className="hover:bg-gray-200 py-1 px-2 rounded">
-                    <a href="#" className="whitespace-nowrap  " >Hardware Setup</a>
+                    <a href="#"  className="whitespace-nowrap  " >Hardware Setup</a>
                     </li>
                 </ul>
              </div>
@@ -244,7 +252,7 @@ function Navbars() {
                    <a onClick={handleManualPunchClick} href="" className="whitespace-nowrap">User Manager</a>
                  </li>
                  <li className="hover:bg-gray-200 py-1 px-2 rounded">
-                   <a href="#" className="whitespace-nowrap">Change Password</a>
+                   <a href="#" onClick={handleTest} className="whitespace-nowrap">Change Password</a>
                  </li>
                </ul>
              </div>
