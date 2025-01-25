@@ -42,13 +42,17 @@ const recordAttendance = async(req,res)=>{
             });
         }
 
-        console.log(employee)
+        // console.log(employee)
         //check if the employee is eligible to mark attendance
         //check according to shift - max early check
         const currTime = moment(currentTimestamp).format('HH:mm');
-        const currTimeMin = commonUtil.timeDurationInMinutes(currTime,'00:00');
+        const currTimeMin = commonUtil.timeDurationInMinutes('00:00',currTime);
 
-        if(currTimeMin < commonUtil.timeDurationInMinutes(employee.shift.maxEarlyAllowed,'00:00')){
+        if(currTimeMin < commonUtil.timeDurationInMinutes('00:00',employee.shift.maxEarlyAllowed)){
+
+            console.log(currTime);
+            console.log(employee.shift.maxEarlyAllowed);
+            console.log(currTimeMin, commonUtil.timeDurationInMinutes('00:00',employee.shift.maxEarlyAllowed));
             return res.status(401).json({
                 success:false,
                 message:"Punch-In too early, attendance not recorded."
@@ -75,11 +79,16 @@ const recordAttendance = async(req,res)=>{
             let response = await helper.applyLateArrivalPenalty(employee,currentTimestamp);
             if(response.status==="success" && response.data!=null){
                 attendanceRecord.penalty = response.data;
+                if(response.data.deduction>=0.5){
+                    attendanceRecord.status = "P/2"
+                }
+                if(response.data.deduction===1){
+                    attendanceRecord.status = "Absent"
+                }
             }
             else if(response.status==="error"){
                 throw response.error
             }
-
             
             const isSaved = await attendanceRecord.save();
             if(isSaved){
@@ -96,13 +105,12 @@ const recordAttendance = async(req,res)=>{
 
         if(!attendanceRecord.punchOutTime){
             //check shift - max late Allowed
-            if(currTimeMin > commonUtil.timeDurationInMinutes(employee.shift.maxLateAllowed,'00:00')){
+            if(currTimeMin > commonUtil.timeDurationInMinutes('00:00',employee.shift.maxLateAllowed)){
                 return res.status(401).json({
                     success:false,
                     message:"Punch-Out too late, attendance not recorded."
                 });
             }
-
             attendanceRecord.punchOutTime = currentTimestamp;
 
             //calculate total work minutes
@@ -125,10 +133,20 @@ const recordAttendance = async(req,res)=>{
             }
             const totalMinutes = commonUtil.timeDurationInMinutes(punchIn,punchOut);
 
+            //early departure penalty
+            const response = helper.applyEarlyDeparturePenalty(employee,totalMinutes);
+            if(response.isPenalized)
+            {
+                attendanceRecord.penalty = response;
+                if(response.deduction>=0.5){
+                    attendanceRecord.status = "P/2"
+                }
+                if(response.deduction===1){
+                    attendanceRecord.status = "Absent"
+                }
+            }
             attendanceRecord.totalMinutes = totalMinutes;
-            attendanceRecord.updated_By= employeeId;
-
-            
+            attendanceRecord.updated_By= employeeId;   
 
             const isSaved = await attendanceRecord.save();
             if(isSaved){
@@ -161,11 +179,27 @@ const recordAttendance = async(req,res)=>{
 
             const totalMinutes = commonUtil.timeDurationInMinutes(punchIn,punchOut);
 
+            //early departure penalty
+            const response = helper.applyEarlyDeparturePenalty(employee,totalMinutes);
+            console.log(response);
+            if(response.isPenalized)
+            {
+                attendanceRecord.penalty = response;
+                if(response.deduction>=0.5){
+                    attendanceRecord.status = "P/2"
+                }
+                if(response.deduction===1){
+                    attendanceRecord.status = "Absent"
+                }
+            }
+
             attendanceRecord.totalMinutes = totalMinutes;
             attendanceRecord.updated_By= employeeId;
 
             const isSaved = await attendanceRecord.save();
             if(isSaved){
+                console.log(attendanceRecord.toObject());
+
                 return res.status(200).json({
                     success: true,
                     message: "Punch-out updated successfully.",
