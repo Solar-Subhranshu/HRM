@@ -1377,24 +1377,24 @@ const addOfficeTimePolicy = async (req,res)=>{
                     message:"Late Rule 1 can not have time more than 59 minutes"
                 });
             }
-            if(lateArrival2 && ((60>helper.timeDurationInMinutes('00:00',lateArrival2))||(helper.timeDurationInMinutes('00:00',lateArrival2)>120))){
+            if(lateArrival2 && ((15>helper.timeDurationInMinutes('00:00',lateArrival2))||(helper.timeDurationInMinutes('00:00',lateArrival2)>120))){
                 console.log(helper.timeDurationInMinutes('00:00',lateArrival2));
                 return res.status(400).json({
                     success:false,
-                    message:"Late Rule 2 can not have time more than 2 hrs and less than 1 hr"
+                    message:"Late Rule 2 can not have time more than 2 hrs and less than 15 minutes"
                 });
             }
-            if(lateArrival3 && ((120>helper.timeDurationInMinutes('00:00',lateArrival3))||(helper.timeDurationInMinutes('00:00',lateArrival3)>180))){
+            if(lateArrival3 && ((30>helper.timeDurationInMinutes('00:00',lateArrival3))||(helper.timeDurationInMinutes('00:00',lateArrival3)>180))){
                 console.log(120<helper.timeDurationInMinutes('00:00',lateArrival3)<180)
                 return res.status(400).json({
                     success:false,
-                    message:"Late Rule 3 can not have time more than 3 hrs and less than 2 hr"
+                    message:"Late Rule 3 can not have time more than 3 hrs and less than 30 minutes"
                 });
             }
-            if(lateArrival4 && ((1>helper.timeDurationInMinutes('00:00',lateArrival4)) || (helper.timeDurationInMinutes('00:00',lateArrival4)>240))){
+            if(lateArrival4 && ((60>helper.timeDurationInMinutes('00:00',lateArrival4)) || (helper.timeDurationInMinutes('00:00',lateArrival4)>240))){
                 return res.status(400).json({
                     success:false,
-                    message:"Late Rule 4 can not have time more than 4 hrs and less than 1 min"
+                    message:"Late Rule 4 can not have time more than 4 hrs and less than 1 Hr"
                 });
             }
         }

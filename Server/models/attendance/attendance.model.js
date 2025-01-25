@@ -22,25 +22,31 @@ const attendanceSchema = new mongoose.Schema({
     totalMinutes:{
         type:Number,  
         // required:true
+
     },
 
     penalty:{
         type:{
             isPenalized: Boolean, // True if penalty is applied
             reason: String, // E.g., "Late Arrival", "Short Working Hours"
-            deduction: Number // Salary deduction percentage
-        },
-        
+            deduction: {  // Salary deduction percentage
+                type: Number,
+                min: 0,
+                max: 1, // Ensures deduction does not exceed 1
+            }
+            
+        }, 
+        _id:false,
         default: { isPenalized: false, reason: "", deduction: 0 }
     },
-
-    //we will not store status statically in DB but computing it dynamically when needed,
+    
+    
     //so that we do not need to keep updating the DB when changes occur in office-policy and shift timings 
-    // status:{
-    //     type:String,
-    //     enum:["Present","Absent","Work-off","P/2","On-Leave"],
-    //     default:'Absent'
-    // },
+    status:{
+        type:String,
+        enum:["Present","Absent","Work-off","P/2","On-Leave"],
+        default:'Absent'
+    },
     
     updated_By:{
         type:mongoose.Schema.Types.ObjectId,

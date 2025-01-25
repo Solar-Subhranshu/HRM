@@ -206,7 +206,7 @@ const registerEmployee = async(req,res)=>{
                 success: false,
                 message: "Please upload an image less than 5 MB!",
             });
-            }
+        }
 
         return res.status(500).json({
             success:false,

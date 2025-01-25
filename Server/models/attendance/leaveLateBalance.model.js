@@ -1,3 +1,5 @@
+// maybe this schema will get deleted by me.
+
 const mongoose = require("mongoose");
 
 const leaveLateBalanceSchema = new mongoose.Schema({

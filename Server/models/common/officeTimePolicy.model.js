@@ -11,12 +11,12 @@ const officeTimePolicySchema = new mongoose.Schema({
         required:true
     },
     //time in HH:MM
-    absent:{
+    absent:{   //mark as absent if working hours less than
         type:String,
         required:true
     },
     //time in HH:MM 
-    pByTwo:{
+    pByTwo:{   //mark as half-day if working hours less than
         type:String,
         required:true
     },
