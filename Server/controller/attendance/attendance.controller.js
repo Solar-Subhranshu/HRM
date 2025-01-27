@@ -125,7 +125,7 @@ const recordAttendance = async(req,res)=>{
                 punchIn = moment(attendanceRecord.punchInTime).format("HH:mm");
             }
 
-            if(commonUtil.timeDurationInMinutes(employee.shift.endTime,moment(attendanceRecord.punchInTime).format("HH:mm"))>0){
+            if(commonUtil.timeDurationInMinutes(employee.shift.endTime,moment(attendanceRecord.punchOutTime).format("HH:mm"))>0){
                 punchOut = employee.shift.endTime;
             }
             else{
