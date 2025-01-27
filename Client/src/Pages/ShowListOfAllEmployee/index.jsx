@@ -4,6 +4,9 @@ import { FaListUl } from "react-icons/fa6";
 import axios from 'axios';
 import { useNavigate } from 'react-router-dom';
 import { GoSearch } from "react-icons/go";
+import * as XLSX from "xlsx";
+import { saveAs } from "file-saver";
+
 
 function TotalEmployeeTable() {
   const navigate = useNavigate();
@@ -102,7 +105,7 @@ function TotalEmployeeTable() {
     fetchAllEmployeeData();
   }, [isActiveFilter]);
 
-
+   
   
   //  import form excel 
   const handleFileUpload = async () => {
@@ -166,6 +169,49 @@ function TotalEmployeeTable() {
         },
       });
     }
+  };
+  
+  //export from excel 
+  const exportToExcel = () => {
+    if (allEmployeeData.length === 0) {
+      alert("No employee data to export.");
+      return;
+    }
+  
+    // Map employee data to ensure all fields are included, even if some are missing
+    const formattedData = allEmployeeData.map((employee) => {
+      const formattedEmployee = {};
+      columns.forEach((col) => {
+        
+        // Skip attachment fields
+        if (
+          ["aadharCardAttachment", "panCardAttachment", "bankAttachment", "joiningFormAttachment", "otherAttachment"].includes(col.key)
+        ) {
+          return;
+        }
+        const keys = col.key.split('.');
+        let value = employee;
+        keys.forEach((key) => {
+          value = value ? value[key] : "N/A";
+        });
+        formattedEmployee[col.label] = value;
+      });
+      return formattedEmployee;
+    });
+  
+    // Create worksheet and workbook
+    const worksheet = XLSX.utils.json_to_sheet(formattedData);
+    const workbook = XLSX.utils.book_new();
+    XLSX.utils.book_append_sheet(workbook, worksheet, "Employees");
+  
+    // Write the workbook to a binary string
+    const excelBuffer = XLSX.write(workbook, { bookType: "xlsx", type: "array" });
+  
+    // Convert the buffer to a Blob
+    const blob = new Blob([excelBuffer], { type: "application/octet-stream" });
+  
+    // Save the file using file-saver
+    saveAs(blob, "employee_data.xlsx");
   };
   
   
@@ -349,7 +395,7 @@ function TotalEmployeeTable() {
         >
           Import From Excel
         </button>
-        <button className="px-6 py-2 bg-green-600 text-white font-semibold rounded-lg shadow-md hover:bg-green-700 transition-all">Export To Excel</button>
+        <button  onClick={exportToExcel} className="px-6 py-2 bg-green-600 text-white font-semibold rounded-lg shadow-md hover:bg-green-700 transition-all">Export To Excel</button>
         <button onClick={handleUpdateOpenReg} className="px-6 py-2 bg-red-600 text-white font-semibold rounded-lg shadow-md hover:bg-red-700 transition-all">Update</button>
         <button onClick={handleClose} className="px-6 py-2 bg-red-600 text-white font-semibold rounded-lg shadow-md hover:bg-red-700 transition-all">Close</button>
       </div>
