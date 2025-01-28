@@ -10,6 +10,7 @@ const SalaryDeductRule =require("../../models/policy/salaryDeductRule");
 const WorkType = require("../../models/common/workType.model");
 
 const helper = require("../../utils/common.util");
+const attendanceHelper = require("../../utils/attendance.util");
 // const Employee = require("../../models/auth/employee.model");
 
 //test
@@ -1588,24 +1589,24 @@ const updateOfficeTimePolicy=async (req,res)=>{
                     message:"Late Rule 1 can not have time more than 59 minutes"
                 });
             }
-            if(lateArrival2 && ((60>helper.timeDurationInMinutes('00:00',lateArrival2))||(helper.timeDurationInMinutes('00:00',lateArrival2)>120))){
+            if(lateArrival2 && ((15>helper.timeDurationInMinutes('00:00',lateArrival2))||(helper.timeDurationInMinutes('00:00',lateArrival2)>120))){
                 console.log(helper.timeDurationInMinutes('00:00',lateArrival2));
                 return res.status(400).json({
                     success:false,
-                    message:"Late Rule 2 can not have time more than 2 hrs and less than 1 hr"
+                    message:"Late Rule 2 can not have time more than 2 hrs and less than 15 minutes"
                 });
             }
-            if(lateArrival3 && ((120>helper.timeDurationInMinutes('00:00',lateArrival3))||(helper.timeDurationInMinutes('00:00',lateArrival3)>180))){
+            if(lateArrival3 && ((30>helper.timeDurationInMinutes('00:00',lateArrival3))||(helper.timeDurationInMinutes('00:00',lateArrival3)>180))){
                 console.log(120<helper.timeDurationInMinutes('00:00',lateArrival3)<180)
                 return res.status(400).json({
                     success:false,
-                    message:"Late Rule 3 can not have time more than 3 hrs and less than 2 hr"
+                    message:"Late Rule 3 can not have time more than 3 hrs and less than 30 minutes"
                 });
             }
-            if(lateArrival4 && ((1>helper.timeDurationInMinutes('00:00',lateArrival4)) || (helper.timeDurationInMinutes('00:00',lateArrival4)>240))){
+            if(lateArrival4 && ((60>helper.timeDurationInMinutes('00:00',lateArrival4)) || (helper.timeDurationInMinutes('00:00',lateArrival4)>240))){
                 return res.status(400).json({
                     success:false,
-                    message:"Late Rule 4 can not have time more than 4 hrs and less than 1 min"
+                    message:"Late Rule 4 can not have time more than 4 hrs and less than 1 Hr"
                 });
             }
         }
@@ -1633,7 +1634,12 @@ const updateOfficeTimePolicy=async (req,res)=>{
             salaryCutPercentage,
             continuous,
             updated_By:employeeId
-        },{new:true})
+        },{new:true});
+
+        // we will re-calculate the attendance record according to new policy at the time of policy updation.
+        // console.log("Policy updated, now updating the attendance of current month.");
+        const reply = await attendanceHelper.recalculateAttendance(_id);
+        // console.log(reply.updatedRecords);
 
         return res.status(200).json({
             success:true,

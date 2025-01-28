@@ -143,7 +143,7 @@ const joiningFormSchema = new mongoose.Schema({
     emergencyContact:{
         type:[
             {
-                name:String,
+                contactName:String,
                 relation:String,
                 address:String,
                 phoneNumber:Number
