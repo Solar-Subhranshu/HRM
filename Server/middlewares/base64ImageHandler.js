@@ -27,12 +27,12 @@ const handleBase64Images = async (photos, folder) => {
       // const match = base64Image.match(/^data:image\/([a-zA-Z0-9]+|application\/pdf);base64,/);
       // /^data:image\/([a-zA-Z0-9]+);base64,/
       const match = base64Image.match(/^data:(image\/(jpeg|jpg|png)|application\/pdf);base64,/);
-      console.log('hi-1')
+      // console.log('hi-1')
 
       if (!match) {
         throw new Error(`Image ${index + 1} does not have a valid base64 format.`);
       }
-      console.log('hi-2');
+      // console.log('hi-2');
       // console.log(match)
 
       const allowedFormats = ["jpeg", "jpg", "png","pdf"];
@@ -41,7 +41,7 @@ const handleBase64Images = async (photos, folder) => {
       const ext = mimeType.includes("image/") ? match[2] : "pdf";
       // mimeType.toLowerCase();
       // .split("/")[1]
-      console.log('hi-3')
+      // console.log('hi-3')
       // Validate the image format
       if (!allowedFormats.includes(ext)) {
         throw new Error(`Invalid format for image ${index + 1}. Allowed formats are jpeg, jpg, png, pdf.`);

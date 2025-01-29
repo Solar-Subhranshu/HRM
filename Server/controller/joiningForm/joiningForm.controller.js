@@ -43,6 +43,7 @@ const addJoiningForm = async(req, res) =>{
             panCardAttachment,
             bankAttachment,
             photoAttachment,
+            signatureAttachment,
             class10Attachment,
             class12Attachment,
             graduationAttachment,
@@ -71,8 +72,8 @@ const addJoiningForm = async(req, res) =>{
             // joiningDate ||
             // department ||
             // designation ||
-            !employeeType ||
-            !modeOfRecruitment ||
+            // !employeeType ||
+            // !modeOfRecruitment ||
             // reference ||
             !bankName ||
             !branchName ||
@@ -84,15 +85,16 @@ const addJoiningForm = async(req, res) =>{
             !aadharCard ||
             // uanNumber ||
             !emergencyContact ||
-            !aadharCardAttachment ||
-            !panCardAttachment ||
-            !bankAttachment ||
-            !photoAttachment||
+            // !aadharCardAttachment ||
+            // !panCardAttachment ||
+            // !bankAttachment ||
+            !photoAttachment ||
+            !signatureAttachment
             // class10Attachment ||
             // class12Attachment ||
             // graduationAttachment ||
             // postGraduationAttachment ||
-            !joiningFormAttachment
+            // !joiningFormAttachment
         ){
             return res.status(400).json({
                 success:false,
@@ -124,11 +126,20 @@ const addJoiningForm = async(req, res) =>{
             });
         }
 
+        const isBankAccountExists = await JoiningForm.findOne({bankAccount:bankAccount});
+        if(isBankAccountExists){
+            return res.status(400).json({
+                success:false,
+                message:"Joining form already submitted with same bank account detail."
+            });
+        }
+
         //make sure if the base 64 value come in array or not?
         const aadharCardImage = aadharCardAttachment ? await handleBase64Images([aadharCardAttachment], "aadharCardAttachments") : [];
         const panCardImage = panCardAttachment ? await handleBase64Images([panCardAttachment], "panCardAttachments") : [];
         const bankAccountImage = bankAttachment ? await handleBase64Images([bankAttachment], "bankAttachments") : [];
         const photoImage = photoAttachment ? await handleBase64Images([photoAttachment], "photoAttachments") : [];
+        const signatureImage = signatureAttachment ? await handleBase64Images([signatureAttachment], "signatureAttachment") : []; 
 
         const class10Image =class10Attachment? await handleBase64Images([class10Attachment],"class10Attachments") : [];
         const class12Image =class12Attachment? await handleBase64Images([class12Attachment],"class12Attachments") : [];
@@ -147,6 +158,7 @@ const addJoiningForm = async(req, res) =>{
         const graduationUrl = `${req.protocol}://${req.get("host")}/uploads/graduationAttachments/${graduationImage[0].fileName}`;
         const postGraduationUrl = `${req.protocol}://${req.get("host")}/uploads/postGraduationAttachments/${postGraduationImage[0].fileName}`;
         const joiningFormUrl =  `${req.protocol}://${req.get("host")}/uploads/joiningForms/${joiningFormFile[0].fileName}`;
+        const signatureUrl = `${req.protocol}://${req.get("host")}/uploads/joiningForms/${signatureImage[0].fileName}`;
 
         if(!(dateOfBirth instanceof Date)){
             // console.log(dateOfBirth);
@@ -197,7 +209,8 @@ const addJoiningForm = async(req, res) =>{
             class12Attachment:class12Url,
             graduationAttachment:graduationUrl,
             postGraduationAttachment:postGraduationUrl,
-            joiningFormAttachment : joiningFormUrl
+            joiningFormAttachment : joiningFormUrl,
+            signatureAttachment : signatureUrl
         })
 
         await newJoiningForm.save()
@@ -224,6 +237,12 @@ const addJoiningForm = async(req, res) =>{
             });
             }
 
+        if (error.code === 11000) {
+            return res.status(400).json({
+                success: false,
+                message: "Duplicate key error",
+            });
+            }
         return res.status(500).json({
             success:false,
             message : "Internal Server Error",
@@ -282,7 +301,6 @@ const showJoiningFormData = async(req,res)=> {
                 });
             }
         }
-
         return res.status(400).json({
             success: false,
             message : 'No record found',
@@ -297,7 +315,29 @@ const showJoiningFormData = async(req,res)=> {
     }
 }
 
+const showAllJoiningForms = async(req,res)=> {
+    try {
+        const response = await JoiningForm.find()
+        .lean().select("-createdAt -updatedAt -__v");
+
+        if(response){
+            return res.status(200).json({
+                success:true,
+                message :"Joining Forms till now",
+                data: response
+            })
+        }
+    } catch (error) {
+        return res.status(500).json({
+            success:false,
+            message:"Internal Server Error",
+            error: error.message
+        })
+    }
+}
+
 module.exports = {
     addJoiningForm,
-    showJoiningFormData
+    showJoiningFormData,
+    showAllJoiningForms
 }

@@ -47,7 +47,11 @@ router.post("/add-joiningForm",upload.fields([
     { name: 'class12Attachment', maxCount: 1 },
     { name: 'graduationAttachment', maxCount: 1 },
     { name: 'postGraduationAttachment', maxCount: 1 },
+    { name: 'signatureAttachment', maxCount: 1 },
 ]),joiningFormController.addJoiningForm);
+
 router.get("/show-joiningFormData",joiningFormController.showJoiningFormData);
+
+router.get("/show-allJoiningForms",joiningFormController.showAllJoiningForms);
 
 module.exports = router;

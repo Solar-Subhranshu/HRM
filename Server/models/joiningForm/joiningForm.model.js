@@ -153,19 +153,23 @@ const joiningFormSchema = new mongoose.Schema({
     //upload attachments {info}
     aadharCardAttachment : {
         type :String,
-        required:true
+        // required:true
     },
     
     panCardAttachment  :{
         type :String,
-        required:true
+        // required:true
     },
     
     bankAttachment : {
         type:String,
-        required:true
+        // required:true
     },
     photoAttachment:{
+        type:String,
+        required:true
+    },
+    signatureAttachment:{
         type:String,
         required:true
     },
