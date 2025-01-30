@@ -11,7 +11,7 @@ function OfficePolicyTable() {
 
     const fetchOfficePolicyDetail = async () => {
         try {
-            const response = await axios.get('http://localhost:8000/common/show-officeTimePolicy');
+            const response = await axios.get(`${process.env.REACT_APP_SERVER_ADDRESS}/common/show-officeTimePolicy`);
             setOfficePolicy(response.data.data);
         } catch (error) {
             alert('Unable to fetch data', error);

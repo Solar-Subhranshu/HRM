@@ -87,7 +87,7 @@ function TotalEmployeeTable() {
 
   const fetchAllEmployeeData = async () => {
     try {
-      const response = await axios.get("http://localhost:8000/auth/showAllEmployee");
+      const response = await axios.get(`${process.env.REACT_APP_SERVER_ADDRESS}/auth/showAllEmployee`);
       let employeeData = response.data.data || [];
 
       if (isActiveFilter !== null) {
@@ -122,7 +122,7 @@ function TotalEmployeeTable() {
     console.log("Sending file upload request");
   
     try {
-      const response = await axios.post("http://localhost:8000/auth/add-byExcel", formData, {
+      const response = await axios.post(`${process.env.REACT_APP_SERVER_ADDRESS}/auth/add-byExcel`, formData, {
         headers: {
           "Content-Type": "multipart/form-data",
         },

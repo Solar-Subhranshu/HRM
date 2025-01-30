@@ -79,7 +79,7 @@ function AddNewCompany() {
   const fetchAllCompanyDetails = async () => {
     try {
       const response = await axios.get(
-        "http://localhost:8000/common/show-all-companyDetails"
+        `${process.env.REACT_APP_SERVER_ADDRESS}/common/show-all-companyDetails`
       );
       setAllCompanyDetails(response.data.data);
       console.log(showAllCompanyDetails);
@@ -95,7 +95,7 @@ function AddNewCompany() {
   return (
     <div className="ml-1 w-[calc(100%-30%)]">
       {/* Header Section */}
-      <div className="bgMainColor flex py-4 pl-1 gap-3">
+      <div className="bgMainColor flex py-2 pl-1 gap-3">
         <FaListUl size={24} />
         <h4 className="text-white">Show all Company</h4>
       </div>

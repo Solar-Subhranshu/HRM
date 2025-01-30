@@ -79,7 +79,7 @@ function AddNewCompany() {
     }
 
     try {
-      await axios.post("http://localhost:8000/common/add-company", {
+      await axios.post(`${process.env.REACT_APP_SERVER_ADDRESS}/common/add-company`, {
         name: inputData.name,
       });
       alert("Company added successfully");
@@ -105,7 +105,7 @@ function AddNewCompany() {
     };
 
     try {
-      await axios.put(`http://localhost:8000/common/update-company`, requestData)
+      await axios.put(`${process.env.REACT_APP_SERVER_ADDRESS}/common/update-company`, requestData)
 
       alert("Company updated successfully");
       closeUpdateCompanyModal();
@@ -131,7 +131,7 @@ function AddNewCompany() {
       pin: inputData.pin,
     }
     try {
-      await axios.put(`http://localhost:8000/common/update-branch`, finalData);
+      await axios.put(`${process.env.REACT_APP_SERVER_ADDRESS}/common/update-branch`, finalData);
       alert("Branch updated successfully");
       closeUpdateBranchModal();
       fetchAllCompanyDetails(); // Refresh the branch details
@@ -151,7 +151,7 @@ function AddNewCompany() {
     }
 
     try {
-      const response = await axios.post("http://localhost:8000/common/add-branch", {
+      const response = await axios.post(`${process.env.REACT_APP_SERVER_ADDRESS}/common/add-branch`, {
         companyID: inputData.companyID,
         name: inputData.branch,
         address: inputData.address,
@@ -174,7 +174,7 @@ function AddNewCompany() {
 
   const fetchCompanyNameData = async () => {
     try {
-      const response = await axios.get("http://localhost:8000/common/show-company");
+      const response = await axios.get(`${process.env.REACT_APP_SERVER_ADDRESS}/common/show-company`);
       setCompanyName(response.data.data);
     } catch (error) {
       alert("Error: Unable to fetch company name data");
@@ -183,7 +183,7 @@ function AddNewCompany() {
 
   const fetchAllCompanyDetails = async () => {
     try {
-      const response = await axios.get("http://localhost:8000/common/show-all-companyDetails");
+      const response = await axios.get(`${process.env.REACT_APP_SERVER_ADDRESS}/common/show-all-companyDetails`);
       setAllCompanyDetails(response.data.data);
     } catch (error) {
       alert("Unable to fetch all company data", error);

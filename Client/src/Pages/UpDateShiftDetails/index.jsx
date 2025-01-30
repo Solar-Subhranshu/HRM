@@ -82,7 +82,7 @@ const ShiftDetailsTable = () => {
   
     console.log('form date ', formData);
     try {
-      const response = await axios.put('http://localhost:8000/common/update-shift', formData);
+      const response = await axios.put(`${process.env.REACT_APP_SERVER_ADDRESS}/common/update-shift`, formData);
       alert('Shift details Update successfully!');
       console.log('Response:', response.data);
     } catch (error) {

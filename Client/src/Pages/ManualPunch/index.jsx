@@ -14,7 +14,7 @@ function ManualPunch() {
 
   const fetchShiftNameData = async ()=>{
     try {
-      const response=await axios.get('http://localhost:8000/common/show-shift');
+      const response=await axios.get(`${process.env.REACT_APP_SERVER_ADDRESS}/common/show-shift`);
       setShiftName(response.data.data);
     } catch (error) {
       console.log('Unable to Fetch Shift Name', error);
@@ -23,7 +23,7 @@ function ManualPunch() {
 
   const fetchAllEmployeeNameWithId = async ()=>{
     try {
-      const response=await axios.get('http://localhost:8000/auth/showAllEmployee');
+      const response=await axios.get(`${process.env.REACT_APP_SERVER_ADDRESS}/auth/showAllEmployee`);
       setShowAllEmployee(response.data.data);
     } catch (error) {
       console.log('Enable to fetch Employee Name With Id', error);
