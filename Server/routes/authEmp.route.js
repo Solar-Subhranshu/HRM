@@ -1,6 +1,6 @@
-const employeeController= require("../controller/Employee/employee.controller");
+const employeeController= require("../controller/emp/employee.controller");
 const joiningFormController = require("../controller/joiningForm/joiningForm.controller");
-const {addEmployeeByExcel} = require("../controller/Employee/addEmployeeBYExcel");
+const {addEmployeeByExcel} = require("../controller/emp/addEmployeeBYExcel");
     
 const router = require("express").Router();
 const tokenVerify = require("../middlewares/tokenVerification")
