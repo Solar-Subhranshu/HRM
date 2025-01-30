@@ -35,7 +35,7 @@ const joiningFormSchema = new mongoose.Schema({
         maxLength : 10,
         minLength : 10,
         required:true,
-        unique:true
+        // unique:true
     },
     personalEmail : {
         type : String,
@@ -75,6 +75,7 @@ const joiningFormSchema = new mongoose.Schema({
         type:Number,
         required:true
     },
+    
     //joining-details
     interviewDate:{
         type:Date
@@ -84,34 +85,40 @@ const joiningFormSchema = new mongoose.Schema({
     },
     //check-if it needs to be object-id or not
     department:{
-        type:String
+        type:mongoose.Schema.Types.ObjectId,
+        ref : "Department",
     },
     designation:{
-        type:String
+        type:mongoose.Schema.Types.ObjectId,
+        ref : "Designation",
     },
     // radio button - part-time, full time
     employeeType:{
         type:String,
-        required:true
+        // required:true
     },
     // online / offline
     modeOfRecruitment:{
         type:String,
-        required:true
+        // required:true
     },
     reference:{
         type:String
     },
+
     //bank details
     bankName : {
-        type : String
+        type : String,
+        required:true
     },
     branchName:{
         type:String,
+        required:true
     },
     bankAccount :{
         type :Number,
-        unique:true
+        // unique:true,
+        required:true
     },
     bankIFSC : {type :String},
 
@@ -125,14 +132,14 @@ const joiningFormSchema = new mongoose.Schema({
         type : String,
         maxLenght:10,
         minLength:10,
-        unique:true,
+        // unique:true,
         required:true
     },
     aadharCard :{
         type:Number,
         maxLenght:12,
         minLength:12,
-        unique:true,
+        // unique:true,
         required:true
     },
     //esi and pf details
@@ -190,6 +197,12 @@ const joiningFormSchema = new mongoose.Schema({
     //this joining form pdf file.
     joiningFormAttachment:{
         type:String
+    },
+
+    status:{
+        type:String,
+        enum:["Pending","Approved","Rejected"],
+        default:"Pending"
     }
 
 },{timestamps:true});

@@ -16,6 +16,11 @@ const moment = require("moment");
     console.log(moment(firstDayOfMonth).format("DD-MM-YYYY"));
     console.log(moment(lastDayOfMonth).format("DD-MM-YYYY"));
 
+//     const date1 = new Date();
+//     console.log(date1.toISOString()
+//     .split('T')[0]
+// );
+
     // let str = {
     //     "companyId":"676545d6bde9d701481ea783",
     //     "name": "Rakesh Khanna",

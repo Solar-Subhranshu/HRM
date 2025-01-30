@@ -12,6 +12,7 @@ const leaveSchema = new mongoose.Schema({
     },
     leavesAccumulated :{
         type:Number,
+        min:0,
         required:true
     },
     year:{
