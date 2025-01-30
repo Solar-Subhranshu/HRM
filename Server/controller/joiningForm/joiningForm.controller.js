@@ -22,13 +22,14 @@ const addJoiningForm = async(req, res) =>{
             permanentState,
             permanentCity,
             permanentPinCode,
-            interviewDate,
-            joiningDate,
-            department,
-            designation,
-            employeeType,
-            modeOfRecruitment,
-            reference,
+                //Joining Details to be filled by Hr
+            // interviewDate,
+            // joiningDate, 
+            // department,
+            // designation,
+            // employeeType,
+            // modeOfRecruitment,
+            // reference,
             bankName,
             branchName,
             bankAccount,
@@ -43,11 +44,12 @@ const addJoiningForm = async(req, res) =>{
             panCardAttachment,
             bankAttachment,
             photoAttachment,
+            signatureAttachment,
             class10Attachment,
             class12Attachment,
             graduationAttachment,
             postGraduationAttachment,
-            joiningFormAttachment
+            // joiningFormAttachment
         }=req.body;
 
         if(!companyId ||
@@ -71,8 +73,8 @@ const addJoiningForm = async(req, res) =>{
             // joiningDate ||
             // department ||
             // designation ||
-            !employeeType ||
-            !modeOfRecruitment ||
+            // !employeeType ||
+            // !modeOfRecruitment ||
             // reference ||
             !bankName ||
             !branchName ||
@@ -84,15 +86,16 @@ const addJoiningForm = async(req, res) =>{
             !aadharCard ||
             // uanNumber ||
             !emergencyContact ||
-            !aadharCardAttachment ||
-            !panCardAttachment ||
-            !bankAttachment ||
-            !photoAttachment||
+            // !aadharCardAttachment ||
+            // !panCardAttachment ||
+            // !bankAttachment ||
+            !photoAttachment ||
+            !signatureAttachment
             // class10Attachment ||
             // class12Attachment ||
             // graduationAttachment ||
             // postGraduationAttachment ||
-            !joiningFormAttachment
+            // !joiningFormAttachment
         ){
             return res.status(400).json({
                 success:false,
@@ -100,27 +103,47 @@ const addJoiningForm = async(req, res) =>{
             });
         }
 
-        const isPhoneNumberExists = await JoiningForm.findOne({personalPhoneNum:personalPhoneNum}).lean();
+        const isPhoneNumberExists = await JoiningForm.findOne({
+            personalPhoneNum:personalPhoneNum,
+            status: { $ne: "rejected" }
+        }).lean();
         if(isPhoneNumberExists){
             return res.status(400).json({
                 success:false,
-                message:"Joining form already submitted with same Phone Num details."
+                message:"Joining form already submitted with same Phone Num details. Contact your HR"
             });
         }
         
-        const isAadharCardExists = await JoiningForm.findOne({aadharCard:aadharCard}).lean();
+        const isAadharCardExists = await JoiningForm.findOne({
+            aadharCard:aadharCard,
+            status: { $ne: "rejected" }
+        }).lean();
         if(isAadharCardExists){
             return res.status(400).json({
                 success:false,
-                message:"Joining form already submitted with same aadhar details."
+                message:"Joining form already submitted with same aadhar details. Contact your HR"
             });
         }
 
-        const isPanCardExists = await JoiningForm.findOne({panCard:panCard});
+        const isPanCardExists = await JoiningForm.findOne({
+            panCard:panCard,
+            status: { $ne: "rejected" }
+        });
         if(isPanCardExists){
             return res.status(400).json({
                 success:false,
-                message:"Joining form already submitted with same pan card detail."
+                message:"Joining form already submitted with same pan card detail. Contact your HR"
+            });
+        }
+
+        const isBankAccountExists = await JoiningForm.findOne({
+            bankAccount:bankAccount,
+            status: { $ne: "rejected" }
+        });
+        if(isBankAccountExists){
+            return res.status(400).json({
+                success:false,
+                message:"Joining form already submitted with same bank account detail. Contact your HR"
             });
         }
 
@@ -129,6 +152,7 @@ const addJoiningForm = async(req, res) =>{
         const panCardImage = panCardAttachment ? await handleBase64Images([panCardAttachment], "panCardAttachments") : [];
         const bankAccountImage = bankAttachment ? await handleBase64Images([bankAttachment], "bankAttachments") : [];
         const photoImage = photoAttachment ? await handleBase64Images([photoAttachment], "photoAttachments") : [];
+        const signatureImage = signatureAttachment ? await handleBase64Images([signatureAttachment], "signatureAttachment") : []; 
 
         const class10Image =class10Attachment? await handleBase64Images([class10Attachment],"class10Attachments") : [];
         const class12Image =class12Attachment? await handleBase64Images([class12Attachment],"class12Attachments") : [];
@@ -147,10 +171,12 @@ const addJoiningForm = async(req, res) =>{
         const graduationUrl = `${req.protocol}://${req.get("host")}/uploads/graduationAttachments/${graduationImage[0].fileName}`;
         const postGraduationUrl = `${req.protocol}://${req.get("host")}/uploads/postGraduationAttachments/${postGraduationImage[0].fileName}`;
         const joiningFormUrl =  `${req.protocol}://${req.get("host")}/uploads/joiningForms/${joiningFormFile[0].fileName}`;
+        const signatureUrl = `${req.protocol}://${req.get("host")}/uploads/joiningForms/${signatureImage[0].fileName}`;
 
+        let correctDateofBirth;
         if(!(dateOfBirth instanceof Date)){
             // console.log(dateOfBirth);
-            var correctDateofBirth = new Date(dateOfBirth);
+            correctDateofBirth = new Date(dateOfBirth);
             // console.log(correctDateofBirth);
         }
 
@@ -172,13 +198,13 @@ const addJoiningForm = async(req, res) =>{
             permanentState,
             permanentCity,
             permanentPinCode,
-            interviewDate,
-            joiningDate,
-            department,
-            designation,
-            employeeType,
-            modeOfRecruitment,
-            reference,
+            // interviewDate,
+            // joiningDate,
+            // department,
+            // designation,
+            // employeeType,
+            // modeOfRecruitment,
+            // reference,
             bankName,
             branchName,
             bankAccount,
@@ -197,7 +223,8 @@ const addJoiningForm = async(req, res) =>{
             class12Attachment:class12Url,
             graduationAttachment:graduationUrl,
             postGraduationAttachment:postGraduationUrl,
-            joiningFormAttachment : joiningFormUrl
+            joiningFormAttachment : joiningFormUrl,
+            signatureAttachment : signatureUrl
         })
 
         await newJoiningForm.save()
@@ -211,7 +238,7 @@ const addJoiningForm = async(req, res) =>{
             if(error){
                 return res.status(401).json({
                     success:false,
-                    message : "Something Went Wrong, Employee Not Registered.",
+                    message : "Something Went Wrong, Try Again Later",
                     error:error
                 });
             }
@@ -220,10 +247,18 @@ const addJoiningForm = async(req, res) =>{
         if (error.code === 'LIMIT_FILE_SIZE') {
             return res.status(400).json({
                 success: false,
-                message: "Please upload an image less than 5 MB!",
+                message: "Please upload an image less than 2MB!",
+                error: error.message
             });
             }
 
+        if (error.code === 11000) {
+            return res.status(400).json({
+                success: false,
+                message: "Duplicate key error",
+                error: error.message
+            });
+            }
         return res.status(500).json({
             success:false,
             message : "Internal Server Error",
@@ -248,7 +283,7 @@ const showJoiningFormData = async(req,res)=> {
             const isFound = await JoiningForm.findOne({personalPhoneNum:phoneNumber})
             .lean().select("-createdAt -updatedAt -__v");
             
-            if(isFound){
+            if(isFound && isFound.status==="Approved"){
                 return res.status(200).json({
                     success:true,
                     message:"Record found",
@@ -261,7 +296,7 @@ const showJoiningFormData = async(req,res)=> {
             const isFound = await JoiningForm.findOne({aadharCard:aadharCard})
             .lean().select("-createdAt -updatedAt -__v");
             
-            if(isFound){
+            if(isFound && isFound.status==="Approved"){
                 return res.status(200).json({
                     success:true,
                     message:"Record found",
@@ -274,7 +309,7 @@ const showJoiningFormData = async(req,res)=> {
             const isFound = await JoiningForm.findOne({panCard:panCard})
             .lean().select("-createdAt -updatedAt -__v");
             
-            if(isFound){
+            if(isFound && isFound.status==="Approved"){
                 return res.status(200).json({
                     success:true,
                     message:"Record found",
@@ -282,10 +317,9 @@ const showJoiningFormData = async(req,res)=> {
                 });
             }
         }
-
         return res.status(400).json({
             success: false,
-            message : 'No record found',
+            message : 'No record found. Maybe the joining form is not yet approved.',
             data :[]
         })
     } catch (error) {
@@ -297,7 +331,127 @@ const showJoiningFormData = async(req,res)=> {
     }
 }
 
+const showAllJoiningForms = async(req,res)=> {
+    try {
+        const {status}=req.query;
+        if(!status){
+            return res.status(400).json({
+                success:false,
+                message:"Joining Form Status, is needed."
+            });
+        }
+        const response = await JoiningForm.find({status})
+        .lean().select("-createdAt -updatedAt -__v");
+
+        if(response){
+            return res.status(200).json({
+                success:true,
+                message :"Joining Forms till now",
+                data: response || []
+            })
+        }
+    } catch (error) {
+        return res.status(500).json({
+            success:false,
+            message:"Internal Server Error",
+            error: error.message
+        })
+    }
+}
+
+const joiningFormApproval = async(req,res)=> {
+    try {
+        //take the remaining data from the HR and also the joining form pdf document.
+        const {formId,
+            interviewDate,
+            joiningDate, 
+            department,
+            designation,
+            employeeType,
+            modeOfRecruitment,
+            reference,
+            joiningFormAttachment
+        } = req.body;
+        if(!formId){
+            return res.status(400).json({
+                success:false,
+                message:"Joining Form Id is required."
+            });
+        }
+        if(!department || !designation){
+            return res.status(400).json({
+                success:false,
+                message:"Department and Designation is required, for Approval."
+            });
+        }
+
+        const isApproved = await JoiningForm.findByIdAndUpdate({_id:formId},{
+            interviewDate,
+            joiningDate,
+            department,
+            designation,
+            employeeType,
+            modeOfRecruitment,
+            reference,
+            joiningFormAttachment,
+            status:"Approved"
+        },{new:true});
+        
+        if (isApproved){
+            return res.status(200).json({
+                success:true,
+                message:"Joining Form Approved",
+                data: isApproved
+            });
+        }
+        else{
+            throw new Error("Something went wrong while approving the Joining Form")
+        }
+
+    } catch (error) {
+        return res.status(500).json({
+            success:false,
+            message:"Internal Server Error",
+            error:error.message
+        });
+    }
+}
+
+const joiningFormRejection = async(req,res)=> {
+    try {
+        const {formId} = req.query;
+        if(!formId){
+            return res.status(400).json({
+                success:false,
+                message:"Form id is required"
+            });
+        }
+
+        const isRejected = await JoiningForm.findByIdAndUpdate({_id:formId},{
+            status:"Rejected"
+        },{new:true});
+
+        if(isRejected){
+            return res.status(200).json({
+                success:true,
+                message:"Joining Form Rejected.",
+                data:isRejected
+            });
+        }
+        else{ throw new Error("Something went wrong while rejecting the Joining Form.")}
+    } catch (error) {
+        return res.status(500).json({
+            success:false,
+            message:"Internal Server Error",
+            error: error.message
+        });
+    }
+}
+
 module.exports = {
     addJoiningForm,
-    showJoiningFormData
+    showJoiningFormData,
+    showAllJoiningForms,
+    joiningFormApproval,
+    joiningFormRejection
 }

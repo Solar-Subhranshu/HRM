@@ -43,6 +43,7 @@ const downloadDailyReport = async(req,res)=>{
         }
 
         const {date,empArr,reportType}= req.body;
+        
         if(!date || !reportType){
             return res.status(400).json({
                 success:false,
