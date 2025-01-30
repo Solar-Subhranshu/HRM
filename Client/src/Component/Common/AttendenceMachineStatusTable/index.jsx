@@ -3,7 +3,7 @@ import React from 'react'
 function TableComponent1() {
   return (
     <div className='w-[calc(100%-30%)]'>
-        <div className='bgMainColor py-5 w-full rounded-md'>
+        <div className='bgMainColor py-2 w-full rounded-md'>
           <h6 className='text-white pl-2'>Machine Connected Status</h6>
         </div>
         

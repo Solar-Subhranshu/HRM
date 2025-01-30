@@ -60,7 +60,7 @@ function FrontPage() {
             return;
         }
         try {
-            const response = await axios.post('http://localhost:8000/auth/login', {
+            const response = await axios.post(`${process.env.REACT_APP_SERVER_ADDRESS}/auth/login`, {
                 employeeCode: inputData.employeeCode,
                 password: inputData.password,
             }

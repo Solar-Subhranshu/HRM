@@ -27,7 +27,7 @@ function Registration() {
 
   useEffect(() => {
     // Fetch the reporting managers data from the backend
-    axios.get('http://localhost:8000/auth/showAllEmployee')
+    axios.get(`${process.env.REACT_APP_SERVER_ADDRESS}/auth/showAllEmployee`)
       .then((response) => {
         setReportingManagers(response.data.data);
       })
@@ -111,7 +111,7 @@ function Registration() {
   // Fetching functions
   const fetchDepartmentName = async () => {
     try {
-      const response = await axios.get('http://localhost:8000/common/show-department');
+      const response = await axios.get(`${process.env.REACT_APP_SERVER_ADDRESS}/common/show-department`);
       setDepartmentName(response.data.data);
     } catch (error) {
       alert('Error: Unable to fetch Department data');
@@ -120,7 +120,7 @@ function Registration() {
 
   const fetchDeginationData = async (_id) => {
     try {
-      const response = await axios.get(`http://localhost:8000/common/show-designation?departmentId=${_id}`);
+      const response = await axios.get(`${process.env.REACT_APP_SERVER_ADDRESS}/common/show-designation?departmentId=${_id}`);
       setDeginationData(response.data.data);
     } catch (error) {
       alert('Error: Unable to fetch Degination Name data');
@@ -129,7 +129,7 @@ function Registration() {
 
   const fetchCompanyNameData = async () => {
     try {
-      const response = await axios.get('http://localhost:8000/common/show-company');
+      const response = await axios.get(`${process.env.REACT_APP_SERVER_ADDRESS}/common/show-company`);
       setCompanyName(response.data.data);
     } catch (error) {
       alert('Error: Unable to fetch Company Name data');
@@ -138,7 +138,7 @@ function Registration() {
 
   const fetchBranchNameData = async (_id) => {
     try {
-      const response = await axios.get(`http://localhost:8000/common/show-branch?companyID=${_id}`);
+      const response = await axios.get(`${process.env.REACT_APP_SERVER_ADDRESS}/common/show-branch?companyID=${_id}`);
       setBranchNameData(response.data.data);
     } catch (error) {
       alert('Error: Unable to fetch Branch Name data');
@@ -147,7 +147,7 @@ function Registration() {
 
   const fetchQulificationData = async () => {
     try {
-      const response = await axios.get('http://localhost:8000/common/show-qualification');
+      const response = await axios.get(`${process.env.REACT_APP_SERVER_ADDRESS}/common/show-qualification`);
       setQulificationData(response.data.data);
     } catch (error) {
       alert('Error: Unable to fetch  Qualification data');
@@ -156,7 +156,7 @@ function Registration() {
 
   const fetchDegreeData = async (_id) => {
     try {
-      const response = await axios.get(`http://localhost:8000/common/show-degree?qualificationId=${_id}`);
+      const response = await axios.get(`${process.env.REACT_APP_SERVER_ADDRESS}/common/show-degree?qualificationId=${_id}`);
       setDegreeData(response.data.data);
     } catch (error) {
       alert('Error: Unable to fetch Degree data');
@@ -165,7 +165,7 @@ function Registration() {
 
   const fetchShiftNameData = async () => {
     try {
-      const response = await axios.get('http://localhost:8000/common/show-shift');
+      const response = await axios.get(`${process.env.REACT_APP_SERVER_ADDRESS}/common/show-shift`);
       setShiftName(response.data.data);
     } catch (error) {
       alert('Error: Unable to fetch  Shift Name data');
@@ -174,7 +174,7 @@ function Registration() {
 
   const fetchJoiningHrNameData = async () => {
     try {
-      const response = await axios.get('http://localhost:8000/auth/show-joining-HR');
+      const response = await axios.get(`${process.env.REACT_APP_SERVER_ADDRESS}/auth/show-joining-HR`);
       setJoiningHrNameData(response.data.data);
     } catch (error) {
       alert('Error: Unable to fetch Hr Name data ');
@@ -183,7 +183,7 @@ function Registration() {
 
   const fetchOfficeTimePolicyData = async () => {
     try {
-      const response = await axios.get('http://localhost:8000/common/show-officeTimePolicy');
+      const response = await axios.get(`${process.env.REACT_APP_SERVER_ADDRESS}/common/show-officeTimePolicy`);
       setOfficeTimePolicy(response.data.data);
     } catch (error) {
       alert('Unable to Fetch office time policy Data');
@@ -192,7 +192,7 @@ function Registration() {
 
   const fetchWorkTypeData = async () => {
     try {
-      const response = await axios.get('http://localhost:8000/common/show-workType');
+      const response = await axios.get(`${process.env.REACT_APP_SERVER_ADDRESS}/common/show-workType`);
       setWorkTypeData(response.data.data);
     } catch (error) {
       alert('Unable to Fetch Data work type data');
@@ -301,7 +301,7 @@ function Registration() {
 
     try {
       console.log("formData", formData);
-      const response = await axios.post('http://localhost:8000/auth/empRegister', formData, {
+      const response = await axios.post(`${process.env.REACT_APP_SERVER_ADDRESS}/auth/empRegister`, formData, {
         headers: { 'Content-Type': 'application/json' },
       });
 

@@ -49,7 +49,7 @@ const UpdateEmpPolicyDetailTable =()=> {
         
         if (selectedPolicyId) {
             // Make the GET request to fetch policy details using the selectedPolicyId
-            axios.get(`http://localhost:8000/common/showToUpdate-officeTimepolicy?policyId=${selectedPolicyId}`)
+            axios.get(`${process.env.REACT_APP_SERVER_ADDRESS}/common/showToUpdate-officeTimepolicy?policyId=${selectedPolicyId}`)
                 .then((response) => {
 
                     console.log('API request successful');
@@ -108,7 +108,7 @@ const UpdateEmpPolicyDetailTable =()=> {
 
             console.log("Updated Data", dataToSend);
 
-          const response = await axios.put("http://localhost:8000/common/update-officeTimePolicy",dataToSend,{
+          const response = await axios.put(`${process.env.REACT_APP_SERVER_ADDRESS}/common/update-officeTimePolicy`,dataToSend,{
             headers: {
                 "Content-Type": "application/json",
               },

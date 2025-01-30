@@ -20,7 +20,7 @@ function DailyReport() {
 
   const fetchAllEmployeeNameWithId = async () => {
     try {
-      const response = await axios.get("http://localhost:8000/auth/showAllEmployee");
+      const response = await axios.get(`${process.env.REACT_APP_SERVER_ADDRESS}/auth/showAllEmployee`);
       setShowAllEmployee(response.data.data);
       setFilteredEmployees(response.data.data);
     } catch (error) {
@@ -80,7 +80,7 @@ function DailyReport() {
     };
   
     try {
-      const response = await axios.post("http://localhost:8000/attendance/daily-report-download", data, {
+      const response = await axios.post(`${process.env.REACT_APP_SERVER_ADDRESS}/attendance/daily-report-download`, data, {
         responseType: "blob", // Ensure the response is treated as a Blob
       });
   

@@ -16,7 +16,7 @@ function TableListofCompany2() {
   // Fetch department data
   const fetchDepartmentNameData = async () => {
     try {
-      const response = await axios.get('http://localhost:8000/common/show-department');
+      const response = await axios.get(`${process.env.REACT_APP_SERVER_ADDRESS}/common/show-department`);
       setDepartmentName(response.data.data);
     } catch (error) {
       alert('Error: Unable to fetch department data');
@@ -26,7 +26,7 @@ function TableListofCompany2() {
   // Fetch designation data for the selected department
   const fetchDesignationData = async (departmentId) => {
     try {
-      const response = await axios.get(`http://localhost:8000/common/show-designation?departmentId=${departmentId}`);
+      const response = await axios.get(`${process.env.REACT_APP_SERVER_ADDRESS}/common/show-designation?departmentId=${departmentId}`);
       setDesignationName(response.data.data);
     } catch (error) {
       alert('Error: Unable to fetch designation data');
@@ -91,7 +91,7 @@ function TableListofCompany2() {
 
     try {
       if (isUpdateMode) {
-        const response = await axios.put('http://localhost:8000/common/update-dept', {
+        const response = await axios.put(`${process.env.REACT_APP_SERVER_ADDRESS}/common/update-dept`, {
           deptId: selectedDepartmentId,
           deptName: dept,
         });
@@ -107,7 +107,7 @@ function TableListofCompany2() {
           alert('Error: Department not updated.');
         }
       } else {
-        const response = await axios.post('http://localhost:8000/common/add-department', { dept });
+        const response = await axios.post(`${process.env.REACT_APP_SERVER_ADDRESS}/common/add-department`, { dept });
         if (response.data) {
           alert('Department added successfully!');
           setDepartmentName([
@@ -160,7 +160,7 @@ function TableListofCompany2() {
     try {
       if (isDesignationUpdateMode) {
         const selectedDesig = designationNameData.find((d) => d._id === selectedDesignationId);
-        const response = await axios.put('http://localhost:8000/common/update-designation', {
+        const response = await axios.put(`${process.env.REACT_APP_SERVER_ADDRESS}/common/update-designation`, {
           department: selectedDepartmentId, // Send selected department ID
           designation: selectedDesig?.designation, // Send current designation
           newDesignation: designation, // Send new designation value
@@ -177,7 +177,7 @@ function TableListofCompany2() {
           alert('Error: Designation not updated.');
         }
       } else {
-        const response = await axios.post('http://localhost:8000/common/add-designation', {
+        const response = await axios.post(`${process.env.REACT_APP_SERVER_ADDRESS}/common/add-designation`, {
           department: selectedDepartmentId,
           designation: designation,
         });
@@ -228,7 +228,7 @@ function TableListofCompany2() {
                 <td className="border border-gray-300 text-center">{empdept}</td>
               </tr>
             ))}
-          </tbody>
+          </tbody>        
         </table>
         
         

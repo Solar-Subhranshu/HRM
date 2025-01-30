@@ -223,7 +223,7 @@ const EmpPolicyDetailTable =()=> {
 
         // Submit the form if valid
         try {
-            const response = await axios.post("http://localhost:8000/common/add-officeTimePolicy", formData, {
+            const response = await axios.post(`${process.env.REACT_APP_SERVER_ADDRESS}/common/add-officeTimePolicy`, formData, {
                 headers: {
                     "Content-Type": "application/json",
                 },

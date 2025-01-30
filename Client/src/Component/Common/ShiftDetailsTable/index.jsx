@@ -65,7 +65,7 @@ const ShiftDetailsTable = () => {
   
     console.log('form date ', formData);
     try {
-      const response = await axios.post('http://localhost:8000/common/add-shift', formData);
+      const response = await axios.post(`${process.env.REACT_APP_SERVER_ADDRESS}/common/add-shift`, formData);
       alert('Shift details registered successfully!');
       console.log('Response:', response.data);
     } catch (error) {

@@ -22,7 +22,7 @@ export default function Index() {
 
       const fetchAllEmployeeData = async () => {
         try {
-          const response = await axios.get("http://localhost:8000/auth/showAllEmployee");
+          const response = await axios.get(`${process.env.REACT_APP_SERVER_ADDRESS}/auth/showAllEmployee`);
           let employeeData = response.data.data || [];
     
           if (isActiveFilter !== null) {
