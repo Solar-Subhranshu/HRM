@@ -18,7 +18,7 @@
 
 const net = require("net");
 
-const DEVICE_IP = "192.168.1.201";
+const DEVICE_IP = "122.160.141.26";
 const DEVICE_PORT = 4370; // Check the correct port
 
 const client = new net.Socket();
