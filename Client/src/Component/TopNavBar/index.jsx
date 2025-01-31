@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect, useRef } from 'react';
 import Dash from '../../Assets/Images/dash.png';
 import Setting from '../../Assets/Images/setting.png';
 import File from '../../Assets/Images/file.png';
@@ -6,13 +6,38 @@ import Report from '../../Assets/Images/report.png';
 import Payroll from '../../Assets/Images/payroll.png';
 import Admin from '../../Assets/Images/admin.png';
 import { useNavigate } from 'react-router-dom';
+import { FaUserGraduate } from "react-icons/fa";
+import { RiLogoutCircleRLine } from "react-icons/ri";
 
 
 
 function Navbars() {
   const navigate = useNavigate();
   const [isDropdownOpen, setIsDropdownOpen] = useState([false, false, false, false, false ]);
-  
+  const dropdownRef = useRef(null);
+  const handleDropdownToggle = (index) => {
+    setIsDropdownOpen((prev) => {
+      const newDropdownState = prev.map((state, i) => (i === index ? !state : false));
+      return newDropdownState;
+    });
+  };
+
+  // Close dropdown when clicking outside
+  useEffect(() => {
+    const handleClickOutside = (event) => {
+      if (dropdownRef.current && !dropdownRef.current.contains(event.target)) {
+        setIsDropdownOpen([false, false, false, false, false]);
+      }
+    };
+
+    document.addEventListener('mousedown', handleClickOutside);
+    return () => {
+      document.removeEventListener('mousedown', handleClickOutside);
+    };
+  }, []);
+
+
+
   const handleDepartmentClick = () => {
     navigate('/layout/departmenttable');
   };
@@ -57,12 +82,12 @@ function Navbars() {
   
   
   return (
-    <div className="shadow-md shadow-gray-400">
+    <div className="shadow-md shadow-gray-400" ref={dropdownRef}>
       <nav className="bg-white py-2 bgMainColor">
         <div className="ml-5 flex justify-start gap-9 text-center">
           
           {/* Dashboard */}
-          <div className="flex flex-col justify-center items-center gap-1">
+          <div className="flex flex-col justify-center items-center gap-1  " >
             <button onClick={handleShowDashboardClick}>
               <img src={Dash} alt='dash' width='31.5rem' />
             </button>
@@ -81,8 +106,9 @@ function Navbars() {
                   console.log("Clicked ",tempData);
                   return tempData; 
                 })}
+
             >
-                <div className='flex flex-col justify-center items-center gap-1'>
+                <div className='flex flex-col justify-center items-center gap-1' >
                     <button className="text-red-600">
                         <img src={Setting} alt='setting' width='32rem' />
                     </button>
@@ -106,7 +132,7 @@ function Navbars() {
           </div>
 
           {/* File with Dropdown */}
-          <div className="relative cursor-pointer" 
+          <div className="relative cursor-pointer"  
                   onClick={() => setIsDropdownOpen((prev) => {
                     const tempData = [ ...prev ];
                     for(let index = 0; index < tempData.length; index++){
@@ -258,11 +284,19 @@ function Navbars() {
              </div>
             ) }
           </div>
-          
-          <div className='ml-auto'>
-            <button onClick={handleEmployeeRegister} className='py-2 px-4 mt-1 mr-2 bg-red-500 text-white rounded-lg hover:bg-red-700'>
-              Employee Register
+
+          {/* employee Register */}
+          <div className="flex flex-col justify-center items-center gap-1  " onClick={handleEmployeeRegister} >
+            <button >
+              {<FaUserGraduate size={28} />}
             </button>
+            <div className="text-white text-sm"><span>Employee Register</span></div>
+          </div>
+          
+          <div className='ml-auto mt-3 mr-4 text-white'>
+            
+              {<RiLogoutCircleRLine size={28}/>}
+            
           </div>
 
         </div>
