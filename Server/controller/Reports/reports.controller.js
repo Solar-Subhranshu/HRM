@@ -1,5 +1,6 @@
 const Attendance = require("../../models/attendance/attendance.model");
 const Employee = require("../../models/auth/employee.model");
+const helper = require("../../utils/common.util");
 
 const moment = require("moment");
 const xlsx = require("xlsx");
@@ -257,8 +258,117 @@ const downloadMonthlyReport = async(req,res)=>{
     }
 }
 
+const dashboardReport = async(req,res)=>{
+    try {
+        const currDate = new Date();
+        const date =currDate.toISOString().split('T')[0]
+
+        //employee data
+        const empData = await Employee.find().lean()
+        .populate({
+            path:"department",
+            select:"-updatedAt -createdAt -__v -created_By -updated_By"
+        })
+        .populate({
+            path:"reportingManager",
+            select:"name"
+        })
+        .select("name employeeCode department reportingManager"); 
+
+        //Current day attendance Data
+        const responseRecord =  await Attendance.find({date}).lean()
+                                .populate({
+                                    path:"employeeId",
+                                    select:"employeeCode name",
+                                    populate:[{
+                                        path:"department",
+                                        select:"department"
+                                    },{
+                                        path:"reportingManager",
+                                        select:"name"
+                                    },{
+                                        path:"shift",
+                                        select:"startTime endTime"
+                                    },{
+                                        path:"officeTimePolicy",
+                                        select:"permittedLateArrival"
+                                    }
+                                ]
+        });
+
+        // console.log(responseRecord);
+
+        //present data
+        const presentData = responseRecord.map((record)=>{
+            return {
+                employeeCode: record.employeeId.employeeCode,
+                name: record.employeeId.employeeCode,
+                department : record.employeeId.department.department,
+                in_Time:moment(record.punchInTime).format("hh:mm A"),
+                shift : `${record.employeeId.shift.startTime} - ${record.employeeId.shift.endTime}`,
+                reportingManager: record.employeeId.reportingManager.name
+            }
+        })
+
+        //Absent Data
+        const absentData = empData.filter((emp)=>{
+            return !(responseRecord.some(record=> {return record.employeeId._id.toString()===emp._id.toString()}))
+        });
+        //absent data to be shown
+        const absentDataFormat = absentData.map((d)=>{
+            return {
+                employeeCode:d.employeeCode,
+                name:d.name,
+                department:d.department.department,
+                reportingManager:d.reportingManager?.name||""
+            }
+        })
+
+        //Late Data 
+        const lateData = responseRecord.filter((record)=>{
+            const allowedLateTime = helper.timeDurationInMinutes('00:00',record.employeeId.shift.startTime) + helper.timeDurationInMinutes("00:00",record.employeeId.officeTimePolicy.permittedLateArrival);
+
+            // const midnight = moment("00:00","HH:mm");
+            const punchIn = moment(record.punchInTime).diff(moment('00:00','HH:mm'), 'minutes');
+            return punchIn>allowedLateTime
+        })
+        //Late Data to be shown
+        const lateDataFormat = lateData.map((d)=>{
+            return{
+                employeeCode: d.employeeId.employeeCode,
+                name: d.employeeId.employeeCode,
+                department : d.employeeId.department.department,
+                in_Time:moment(d.punchInTime).format("hh:mm A"),
+                shift : `${d.employeeId.shift.startTime} - ${d.employeeId.shift.endTime}`,
+                reportingManager: d.employeeId.reportingManager.name
+            }
+        })
+
+        return res.status(200).json({
+            success:true,
+            data:{
+            presentData:presentData,
+            absentData:absentDataFormat,
+            lateData:lateDataFormat
+            }
+        })
+
+        throw new Error("Function halted here for checking.")
+
+
+    } catch (error) {
+        return res.status(500).json({
+            success:false,
+            message:"Internal Server Error.",
+            error:error.message
+        });
+    }
+}
+
+
 
 module.exports = {
     downloadDailyReport,
-    downloadMonthlyReport
+    downloadMonthlyReport,
+    dashboardReport
 }

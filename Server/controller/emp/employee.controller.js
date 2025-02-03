@@ -8,7 +8,7 @@ const handleBase64Images = require("../../middlewares/base64ImageHandler");
 const absolutePath = require("../../utils/absolutePath");
 
 // done
-const registerEmployee = async(req,res)=>{
+const registerEmployee = async(req,res)=>{ 
     try {
         //employeeID is "admin ID" used to track who is registering employee
         const employeeId=req.employeeId;
@@ -306,6 +306,30 @@ const login = async(req,res) =>{
             error : error.message
         });
     }
+}
+
+const logout = async(req,res)=> {
+    const employeeId =  req.employeeId;
+    await Employee.findByIdAndUpdate(employeeId,{
+        $unset:{
+            refreshToken:1
+        }
+    },{new:true});
+
+    const options ={
+        withCredentials:true,
+        httpOnly:true,
+        secure:false
+    }
+
+    return res
+    .status(200)
+    .clearCookie("accessToken",options)
+    .clearCookie("refreshToken",options)
+    .json({
+        success:true,
+        message:"User Logged Out"
+    })
 }
 
 // done
@@ -770,7 +794,8 @@ const updateEmployee= async(req,res)=>{
 
 module.exports = {
     registerEmployee,
-    login,    
+    login,
+    logout,   
     deactivateEmp,
     showAllEmployee,
     showSingleEmployee,
