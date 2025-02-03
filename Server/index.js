@@ -2,13 +2,14 @@ require("dotenv").config();
 const express=require("express");
 const cors = require('cors');
 const cookieParser = require('cookie-parser');
-const app=express();
 const path = require("path")
 require("./db/db");
 require("./middlewares/multer.middleware")
 const authEmpRoute = require("./routes/authEmp.route");
 const commonRoute = require('./routes/common.router');
 const attendanceRoute = require('./routes/attendance.router');
+
+const app=express();
 
 const PORT = process.env.PORT || 5000;
 
