@@ -361,7 +361,7 @@ function Registration() {
   };
   return (
     <div>
-      <div className=' py-4 text-center font-semibold text-2xl mt-4 ml-2 mr-2' style={{backgroundColor : '#740FD6'}}>
+      <div className=' py-3 text-center font-semibold text-xl mt-4 ml-10 mr-10 rounded-md' style={{backgroundColor : '#740FD6'}}>
         <h2 className='text-white'>Employee Registration</h2>
       </div>
       <div className='mx-10 pt-6'>

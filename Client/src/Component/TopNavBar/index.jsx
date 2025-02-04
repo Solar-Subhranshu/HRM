@@ -8,10 +8,12 @@ import Admin from '../../Assets/Images/admin.png';
 import { useNavigate } from 'react-router-dom';
 import { FaUserGraduate } from "react-icons/fa";
 import { RiLogoutCircleRLine } from "react-icons/ri";
+import axios from 'axios';
 
 
 
 function Navbars() {
+
   const navigate = useNavigate();
   const [isDropdownOpen, setIsDropdownOpen] = useState([false, false, false, false, false ]);
   const dropdownRef = useRef(null);
@@ -35,6 +37,32 @@ function Navbars() {
       document.removeEventListener('mousedown', handleClickOutside);
     };
   }, []);
+
+  //logout section 
+  const handleLogout = async () => {
+    console.log("my data")
+    try {
+      const response = await axios.get(`${process.env.REACT_APP_SERVER_ADDRESS}/auth/logout`, {
+        method: "GET",
+        credentials: "include", // If using cookies for authentication
+      });
+
+      if (response.ok) {
+        // Perform logout actions (e.g., remove token, redirect)
+        localStorage.removeItem("token"); // If using token-based auth
+        navigate('/')
+      } else {
+        console.error("Logout failed");
+        alert("logout is failed")
+      }
+    } catch (error) {
+      console.error("Error during logout:", error);
+    }
+  };
+
+  useEffect(()=>{
+
+  }, []       )
 
 
 
@@ -108,23 +136,23 @@ function Navbars() {
                 })}
 
             >
-                <div className='flex flex-col justify-center items-center gap-1' >
-                    <button className="text-red-600">
-                        <img src={Setting} alt='setting' width='32rem' />
-                    </button>
-                    <div className='text-sm text-white'>
-                        <span>Device Setup</span>
-                    </div>
+            <div className='flex flex-col justify-center items-center gap-1' >
+                <button className="text-red-600">
+                    <img src={Setting} alt='setting' width='32rem' />
+                </button>
+                <div className='text-sm text-white'>
+                    <span>Device Setup</span>
                 </div>
+            </div>
 
             {isDropdownOpen[0] &&(
-               <div className="absolute text-left left-0 bg-white text-black shadow-lg rounded-sm z-10 inline-block">
+               <div className="absolute text-left left-0 bg-white text-black shadow-lg rounded-sm z-10 inline-block"  >
                 <ul className="">
                     <li className="hover:bg-gray-200 py-1 px-2 rounded border-b-2" >
-                    <a href="#" className="whitespace-nowrap  ">Add Edit Machine</a>
+                    <a href="#" className="whitespace-nowrap text-sm ">Add Edit Machine</a>
                     </li>
                     <li className="hover:bg-gray-200 py-1 px-2 rounded">
-                    <a href="#"  className="whitespace-nowrap  " >Hardware Setup</a>
+                    <a href="#"  className="whitespace-nowrap  text-sm" >Hardware Setup</a>
                     </li>
                 </ul>
              </div>
@@ -133,41 +161,41 @@ function Navbars() {
 
           {/* File with Dropdown */}
           <div className="relative cursor-pointer"  
-                  onClick={() => setIsDropdownOpen((prev) => {
-                    const tempData = [ ...prev ];
-                    for(let index = 0; index < tempData.length; index++){
-                      if(index === 1) continue;
-                      tempData[index] = false;
-                    }
-                    tempData[1] = !tempData[1];
-                    return tempData; 
-                  })}
+            onClick={() => setIsDropdownOpen((prev) => {
+              const tempData = [ ...prev ];
+              for(let index = 0; index < tempData.length; index++){
+                if(index === 1) continue;
+                tempData[index] = false;
+              }
+              tempData[1] = !tempData[1];
+              return tempData; 
+            })}
           >
-            <div className='flex flex-col justify-center items-center gap-1'>
-                <button>
-                    <img src={File} alt='file' width='31.8rem' />
-                </button>
-                <div className="text-sm text-white"><span>File</span></div>
-            </div>
+          <div className='flex flex-col justify-center items-center gap-1'>
+              <button>
+                  <img src={File} alt='file' width='31.8rem' />
+              </button>
+              <div className="text-sm text-white"><span>File</span></div>
+          </div>
             {isDropdownOpen[1] && (
               <div className="absolute text-left left-0 bg-white text-black shadow-lg rounded-sm z-10 inline-block ">
                 <ul className="">
-                  <li className="hover:bg-gray-200 py-1 px-2 rounded border-b-2" >
-                    <a href="#" onClick={handleCompanybranchClick}>Company</a>
+                  <li className="hover:bg-gray-200 py-1 px-2 rounded border-b-2  text-sm " >
+                    <a href="#" onClick={handleCompanybranchClick}  >Company</a>
                   </li>
-                  <li className="hover:bg-gray-200 py-1 px-2 rounded">
+                  <li className="hover:bg-gray-200 py-1 px-2 rounded  text-sm ">
                     <a href="#" >Branch</a>
                   </li>
-                  <li className="hover:bg-gray-200 py-1 px-2 rounded">
+                  <li className="hover:bg-gray-200 py-1 px-2 rounded  text-sm ">
                     <a href="#" onClick={handleDepartmentClick}>Department</a>
                   </li>
-                  <li className="hover:bg-gray-200 py-1 px-2 rounded ">
+                  <li className="hover:bg-gray-200 py-1 px-2 rounded  text-sm ">
                     <a href="#" onClick={handleOfficeTimePolicyClick}  className="whitespace-nowrap">Office Time Policy</a>
                   </li>
-                  <li className="hover:bg-gray-200 py-1 px-2 rounded">
-                    <a href="#"  onClick={handleShiftDetailsClick}>Shift Details</a>
+                  <li className="hover:bg-gray-200 py-1 px-2 rounded  text-sm ">
+                    <a href="#"  onClick={handleShiftDetailsClick} >Shift Details</a>
                   </li>
-                  <li className="hover:bg-gray-200 py-1 px-2 rounded">
+                  <li className="hover:bg-gray-200 py-1 px-2 rounded  text-sm ">
                     <a href="#" onClick={handleEmployeeListClick}>Employee List</a>
                   </li>
                 </ul>
@@ -198,16 +226,16 @@ function Navbars() {
             {isDropdownOpen[2] && (
               <div className="absolute text-left left-0 bg-white text-black shadow-lg rounded-sm z-10 inline-block ">
                 <ul className="">
-                  <li className="hover:bg-gray-200 py-1 px-2 rounded border-b-2" >
+                  <li className="hover:bg-gray-200 py-1 px-2 rounded border-b-2  text-sm " >
                     <a href="" onClick={handleDailyUpdateClick}>Daily Update</a>
                   </li>
-                  <li className="hover:bg-gray-200 py-1 px-2 rounded">
+                  <li className="hover:bg-gray-200 py-1 px-2 rounded  text-sm ">
                     <a href="#" >Daily Present</a>
                   </li>
-                  <li className="hover:bg-gray-200 py-1 px-2 rounded">
+                  <li className="hover:bg-gray-200 py-1 px-2 rounded  text-sm ">
                     <a href="#">Monthly Report</a>
                   </li>
-                  <li className="hover:bg-gray-200 py-1 px-2 rounded ">
+                  <li className="hover:bg-gray-200 py-1 px-2 rounded  text-sm ">
                     <a href="#"  className="whitespace-nowrap">Performence Report</a>
                   </li>
                   
@@ -237,13 +265,13 @@ function Navbars() {
             {isDropdownOpen[3] &&(
                <div className="absolute text-left left-0 bg-white text-black shadow-lg rounded-sm z-10 inline-block ">
                <ul className="">
-                 <li className="hover:bg-gray-200 py-1 px-2 rounded border-b-2" >
+                 <li className="hover:bg-gray-200 py-1 px-2 rounded border-b-2  text-sm " >
                    <a href="#" className="whitespace-nowrap">Pay Setup</a>
                  </li>
-                 <li className="hover:bg-gray-200 py-1 px-2 rounded">
+                 <li className="hover:bg-gray-200 py-1 px-2 rounded  text-sm ">
                    <a href="#" className="whitespace-nowrap">Monthly Pay Process</a>
                  </li>
-                 <li className="hover:bg-gray-200 py-1 px-2 rounded">
+                 <li className="hover:bg-gray-200 py-1 px-2 rounded  text-sm ">
                    <a href="#" className="whitespace-nowrap">Salary Report</a>
                  </li>
                </ul>
@@ -274,10 +302,10 @@ function Navbars() {
             {isDropdownOpen[4] &&(
                <div className="absolute text-left left-0 bg-white text-black shadow-lg rounded-sm z-10 inline-block ">
                <ul className="">
-                 <li  className="hover:bg-gray-200 py-1 px-2 rounded border-b-2" >
+                 <li  className="hover:bg-gray-200 py-1 px-2 rounded border-b-2  text-sm " >
                    <a onClick={handleManualPunchClick} href="" className="whitespace-nowrap">User Manager</a>
                  </li>
-                 <li className="hover:bg-gray-200 py-1 px-2 rounded">
+                 <li className="hover:bg-gray-200 py-1 px-2 rounded  text-sm ">
                    <a href="#" onClick={handleTest} className="whitespace-nowrap">Change Password</a>
                  </li>
                </ul>
@@ -287,16 +315,15 @@ function Navbars() {
 
           {/* employee Register */}
           <div className="flex flex-col justify-center items-center gap-1  " onClick={handleEmployeeRegister} >
-            <button >
+            <button >         
               {<FaUserGraduate size={28} />}
             </button>
             <div className="text-white text-sm"><span>Employee Register</span></div>
           </div>
           
-          <div className='ml-auto mt-3 mr-4 text-white'>
-            
-              {<RiLogoutCircleRLine size={28}/>}
-            
+          {/* logout section  */}
+          <div className='ml-auto mt-3 mr-4 text-white' onClick={handleLogout}>
+            {<RiLogoutCircleRLine size={28}/>}
           </div>
 
         </div>
