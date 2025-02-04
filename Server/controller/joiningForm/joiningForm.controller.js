@@ -52,7 +52,8 @@ const addJoiningForm = async(req, res) =>{
             // joiningFormAttachment
         }=req.body;
         console.log(req.body);
-        if(!companyId ||
+        if(
+            // !companyId ||
             !name ||
             !father_husbandName ||
             !dateOfBirth ||
@@ -363,6 +364,7 @@ const joiningFormApproval = async(req,res)=> {
     try {
         //take the remaining data from the HR and also the joining form pdf document.
         const {formId,
+            companyId,
             interviewDate,
             joiningDate, 
             department,
@@ -378,16 +380,17 @@ const joiningFormApproval = async(req,res)=> {
                 message:"Joining Form Id is required."
             });
         }
-        if(!department || !designation){
+        if(!companyId || !department || !designation){
             return res.status(400).json({
                 success:false,
-                message:"Department and Designation is required, for Approval."
+                message:"Comnpany, Department and Designation is required, for Approval."
             });
         }
 
         const isApproved = await JoiningForm.findByIdAndUpdate({_id:formId},{
             interviewDate,
             joiningDate,
+            companyId,
             department,
             designation,
             employeeType,

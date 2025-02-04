@@ -35,7 +35,6 @@ const attendanceSchema = new mongoose.Schema({
                 min: 0,
                 max: 1, // Ensures deduction does not exceed 1
             }
-            
         }, 
         _id:false,
         default: { isPenalized: false, reason: "", deduction: 0 }

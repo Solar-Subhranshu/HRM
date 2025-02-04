@@ -7,6 +7,21 @@ const fs = require("fs/promises");
 const handleBase64Images = require("../../middlewares/base64ImageHandler");
 const absolutePath = require("../../utils/absolutePath");
 
+//strictly for backend
+const addAdmin = async(req,res)=>{
+    try {
+        // const {}
+    } catch (error) {
+        return res
+        .status(400)
+        .json({
+            success:false,
+            message:"Unable to add admin.",
+            error:error.message
+        })
+    }
+}
+
 // done
 const registerEmployee = async(req,res)=>{ 
     try {
@@ -438,9 +453,7 @@ const showAllEmployee= async (req,res) =>{
             return res.status(200).json({
                 success: true,
                 message: "List of All Employee",
-                root: `${process.env.SERVER_ADDRESS}${process.env.PORT}/`,
                 data : allEmp
-
             });
         }
         
@@ -608,21 +621,21 @@ const showJoiningHR = async (req,res)=>{
     }
 }
 
-const addEmployeeByExcel = async(req,res)=>{
-    try{
-        const JSON_Data= await excelToJSON(req.file.buffer);
+// const addEmployeeByExcel = async(req,res)=>{
+//     try{
+//         const JSON_Data= await excelToJSON(req.file.buffer);
 
-        console.log(JSON_Data);
+//         console.log(JSON_Data);
         
         
-    }
-    catch(error){
-        return res.status(500).json({
-            success:false,
-            message: "Internal Server Error, Couldn't add by Excel."
-        })
-    }
-}
+//     }
+//     catch(error){
+//         return res.status(500).json({
+//             success:false,
+//             message: "Internal Server Error, Couldn't add by Excel."
+//         })
+//     }
+// }
 
 const updateEmployee= async(req,res)=>{
     try {
