@@ -7,8 +7,23 @@ const fs = require("fs/promises");
 const handleBase64Images = require("../../middlewares/base64ImageHandler");
 const absolutePath = require("../../utils/absolutePath");
 
+//strictly for backend
+const addAdmin = async(req,res)=>{
+    try {
+        // const {}
+    } catch (error) {
+        return res
+        .status(400)
+        .json({
+            success:false,
+            message:"Unable to add admin.",
+            error:error.message
+        })
+    }
+}
+
 // done
-const registerEmployee = async(req,res)=>{
+const registerEmployee = async(req,res)=>{ 
     try {
         //employeeID is "admin ID" used to track who is registering employee
         const employeeId=req.employeeId;
@@ -308,6 +323,30 @@ const login = async(req,res) =>{
     }
 }
 
+const logout = async(req,res)=> {
+    const employeeId =  req.employeeId;
+    await Employee.findByIdAndUpdate(employeeId,{
+        $unset:{
+            refreshToken:1
+        }
+    },{new:true});
+
+    const options ={
+        withCredentials:true,
+        httpOnly:true,
+        secure:false
+    }
+
+    return res
+    .status(200)
+    .clearCookie("accessToken",options)
+    .clearCookie("refreshToken",options)
+    .json({
+        success:true,
+        message:"User Logged Out"
+    })
+}
+
 // done
 const deactivateEmp = async (req,res)=>{
     try{
@@ -414,9 +453,7 @@ const showAllEmployee= async (req,res) =>{
             return res.status(200).json({
                 success: true,
                 message: "List of All Employee",
-                root: `${process.env.SERVER_ADDRESS}${process.env.PORT}/`,
                 data : allEmp
-
             });
         }
         
@@ -584,21 +621,21 @@ const showJoiningHR = async (req,res)=>{
     }
 }
 
-const addEmployeeByExcel = async(req,res)=>{
-    try{
-        const JSON_Data= await excelToJSON(req.file.buffer);
+// const addEmployeeByExcel = async(req,res)=>{
+//     try{
+//         const JSON_Data= await excelToJSON(req.file.buffer);
 
-        console.log(JSON_Data);
+//         console.log(JSON_Data);
         
         
-    }
-    catch(error){
-        return res.status(500).json({
-            success:false,
-            message: "Internal Server Error, Couldn't add by Excel."
-        })
-    }
-}
+//     }
+//     catch(error){
+//         return res.status(500).json({
+//             success:false,
+//             message: "Internal Server Error, Couldn't add by Excel."
+//         })
+//     }
+// }
 
 const updateEmployee= async(req,res)=>{
     try {
@@ -770,7 +807,8 @@ const updateEmployee= async(req,res)=>{
 
 module.exports = {
     registerEmployee,
-    login,    
+    login,
+    logout,   
     deactivateEmp,
     showAllEmployee,
     showSingleEmployee,

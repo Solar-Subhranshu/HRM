@@ -21,7 +21,7 @@ const createLeaveRecord = async(empId)=> {
         }
 
         const currDate = new Date();
-        const emp = await Employee.findById(empId).select("joiningDate").lean();
+        const emp = await Employee.findById(empId).select("joiningDate isActive").lean();
         if(!emp.isActive){
             return {
                 success:false,
@@ -34,7 +34,7 @@ const createLeaveRecord = async(empId)=> {
         //check if eligible for monthly paid leaves (in case we register old employees)
         const monthsCompleted = (currDate.getFullYear() - emp.joiningDate.getFullYear())*12 + (currDate.getMonth() - emp.joiningDate.getMonth());
 
-        if(monthsCompleted >=3){
+        if(monthsCompleted >=4){
             monthlyLeaves = 2;
 
             if(currDate.getFullYear()-emp.joiningDate.getFullYear() > 0){
@@ -121,7 +121,7 @@ const viewLeaveRecord = async(req,res)=> {
     }
 }
 
-
+// this is to be used when the admin or management want to increase paid leaves for any employee or group of employees.
 const updateLeaveCountAllowedPerMonth= async(req,res)=>{
      try {
         //emp can be single employee-id or array of employee-id
@@ -179,11 +179,68 @@ const updateLeaveCountAllowedPerMonth= async(req,res)=>{
 
 //only for monthly corn job
 //updating accumulated leave count.
-const updateLeaveAccumulatedEachMonth = async()=> {
+//if employee older than 3 months then they get 2 paid leaves every-month.
+//if paid leaves not used, then they are carry-forwarded to the next month.
+const updateLeaveAccumulatedEachMonth = async(empId)=> {
     try {
-        
+        if(!empId){
+            return{
+                success:false,
+                message:"employee is required."
+            }
+        }
+
+        const emp = await Employee.findById(empId).select("joiningDate isActive").lean();
+        if(!emp.isActive){
+            return {
+                success:false,
+                message:"Employee is no longer active",
+            };
+        }
+
+        const currDate = new Date();
+        const currLeaveRecord = await Leave.findOne({employee:empId, year: currDate.getFullYear()}).lean();
+        if(!currLeaveRecord){
+            return {
+                success:false,
+                message:`Leave Record Not Found, Emp: ${empId}  Year: ${currYear}`
+            }
+        }
+
+        //check if eligible for monthly paid leaves (in case we register old employees)
+        const monthsCompleted = (currDate.getFullYear() - emp.joiningDate.getFullYear())*12 + (currDate.getMonth() - emp.joiningDate.getMonth());
+
+        let monthlyLeaves=0;
+        let accumulatedLeaves=0;
+
+        if(monthsCompleted>=4){
+            if(currLeaveRecord.leaveAllowedPerMonth>0){
+                monthlyLeaves = currLeaveRecord.leaveAllowedPerMonth;
+                accumulatedLeaves = currLeaveRecord.leavesAccumulated + currLeaveRecord.leaveAllowedPerMonth;
+            }
+            else{
+                monthlyLeaves= 2;
+                accumulatedLeaves +=monthlyLeaves;
+            }
+        }
+
+        const isUpdated = await Leave.findByIdAndUpdate(currLeaveRecord._id, {
+            leaveAllowedPerMonth: monthlyLeaves,
+            leavesAccumulated : accumulatedLeaves
+        },{new:true});
+
+        if(isUpdated){
+            return {
+                success:true,
+                message:"Leave Record Updated!"
+            }
+        }
+
     } catch (error) {
-        
+        return {
+            success:false,
+            message:`Unable to update the record, ${error.message}`
+        };
     }
 }
 
@@ -191,5 +248,5 @@ module.exports = {
      createLeaveRecord,
      viewLeaveRecord,
      updateLeaveCountAllowedPerMonth,
-
+     updateLeaveAccumulatedEachMonth
 }

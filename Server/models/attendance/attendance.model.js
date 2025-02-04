@@ -10,6 +10,7 @@ const attendanceSchema = new mongoose.Schema({
         type:Date,
         required:true
     },
+    
     punchInTime:{
         type:Date,
         required:true
@@ -34,7 +35,6 @@ const attendanceSchema = new mongoose.Schema({
                 min: 0,
                 max: 1, // Ensures deduction does not exceed 1
             }
-            
         }, 
         _id:false,
         default: { isPenalized: false, reason: "", deduction: 0 }

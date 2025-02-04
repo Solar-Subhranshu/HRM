@@ -33,6 +33,7 @@ router.get("/seeEmpBackend",employeeController.seeEmpBackend);
 router.get("/showSingleEmployee",employeeController.showSingleEmployee);
 
 router.post("/login",employeeController.login);
+router.post("/logout",employeeController.logout);
 
 router.get("/show-joining-HR",employeeController.showJoiningHR);
 
@@ -59,4 +60,4 @@ router.patch("/approve-joiningForm",tokenVerify,joiningFormController.joiningFor
 router.patch("/reject-joiningForm",tokenVerify,joiningFormController.joiningFormRejection);
 
 
-module.exports = router;
+module.exports = router;    

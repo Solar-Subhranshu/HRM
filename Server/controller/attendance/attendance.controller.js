@@ -17,6 +17,7 @@ const commonUtil = require("../../utils/common.util");
         5. absent and half-day will also be decided based on manual punch-out.
 
 */ 
+// 
 const recordAttendance = async(req,res)=>{
     try {
         const {employeeId} = req.body;
@@ -50,9 +51,9 @@ const recordAttendance = async(req,res)=>{
 
         if(currTimeMin < commonUtil.timeDurationInMinutes('00:00',employee.shift.maxEarlyAllowed)){
 
-            console.log(currTime);
-            console.log(employee.shift.maxEarlyAllowed);
-            console.log(currTimeMin, commonUtil.timeDurationInMinutes('00:00',employee.shift.maxEarlyAllowed));
+            // console.log(currTime);
+            // console.log(employee.shift.maxEarlyAllowed);
+            // console.log(currTimeMin, commonUtil.timeDurationInMinutes('00:00',employee.shift.maxEarlyAllowed));
             return res.status(401).json({
                 success:false,
                 message:"Punch-In too early, attendance not recorded."

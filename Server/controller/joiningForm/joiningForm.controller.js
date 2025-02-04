@@ -51,8 +51,9 @@ const addJoiningForm = async(req, res) =>{
             postGraduationAttachment,
             // joiningFormAttachment
         }=req.body;
-
-        if(!companyId ||
+        console.log(req.body);
+        if(
+            // !companyId ||
             !name ||
             !father_husbandName ||
             !dateOfBirth ||
@@ -158,20 +159,20 @@ const addJoiningForm = async(req, res) =>{
         const class12Image =class12Attachment? await handleBase64Images([class12Attachment],"class12Attachments") : [];
         const graduationImage = graduationAttachment? await handleBase64Images([graduationAttachment],"graduationAttachments") :[];
         const postGraduationImage = postGraduationAttachment? await handleBase64Images([postGraduationAttachment],"postGraduationAttachments"):[];
-        const joiningFormFile = joiningFormAttachment? await handleBase64Images([joiningFormAttachment],"joiningForms") : [];
+        // const joiningFormFile = joiningFormAttachment? await handleBase64Images([joiningFormAttachment],"joiningForms") : [];
 
 
         // attachment urls
-        const aadharCardUrl = `${req.protocol}://${req.get("host")}/uploads/aadharCardAttachments/${aadharCardImage[0].fileName}`;
-        const panCardUrl = `${req.protocol}://${req.get("host")}/uploads/panCardAttachments/${panCardImage[0].fileName}`;
-        const bankAccountUrl = `${req.protocol}://${req.get("host")}/uploads/bankAttachments/${bankAccountImage[0].fileName}`;
-        const photoUrl = `${req.protocol}://${req.get("host")}/uploads/photoAttachments/${photoImage[0].fileName}`;
-        const class10Url = `${req.protocol}://${req.get("host")}/uploads/class10Attachments/${class10Image[0].fileName}`;
-        const class12Url = `${req.protocol}://${req.get("host")}/uploads/class12Attachments/${class12Image[0].fileName}`;
-        const graduationUrl = `${req.protocol}://${req.get("host")}/uploads/graduationAttachments/${graduationImage[0].fileName}`;
-        const postGraduationUrl = `${req.protocol}://${req.get("host")}/uploads/postGraduationAttachments/${postGraduationImage[0].fileName}`;
-        const joiningFormUrl =  `${req.protocol}://${req.get("host")}/uploads/joiningForms/${joiningFormFile[0].fileName}`;
-        const signatureUrl = `${req.protocol}://${req.get("host")}/uploads/joiningForms/${signatureImage[0].fileName}`;
+        const aadharCardUrl = aadharCardImage.length>0 ? `${req.protocol}://${req.get("host")}/uploads/aadharCardAttachments/${aadharCardImage[0].fileName}` : null;
+        const panCardUrl = panCardImage.length>0 ? `${req.protocol}://${req.get("host")}/uploads/panCardAttachments/${panCardImage[0].fileName}` : null;
+        const bankAccountUrl = bankAccountImage.length>0 ? `${req.protocol}://${req.get("host")}/uploads/bankAttachments/${bankAccountImage[0].fileName}` : null;
+        const photoUrl = photoImage.length>0 ? `${req.protocol}://${req.get("host")}/uploads/photoAttachments/${photoImage[0].fileName}` : null;
+        const class10Url = class10Image.length>0 ? `${req.protocol}://${req.get("host")}/uploads/class10Attachments/${class10Image[0].fileName}` :null;
+        const class12Url = class12Image.length>0 ? `${req.protocol}://${req.get("host")}/uploads/class12Attachments/${class12Image[0].fileName}`:null;
+        const graduationUrl = graduationImage.length>0 ? `${req.protocol}://${req.get("host")}/uploads/graduationAttachments/${graduationImage[0].fileName}`:null;
+        const postGraduationUrl = postGraduationImage.length>0 ? `${req.protocol}://${req.get("host")}/uploads/postGraduationAttachments/${postGraduationImage[0].fileName}`:null;
+        // const joiningFormUrl =  `${req.protocol}://${req.get("host")}/uploads/joiningForms/${joiningFormFile[0].fileName}`;
+        const signatureUrl = signatureImage.length>0 ? `${req.protocol}://${req.get("host")}/uploads/joiningForms/${signatureImage[0].fileName}`:null;
 
         let correctDateofBirth;
         if(!(dateOfBirth instanceof Date)){
@@ -223,7 +224,7 @@ const addJoiningForm = async(req, res) =>{
             class12Attachment:class12Url,
             graduationAttachment:graduationUrl,
             postGraduationAttachment:postGraduationUrl,
-            joiningFormAttachment : joiningFormUrl,
+            // joiningFormAttachment : joiningFormUrl,
             signatureAttachment : signatureUrl
         })
 
@@ -363,6 +364,7 @@ const joiningFormApproval = async(req,res)=> {
     try {
         //take the remaining data from the HR and also the joining form pdf document.
         const {formId,
+            companyId,
             interviewDate,
             joiningDate, 
             department,
@@ -378,16 +380,17 @@ const joiningFormApproval = async(req,res)=> {
                 message:"Joining Form Id is required."
             });
         }
-        if(!department || !designation){
+        if(!companyId || !department || !designation){
             return res.status(400).json({
                 success:false,
-                message:"Department and Designation is required, for Approval."
+                message:"Comnpany, Department and Designation is required, for Approval."
             });
         }
 
         const isApproved = await JoiningForm.findByIdAndUpdate({_id:formId},{
             interviewDate,
             joiningDate,
+            companyId,
             department,
             designation,
             employeeType,
@@ -424,6 +427,16 @@ const joiningFormRejection = async(req,res)=> {
             return res.status(400).json({
                 success:false,
                 message:"Form id is required"
+            });
+        }
+
+        const currentStatus = (await JoiningForm.findById(formId))?.status ?? null;
+        if(!currentStatus || currentStatus==="Approved"){
+            return res
+            .status(400)
+            .json({
+                success:false,
+                message:"This Joining Form may already be approved, so it can't be rejected."
             });
         }
 
