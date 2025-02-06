@@ -15,6 +15,9 @@ import axios from 'axios';
 function Navbars() {
 
   const navigate = useNavigate();
+ 
+  
+
   const [isDropdownOpen, setIsDropdownOpen] = useState([false, false, false, false, false ]);
   const dropdownRef = useRef(null);
   const handleDropdownToggle = (index) => {
@@ -37,35 +40,44 @@ function Navbars() {
       document.removeEventListener('mousedown', handleClickOutside);
     };
   }, []);
-
-  //logout section 
+ 
+  // logout part 
   const handleLogout = async () => {
-    console.log("my data")
-    try {
-      const response = await axios.get(`${process.env.REACT_APP_SERVER_ADDRESS}/auth/logout`, {
-        method: "GET",
-        credentials: "include", // If using cookies for authentication
-      });
+    console.log("Logging out...");
 
-      if (response.ok) {
-        // Perform logout actions (e.g., remove token, redirect)
-        localStorage.removeItem("token"); // If using token-based auth
-        navigate('/')
+    try {
+      const response = await axios.post(
+        `${process.env.REACT_APP_SERVER_ADDRESS}/auth/logout`,
+        {}, // No request body required unless specified by your API
+        {
+          withCredentials: true, // Ensures cookies are sent if needed
+          headers: {
+            "Content-Type": "application/json",
+          },
+        }
+      );
+
+      // Axios automatically parses JSON, so no need for .json()
+      if (response.data.success) {
+        console.log(response.data.message); // "User Logged Out"
+
+        // Remove token if using token-based authentication
+        localStorage.removeItem("token");
+
+        // Redirect to login page
+        navigate("/");
       } else {
-        console.error("Logout failed");
-        alert("logout is failed")
+        console.error("Logout failed:", response.data.message);
+        alert("Logout failed");
       }
     } catch (error) {
       console.error("Error during logout:", error);
+      alert("Error during logout");
     }
   };
+  
 
-  useEffect(()=>{
-
-  }, []       )
-
-
-
+                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                     
   const handleDepartmentClick = () => {
     navigate('/layout/departmenttable');
   };
@@ -325,7 +337,8 @@ function Navbars() {
           <div className='ml-auto mt-3 mr-4 text-white' onClick={handleLogout}>
             {<RiLogoutCircleRLine size={28}/>}
           </div>
-
+          
+          
         </div>
       </nav>
         
