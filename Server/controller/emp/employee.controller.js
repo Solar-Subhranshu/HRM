@@ -248,7 +248,7 @@ const login = async(req,res) =>{
         //checking if valid id is given
         const adminData = await Employee.findOne({employeeCode:employeeCode}).populate("department");
         // console.log(adminData.department.department);
-        if(adminData.department.department !== 'Admin'){
+        if(adminData?.department?.department !== 'Admin'){
             return res.status(400).json({
                 success: false,
                 message: "You are not authorized to login."
