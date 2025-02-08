@@ -236,6 +236,7 @@ const login = async(req,res) =>{
     try {
         //checking if both id and password are given
         const {employeeCode, password}= req.body;
+        console.log("Login Body", req.body);
         if(!employeeCode || !password){
             return res.status(400).json({
                 success:false,
@@ -250,14 +251,14 @@ const login = async(req,res) =>{
         if(adminData.department.department !== 'Admin'){
             return res.status(400).json({
                 success: false,
-                message: "You are not authorised to login."
+                message: "You are not authorized to login."
             });
         }
 
         if(!adminData){
             return res.status(401).json({
                 success : false,
-                message : "Invalid creadentials! Wrong ID."
+                message : "Invalid credentials! Wrong ID."
             });
         }
 
@@ -267,7 +268,7 @@ const login = async(req,res) =>{
         if(!isMatch){
             return res.status(401).json({
                 success : false,
-                message : "Invalid creadentials! Wrong Password."
+                message : "Invalid credentials! Wrong Password."
             });
         }
 
@@ -314,7 +315,7 @@ const login = async(req,res) =>{
         });
 
     } catch (error) {
-        console.log(error)
+        console.log("Login Error: ", error)
         return res.status(500).json({
             success:false,
             message:"Internal Server Error",
