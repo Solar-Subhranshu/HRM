@@ -6,7 +6,7 @@ const employeeSchema = new mongoose.Schema({
             required: true,
             unique : true,
             minLength : 6,
-            maxLenght : 9
+            maxLength : 9
         },
         password:{
             type :String,
