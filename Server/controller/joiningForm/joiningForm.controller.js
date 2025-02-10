@@ -514,7 +514,7 @@ const deleteJoiningForm = async(req,res)=> {
 
 const generateJoiningFormPDF = async (req, res) => {
     try {
-        const {formId} =req.body;
+        const {formId} =req.query;
         if(!formId){
             return res.status(400).json({
                 success:false,
