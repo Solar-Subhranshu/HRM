@@ -96,7 +96,7 @@ export default function Index() {
         
       
 
-        <div className="mt-4 bgMainColor flex py-4 pl-1 gap-3 justify-between z-6 rounded-md ">
+        <div className="mt-4 bgMainColor flex py-4 pl-1 gap-3 justify-between z-6 rounded-md ml-1 mr-1">
             <div className="flex flex-row pl-2 gap-4">
                 <FaListUl size={24} />
                 <h4 className="text-white">List of Employee (Total Employee)</h4>
@@ -137,107 +137,118 @@ export default function Index() {
         <div className='overflow-auto h-[calc(100vh-14rem)]'>
             <div className="relative">
                 <table className=" text-gray-500 dark:text-gray-400" style={{ position: 'relative'}}>
-                    <thead className="text-xs border border-gray-150 bg-gray-800 text-gray-100 uppercase dark:bg-gray-800 dark:text-gray-400">
-                        <tr>
-                            <th  className="px-6 py-3 text-center font-semibold text-nowrap">Select</th>
-                            <th  className="px-6 py-3 text-center font-semibold text-nowrap">Employee Code</th>
-                            <th  className="px-6 py-3 text-center font-semibold text-nowrap">Employee Name</th>
-                            <th  className="px-6 py-3 text-center font-semibold text-nowrap">Father Name</th>
-                            <th  className="px-6 py-3 text-center font-semibold text-nowrap">Date of Birth</th>
-                            <th  className="px-6 py-3 text-center font-semibold text-nowrap">Personal Phone Number</th>
-                            <th  className="px-6 py-3 text-center font-semibold text-nowrap">Personal Email</th>
-                            <th  className="px-6 py-3 text-center font-semibold text-nowrap">Pancard Number</th>
-                            <th  className="px-6 py-3 text-center font-semibold text-nowrap">Aadharcard Number</th>
-                            <th  className="px-6 py-3 text-center font-semibold text-nowrap">Qualification</th>
-                            <th  className="px-6 py-3 text-center font-semibold text-nowrap">Degree</th>
-                            <th  className="px-6 py-3 text-center font-semibold text-nowrap">Permanent Address</th>
-                            <th  className="px-6 py-3 text-center font-semibold text-nowrap">Permanent Pin Code</th>
-                            <th  className="px-6 py-3 text-center font-semibold text-nowrap">Current Address</th>
-                            <th  className="px-6 py-3 text-center font-semibold text-nowrap">Bank Name</th>
-                            <th  className="px-6 py-3 text-center font-semibold text-nowrap">Branch Name</th>
-                            <th  className="px-6 py-3 text-center font-semibold text-nowrap">Account Number</th>
-                            <th  className="px-6 py-3 text-center font-semibold text-nowrap">IFSC Code</th>
-                            <th  className="px-6 py-3 text-center font-semibold text-nowrap">Bank Address</th>
-                            <th  className="px-6 py-3 text-center font-semibold text-nowrap">Bank Holder Name</th>
-                            <th  className="px-6 py-3 text-center font-semibold text-nowrap">Reporting Manager Name</th>
-                            <th  className="px-6 py-3 text-center font-semibold text-nowrap">Join Hr Name</th>
-                            <th  className="px-6 py-3 text-center font-semibold text-nowrap">Company Phone Number</th>
-                            <th  className="px-6 py-3 text-center font-semibold text-nowrap">Company Email</th>
-                            <th  className="px-6 py-3 text-center font-semibold text-nowrap">Joining Date</th>
-                            <th  className="px-6 py-3 text-center font-semibold text-nowrap">Company Name</th>
-                            <th  className="px-6 py-3 text-center font-semibold text-nowrap">Branch Name</th>
-                            <th  className="px-6 py-3 text-center font-semibold text-nowrap">Department Name</th>
-                            <th  className="px-6 py-3 text-center font-semibold text-nowrap">Designation Name</th>
-                            <th  className="px-6 py-3 text-center font-semibold text-nowrap">Office Time Policy</th>
-                            <th  className="px-6 py-3 text-center font-semibold text-nowrap">Shift Name</th>
-                            <th  className="px-6 py-3 text-center font-semibold text-nowrap">Work Type</th>
-                            <th  className="px-6 py-3 text-center font-semibold text-nowrap">Last Appraisal Date</th>
-                            {/* <th  className="px-6 py-3 text-center font-semibold text-nowrap">designation</th>
-                            <th  className="px-6 py-3 text-center font-semibold text-nowrap">designation</th>
-                            <th  className="px-6 py-3 text-center font-semibold text-nowrap">designation</th>
-                            <th  className="px-6 py-3 text-center font-semibold text-nowrap">designation</th>
-                            <th  className="px-6 py-3 text-center font-semibold text-nowrap">designation</th> */} 
-                        </tr>
+                    <thead className="text-xs border border-gray-150 bg-gray-800 text-gray-100 uppercase dark:bg-gray-800 dark:text-gray-400 ">
+                    <tr>
+                        <th className="px-6 py-3 text-center font-semibold text-nowrap">Select</th>
+                        <th className="px-6 py-3 text-center font-semibold text-nowrap">Employee Name</th>
+                        <th className="px-6 py-3 text-center font-semibold text-nowrap">Emp. Code</th>
+                        <th className="px-6 py-3 text-center font-semibold text-nowrap">Father/Husband Name</th>
+                        <th className="px-6 py-3 text-center font-semibold text-nowrap">Date Of Birth</th>
+                        <th className="px-6 py-3 text-center font-semibold text-nowrap">Personal Phone Number</th>
+                        <th className="px-6 py-3 text-center font-semibold text-nowrap">Personal Email</th>
+                        <th className="px-6 py-3 text-center font-semibold text-nowrap">Pancard Number</th>
+                        <th className="px-6 py-3 text-center font-semibold text-nowrap">Aadhar Card Number</th>
+                        <th className="px-6 py-3 text-center font-semibold text-nowrap">Qualification</th>
+                        <th className="px-6 py-3 text-center font-semibold text-nowrap">Degree</th>
+                        <th className="px-6 py-3 text-center font-semibold text-nowrap">Permanent Address</th>
+                        <th className="px-6 py-3 text-center font-semibold text-nowrap">Permanent Pin Code</th>
+                        <th className="px-6 py-3 text-center font-semibold text-nowrap">Current Address</th>
+                        <th className="px-6 py-3 text-center font-semibold text-nowrap">Current Pin Code</th>
+
+                        <th className="px-6 py-3 text-center font-semibold text-nowrap">Work Type</th>
+                        <th className="px-6 py-3 text-center font-semibold text-nowrap">Bank Name</th>
+                        <th className="px-6 py-3 text-center font-semibold text-nowrap">Branch Name</th>
+                        <th className="px-6 py-3 text-center font-semibold text-nowrap">A/C Number</th>
+                        <th className="px-6 py-3 text-center font-semibold text-nowrap">IFSC Code</th>
+                        <th className="px-6 py-3 text-center font-semibold text-nowrap">Bank Address</th>
+                        <th className="px-6 py-3 text-center font-semibold text-nowrap">Bank Holder Name</th>
+
+                        <th className="px-6 py-3 text-center font-semibold text-nowrap">Reporting Manager Name</th>
+                        <th className="px-6 py-3 text-center font-semibold text-nowrap">Company Phone Number</th>
+                        <th className="px-6 py-3 text-center font-semibold text-nowrap">Company Email</th>
+
+                        <th className="px-6 py-3 text-center font-semibold text-nowrap">Joining Date</th>
+                        <th className="px-6 py-3 text-center font-semibold text-nowrap">Last Appraisal Date</th>
+                        <th className="px-6 py-3 text-center font-semibold text-nowrap">Resignation Date</th>
+
+                        <th className="px-6 py-3 text-center font-semibold text-nowrap">Company Name</th>
+                        <th className="px-6 py-3 text-center font-semibold text-nowrap">Company Branch Name</th>
+                        <th className="px-6 py-3 text-center font-semibold text-nowrap">Department</th>
+                        <th className="px-6 py-3 text-center font-semibold text-nowrap">Designation</th>
+                        <th className="px-6 py-3 text-center font-semibold text-nowrap">Office Time Policy</th>
+                        <th className="px-6 py-3 text-center font-semibold text-nowrap">Shift</th>
+
+                        <th className="px-6 py-3 text-center font-semibold text-nowrap">Aadhar Card Attachment</th>
+                        <th className="px-6 py-3 text-center font-semibold text-nowrap">Pan Card Attachment</th>
+                        <th className="px-6 py-3 text-center font-semibold text-nowrap">Bank Attachment</th>
+                        <th className="px-6 py-3 text-center font-semibold text-nowrap">Joining Form</th>
+                        <th className="px-6 py-3 text-center font-semibold text-nowrap">Other Attachment</th>
+                    </tr>
+
                     </thead>
                     <tbody>
                     {
-                        currentEmployees.map(({_id,employeeCode,name,father_husbandName,dateOfBirth,personalPhoneNum,personalEmail,panCard,aadharCard,qualification,degree,permanentAddress,permanentPinCode,currentAddress,currentPinCode,bankName,branchName,bankAccount,bankIFSC,bankAccountHolderName,bankAddress,reportingManager,joiningHR,companyPhoneNum,companyEmail,joiningDate,company,branch,department,designation,officeTimePolicy,shift,workType,lastAppraisalDate}) =>(
-                            <>
-                                <tr className="bg-white border-b hover:bg-gray-400 hover:text-gray-900" key={_id} >
-                                    {/* <th scope="row" className="px-6 font-medium text-gray-900 whitespace-nowrap dark:text-white">
-                                        {(SrNo++) + ((page - 1) * LIMIT)}
-                                    </th> */}
-                                    <td className='px-2 py-2'>
-                                        {/* <div onClick={(e) => e.stopPropagation() }>    
-                                                            <input
-                                                              type="radio"
-                                                              name="selectedRow"
-                                                              onClick={()=>{
-                                                                const data=JSON.stringify(employee);
-                                                                Cookies.set('EmployeeFormData', data);
-                                                              }}
-                                                              onChange={() => {setSelectedEmployee(employee)}}
-                                                              checked={selectedEmployee?._id === employee._id}
-                                        
-                                                            />
-                                                          </div> */}
-                                    </td>
-                                    <th scope="row" className="px-2 font-medium text-center text-gray-900 whitespace-nowrap ">{employeeCode}</th>
-                                    <td className="px-2 py-2 text-center">{name || 'N/A'}</td>
-                                    <td className="px-2 py-2 text-center">{father_husbandName || 'N/A'}</td>
-                                    <td className="px-2 py-2 text-center">{dateOfBirth ? formatDate(dateOfBirth) : 'N/A'}</td>
-                                    <td className="px-2 py-2 text-center">{personalPhoneNum || 'N/A'}</td>
-                                    <td className="px-2 py-2 text-center">{personalEmail || 'N/A'}</td>
-                                    <td className="px-2 py-2 text-center">{panCard || 'N/A'}</td>
-                                    <td className="px-2 py-2 text-center">{ aadharCard|| 'N/A'}</td>
-                                    <td className="px-2 py-2 text-center">{qualification?.name || 'N/A'}</td>
-                                    <td className="px-2 py-2 text-center">{degree?.name || 'N/A'}</td>
-                                    <td className="px-2 py-2 text-center">{permanentAddress || 'N/A'}</td>
-                                    <td className="px-2 py-2 text-center">{permanentPinCode || 'N/A'}</td>
-                                    <td className="px-2 py-2 text-center">{currentAddress || 'N/A'}</td>
-                                    <td className="px-2 py-2 text-center">{currentPinCode || 'N/A'}</td>
-                                    <td className="px-2 py-2 text-center">{bankName || 'N/A'}</td>
-                                    <td className="px-2 py-2 text-center">{branchName || 'N/A'}</td>
-                                    <td className="px-2 py-2 text-center">{bankAccount || 'N/A'}</td>
-                                    <td className="px-2 py-2 text-center">{bankIFSC || 'N/A'}</td>
-                                    <td className="px-2 py-2 text-center">{bankAccountHolderName || 'N/A'}</td>
-                                    <td className="px-2 py-2 text-center">{bankAddress || 'N/A'}</td>
-                                    <td className="px-2 py-2 text-center">{reportingManager?.name || 'N/A'}</td>
-                                    <td className="px-2 py-2 text-center">{joiningHR?.name || 'N/A'}</td>
-                                    <td className="px-2 py-2 text-center">{companyPhoneNum || 'N/A'}</td>
-                                    <td className="px-2 py-2 text-center">{companyEmail || 'N/A'}</td>
-                                    <td className="px-2 py-2 text-center">{joiningDate || 'N/A'}</td>
-                                    <td className="px-2 py-2 text-center">{company?.name || 'N/A'}</td>
-                                    <td className="px-2 py-2 text-center">{branch?.name || 'N/A'}</td>
-                                    <td className="px-2 py-2 text-center">{department?.department || 'N/A'}</td>
-                                    <td className="px-2 py-2 text-center">{designation?.designation || 'N/A'}</td>
-                                    <td className="px-2 py-2 text-center">{officeTimePolicy?.policyName || 'N/A'}</td>
-                                    <td className="px-2 py-2 text-center">{shift?.name || 'N/A'}</td>
-                                    <td className="px-2 py-2 text-center">{workType?.workType || 'N/A'}</td>
-                                    <td className="px-2 py-2 text-center">{lastAppraisalDate ? formatDate(lastAppraisalDate) : 'N/A'}</td>
-                                </tr>
-                            </>
-                        ))
+                      currentEmployees.map(({_id,employeeCode,name,father_husbandName,dateOfBirth,personalPhoneNum,personalEmail,panCard,aadharCard,qualification,degree,
+                        permanentAddress,permanentPinCode,currentAddress,currentPinCode,bankName,branchName,bankAccount,bankIFSC,bankAccountHolderName,bankAddress,
+                        reportingManager,joiningHR,companyPhoneNum,companyEmail,joiningDate,company,branch,department,designation,officeTimePolicy,shift,workType,
+                        lastAppraisalDate, aadharCardAttachment, panCardAttachment, bankAttachment, joiningFormAttachment, otherAttachment}) =>(
+                          <>
+                              <tr className="bg-white border-b hover:bg-gray-400 hover:text-gray-900" key={_id} >
+                                  <td className="px-2 py-2 text-center"><input type='checkbox'/></td>
+                                  <td className="px-2 py-2 text-center">{name || 'N/A'}</td>
+                                  <th scope="row" className="px-2 font-medium text-center text-gray-900 whitespace-nowrap ">{employeeCode}</th>
+                                  <td className="px-2 py-2 text-center">{father_husbandName || 'N/A'}</td>
+                                  <td className="px-2 py-2 text-center">{dateOfBirth ? formatDate(dateOfBirth) : 'N/A'}</td>
+                                  <td className="px-2 py-2 text-center">{personalPhoneNum || 'N/A'}</td>
+                                  <td className="px-2 py-2 text-center">{personalEmail || 'N/A'}</td>
+                                  <td className="px-2 py-2 text-center">{panCard || 'N/A'}</td>
+                                  <td className="px-2 py-2 text-center">{ aadharCard|| 'N/A'}</td>
+
+                                  <td className="px-2 py-2 text-center">{qualification?.name || 'N/A'}</td>
+                                  <td className="px-2 py-2 text-center">{degree?.name || 'N/A'}</td>
+                                  <td className="px-2 py-2 text-center">{permanentAddress || 'N/A'}</td>
+                                  <td className="px-2 py-2 text-center">{permanentPinCode || 'N/A'}</td>
+                                  <td className="px-2 py-2 text-center">{currentAddress || 'N/A'}</td>
+                                  <td className="px-2 py-2 text-center">{currentPinCode || 'N/A'}</td>
+                                  <td className="px-2 py-2 text-center">{workType?.workType || 'N/A'}</td>
+
+                                  <td className="px-2 py-2 text-center">{bankName || 'N/A'}</td>
+                                  <td className="px-2 py-2 text-center">{branchName || 'N/A'}</td>
+                                  <td className="px-2 py-2 text-center">{bankAccount || 'N/A'}</td>
+                                  <td className="px-2 py-2 text-center">{bankIFSC || 'N/A'}</td>
+                                  <td className="px-2 py-2 text-center">{bankAddress || 'N/A'}</td>
+                                  <td className="px-2 py-2 text-center">{bankAccountHolderName || 'N/A'}</td>
+                                  <td className="px-2 py-2 text-center">{reportingManager?.name || 'N/A'}</td>
+                                  <td className="px-2 py-2 text-center">{companyPhoneNum || 'N/A'}</td>
+                                  <td className="px-2 py-2 text-center">{companyEmail || 'N/A'}</td>
+                                  <td className="px-2 py-2 text-center">{joiningDate || 'N/A'}</td>
+                                  <td className="px-2 py-2 text-center">{lastAppraisalDate ? formatDate(lastAppraisalDate) : 'N/A'}</td>
+
+                                  <td className="px-2 py-2 text-center">{joiningHR?.name || 'N/A'}</td>
+                                  {/* <t></t> for resignation date  */}
+                                  
+                                  
+                                  <td className="px-2 py-2 text-center">{company?.name || 'N/A'}</td>
+                                  <td className="px-2 py-2 text-center">{branch?.name || 'N/A'}</td>
+                                  <td className="px-2 py-2 text-center">{department?.department || 'N/A'}</td>
+                                  <td className="px-2 py-2 text-center">{designation?.designation || 'N/A'}</td>
+                                  <td className="px-2 py-2 text-center">{officeTimePolicy?.policyName || 'N/A'}</td>
+                                  <td className="px-2 py-2 text-center">{shift?.name || 'N/A'}</td>
+
+                                  <td className="px-2 py-2 text-center">
+                                  {aadharCardAttachment ? (
+                                      <a href= "#"className="text-blue-600 hover:text-blue-800">
+                                        Show Image
+                                      </a>
+                                    ) : 'N/A'}
+                                  </td>
+                                  <td className="px-2 py-2 text-center">{panCardAttachment || 'N/A'}</td>
+                                  <td className="px-2 py-2 text-center">{bankAttachment || 'N/A'}</td>
+                                  <td className="px-2 py-2 text-center">{joiningFormAttachment || 'N/A'}</td>
+                                  <td className="px-2 py-2 text-center">{otherAttachment || 'N/A'}</td>
+                              </tr>
+                          </>
+                      ))
                     }
                     </tbody>
                     

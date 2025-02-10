@@ -277,8 +277,8 @@ function TotalEmployeeTable() {
         </div>
       </div>
 
-      <div className=" flex-1  overflow-auto h-[calc(100vh-14rem)] relative">
-        <table className="table-auto w-full border border-black text-sm relative">
+      <div className=" flex-1  overflow-auto h-[calc(100vh-14rem)]  relative">
+        <table className="table-auto w-full border border-black text-sm relative h-4/5">
           <thead className="bg-gray-200">
             <tr>
               <th className="text-blue-600 border border-black px-2 py-1">Select</th>
@@ -366,7 +366,7 @@ function TotalEmployeeTable() {
  
       
       {/* pagination button  */}
-      <div className="flex justify-center mt-4 pb-3">
+      <div className="flex justify-center mt-4 pb-3 relative">
         <button
           onClick={() => paginate(currentPage - 1)}
           disabled={currentPage === 1}
@@ -387,7 +387,7 @@ function TotalEmployeeTable() {
       </div>
       
       {/* all action button  */}
-      <div className="flex justify-center gap-6 mb-4  bottom-0  sticky">
+      <div className="flex justify-center gap-6 mb-4  bottom-0  sticky ">
         <button onClick={handleEmployeeRegisterForm} className="px-6 py-2 bg-green-600 text-white font-semibold rounded-lg shadow-md hover:bg-green-700 transition-all">Add</button>
         <button
           onClick={() => setIsModalOpen(true)}

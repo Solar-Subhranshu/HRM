@@ -128,7 +128,7 @@ function DailyReport() {
     <div className="pr-4">
       <div className="flex flex-col items-center justify-center border-4 mt-5 h-full w-full ml-2 rounded-md" style={{ borderColor: "#740FD6" }} >
         <div className="bgMainColor w-2/3 text-center -m-3 ml-2 rounded-md">
-          <h6 className="text-white font-semibold text-xl">Daily Report</h6>
+          <h6 className="text-white font-semibold text-lg">Daily Report</h6>
         </div>
 
         {/* Top Section */}
@@ -228,7 +228,7 @@ function DailyReport() {
         {/* button part  */}
         <div className="mt-6 flex gap-6 mb-2">
           <button onClick={handleShowReport}  className="font-semibold mr-2 text-white bg-gradient-to-r from-green-400 via-green-500 to-green-600 hover:bg-gradient-to-br focus:ring-4 focus:outline-none focus:ring-green-300 dark:focus:ring-green-800  rounded-lg text-sm px-5 py-2.5 text-center me-2 mb-2">Show Report</button>
-          <button onClick={handleCloseClick}  className="font-semibold  text-white bg-gradient-to-r from-cyan-400 via-cyan-500 to-cyan-600 hover:bg-gradient-to-br focus:ring-4 focus:outline-none focus:ring-cyan-300 dark:focus:ring-cyan-800  rounded-lg text-sm px-10 py-2.5 text-center me-2 mb-2">Close</button>
+          <button onClick={handleCloseClick}  className="font-semibold  text-white bg-gradient-to-r from-red-400 via-red-500 to-red-600 hover:bg-gradient-to-br focus:ring-4 focus:outline-none focus:ring-red-300 dark:focus:ring-red-800  rounded-lg text-sm px-10 py-2.5 text-center me-2 mb-2">Close</button>
         </div>
 
       </div>

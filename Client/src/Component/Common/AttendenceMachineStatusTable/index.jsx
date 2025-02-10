@@ -3,12 +3,12 @@ import React from 'react'
 function TableComponent1() {
   return (
     <div className='w-[calc(100%-30%)]'>
-        <div className='bgMainColor py-2 w-full rounded-md'>
+        <div className='bgMainColor py-2 w-full '>
           <h6 className='text-white pl-2'>Machine Connected Status</h6>
         </div>
         
         <div className="overflow-x-auto">
-          <table className="table-auto w-full border-collapse border border-gray-600 rounded-md">
+          <table className="table-auto w-full border-collapse border border-gray-600">
             <thead>
               <tr>
                 <th className='border border-gray-500'>S No.</th>
