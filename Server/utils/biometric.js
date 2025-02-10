@@ -1,39 +1,122 @@
-const axios = require('axios');
+// const net = require("node:net");
 
-const DEVICE_IP = "122.160.141.26"; // Replace with your device IP
-const DEVICE_PORT = "4730"; // API port
-const API_ENDPOINT = `http://${DEVICE_IP}:${DEVICE_PORT}/api/attendance`;
-
-const fetchAttendanceLogs = async () => {
-  try {
-    const response = await axios.get(API_ENDPOINT);
-    console.log("Attendance Data:", response.data);
-  } catch (error) {
-    console.error("Error fetching attendance logs:", error.message);
-  }
-};
-
-// Call function to fetch logs
-fetchAttendanceLogs();
-
-// const net = require("net");
-
-// const DEVICE_IP = "122.160.141.26";
-// const DEVICE_PORT = 4370; // Check the correct port
+// const DEVICE_IP = "192.168.1.140"; // Replace with your device IP
+// const DEVICE_PORT = 4370;
 
 // const client = new net.Socket();
+
+// // Convert Comm Key (Example: 1234 → Hex 00 00 04 D2)
+// // const commKey = Buffer.from("000004D2", "hex");
+
+
+// // // Updated handshake command with Comm Key
+// // const handshakeCommand = Buffer.concat([
+// //     Buffer.from("c50d11126ba2a07ac2ef800450100400", "hex"),
+// //     commKey // Appending the Comm Key
+// // ]);
+
+// // // const logRequestCommand = Buffer.from("c50d11126ba2a07ac2ef80045018040084160000", "hex");
+// // // const logRequestData = Buffer.from("5050827d08000000e80317fc00000000", "hex");
+
+// // // client.setKeepAlive(true); // Enable keep-alive
+
+
+// const handshakeCommand = Buffer.from("c50d11126ba2a07ac2ef80045010040084060000", "hex");
+
+// // Extracted log request command (from Wireshark)
+// const logRequestCommand = Buffer.from("c50d11126ba2a07ac2ef80045018040084160000", "hex");
+// const logRequestData = Buffer.from("5050827d08000000e80317fc00000000", "hex");
+
 // client.connect(DEVICE_PORT, DEVICE_IP, () => {
-//   console.log("Connected to ESSL Device");
-// });
+//     console.log("✅ Connected to biometric device.");
+//     // console.log(client)
+//     console.log(`Connected to device at ${DEVICE_IP}:${DEVICE_PORT}`);
+ 
+//     // // Step 1: Send Handshake
+//     console.log("📤 Sending Handshake...",handshakeCommand);
+//     client.write(handshakeCommand);
+// })
+
+// client.on("end",()=>{
+//     console.log("This line is printed when socket ends connection.")
+// })
 
 // client.on("data", (data) => {
-//   console.log("Received:", data.toString());
+//     console.log("📥 Received Response (HEX):", data.toString("hex"));
+
+//     if (data.toString("hex").includes("5010")) {
+//         console.log("✅ Handshake Acknowledged. Sending Log Request...");
+
+//         setTimeout(() => {
+//             client.write(logRequestCommand);
+//             client.write(logRequestData);
+//         }, 2000); // Wait 2 seconds before sending log request
+//     } else if (data.toString("hex").includes("5018")) {
+//         console.log("✅ Attendance Data Received!");
+//     }
 // });
 
 // client.on("error", (err) => {
-//   console.error("Connection Error:", err);
+//     console.error("❌ Connection Error:", err);
 // });
 
 // client.on("close", () => {
-//   console.log("Connection Closed");
+//     console.log("🔌 Connection closed.");
 // });
+
+
+
+
+
+
+
+
+
+
+
+
+
+//new code
+const net = require("net");
+
+const DEVICE_IP = "192.168.1.140"; // Replace with your actual device IP
+const DEVICE_PORT = 4370;
+
+const client = new net.Socket();
+
+// Extracted commands from Wireshark
+const handshakeCommand = Buffer.from("c50d11126ba2a07ac2ef80045010040084060000", "hex");
+const sessionResponse = Buffer.from("response_from_device", "hex"); // Placeholder for session response
+const logRequestCommand = Buffer.from("c50d11126ba2a07ac2ef80045018040084160000", "hex");
+const logRequestData = Buffer.from("5050827d08000000e80317fc00000000", "hex");
+
+client.connect(DEVICE_PORT, DEVICE_IP, () => {
+    console.log("✅ Connected to biometric device.");
+
+    // Step 1: Send Handshake
+    console.log("📤 Sending Handshake...");
+    client.write(handshakeCommand);
+});
+
+client.on("data", (data) => {
+    console.log("📥 Received Response (HEX):", data.toString("hex"));
+
+    if (data.toString("hex").includes("5010")) {
+        console.log("✅ Handshake Acknowledged. Sending Log Request...");
+
+        setTimeout(() => {
+            client.write(logRequestCommand);
+            client.write(logRequestData);
+        }, 2000); // Wait 2 seconds before sending log request
+    } else if (data.toString("hex").includes("5018")) {
+        console.log("✅ Attendance Data Received!");
+    }
+});
+
+client.on("error", (err) => {
+    console.error("❌ Connection Error:", err);
+});
+
+client.on("close", () => {
+    console.log("🔌 Connection closed.");
+});

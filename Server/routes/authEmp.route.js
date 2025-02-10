@@ -1,6 +1,6 @@
 const employeeController= require("../controller/emp/employee.controller");
 const joiningFormController = require("../controller/joiningForm/joiningForm.controller");
-const {addEmployeeByExcel} = require("../controller/emp/addEmployeeBYExcel");
+const {addEmployeeByExcel,addHRByExcel} = require("../controller/emp/addEmployeeBYExcel");
     
 const router = require("express").Router();
 const tokenVerify = require("../middlewares/tokenVerification")
@@ -23,7 +23,8 @@ router.patch("/empUpdate",tokenVerify,upload.fields([
     { name: 'otherAttachment', maxCount: 1 },
 ]),employeeController.updateEmployee);
 
-router.post("/add-byExcel",uploadExcel.single('file'),addEmployeeByExcel);
+router.post("/add-byExcel",tokenVerify,uploadExcel.single('file'),addEmployeeByExcel);
+router.post("/add-HRbyExcel",tokenVerify,uploadExcel.single('file'),addHRByExcel);
 
 router.put("/deactivateEmp",tokenVerify,employeeController.deactivateEmp);
 router.get("/showAllEmployee",employeeController.showAllEmployee);
@@ -36,7 +37,7 @@ router.post("/login",employeeController.login);
 router.post("/logout",employeeController.logout);
 
 router.get("/show-joining-HR",employeeController.showJoiningHR);
-
+router.delete("/delete-Employee",tokenVerify,employeeController.deleteEmployee);
 
 
 
@@ -58,6 +59,8 @@ router.get("/show-joiningFormData",tokenVerify,joiningFormController.showJoining
 router.get("/show-allJoiningForms",tokenVerify,joiningFormController.showAllJoiningForms);
 router.patch("/approve-joiningForm",tokenVerify,joiningFormController.joiningFormApproval);
 router.patch("/reject-joiningForm",tokenVerify,joiningFormController.joiningFormRejection);
+router.delete("/delete-joiningForm",tokenVerify, joiningFormController.deleteJoiningForm);
+router.get("/download-JoiningPdf",joiningFormController.generateJoiningFormPDF);
 
 
 module.exports = router;    

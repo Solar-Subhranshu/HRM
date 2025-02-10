@@ -31,7 +31,7 @@ const joiningFormSchema = new mongoose.Schema({
     },
     //contact
     personalPhoneNum:{
-        type : Number,
+        type : String,
         maxLength : 10,
         minLength : 10,
         required:true,
@@ -92,6 +92,10 @@ const joiningFormSchema = new mongoose.Schema({
         type:mongoose.Schema.Types.ObjectId,
         ref : "Designation",
     },
+    joiningHR:{
+        type:mongoose.Schema.Types.ObjectId,
+        ref:"Employee"
+    },
     // radio button - part-time, full time
     employeeType:{
         type:String,
@@ -136,7 +140,7 @@ const joiningFormSchema = new mongoose.Schema({
         required:true
     },
     aadharCard :{
-        type:Number,
+        type:String,
         maxLenght:12,
         minLength:12,
         // unique:true,
@@ -155,7 +159,8 @@ const joiningFormSchema = new mongoose.Schema({
                 address:String,
                 phoneNumber:Number
             }
-        ]
+        ],
+        _id:false
     },
     //upload attachments {info}
     aadharCardAttachment : {

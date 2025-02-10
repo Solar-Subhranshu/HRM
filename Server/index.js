@@ -32,6 +32,10 @@ app.use("/attendance",attendanceRoute);
 
 app.use("/uploads", express.static(path.join(__dirname, "uploads")));
 
+// app.get("/",(req,res)=>{
+//     res.send("Hello World");
+// });
+
 app.listen(PORT, () => {
     console.log(`Server running at port ${PORT}`);
 })

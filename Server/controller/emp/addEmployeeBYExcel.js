@@ -11,11 +11,12 @@ const OfficeTimePolicy = require("../../models/common/officeTimePolicy.model");
 const WorkType = require("../../models/common/workType.model");
 
 const generateRandomNumbers = require("../../utils/randomNumGenerator");
-const xlsx = require("xlsx");
+// const xlsx = require("xlsx");
 
 //here we are not inserting images through excel.
 const addEmployeeByExcel = async(req,res) =>{
     try {
+        const employeeId = req.employeeId;
         const JSON_Data = await excelToJSON(req.file.buffer);
         // console.log(JSON_Data)
 
@@ -74,7 +75,8 @@ const addEmployeeByExcel = async(req,res) =>{
             officeTimePolicy : getId(officeTimePolicyData,{policyName:`${row['officeTimePolicy']}`}),      //check for reference
             shift : getId(shiftData,{name:`${row['shift']}`}),
             joiningHR : getId(employeeData,{name:`${row['joiningHR']}`}),
-            workType : getId(workTypeData,{workType : `${row['workType']}`})         //check for reference
+            workType : getId(workTypeData,{workType : `${row['workType']}`}),        //check for reference
+            created_By:employeeId
         }));
 
         //filtering invalid data to return to user as excel
@@ -168,4 +170,49 @@ const addEmployeeByExcel = async(req,res) =>{
     }
 }
 
-module.exports={addEmployeeByExcel}
+const addHRByExcel = async(req,res)=>{
+    try {
+        const employeeId = req.employeeId;
+        const JSON_Data = await excelToJSON(req.file.buffer);
+        //console.log(JSON_Data);
+
+        const hrMap = JSON_Data.map((row)=>({
+            employeeCode: row['employeeCode'] ? row['employeeCode'] : 'NA',
+            name: row['name'] ? row['name'] : "NA",
+            personalPhoneNum : row['phoneNum'] ? row['phoneNum'] : "NA",
+            created_By : employeeId
+        }));
+        console.log(hrMap);
+
+        const insertableEntries = hrMap.filter(
+            (employee)=> !Object.values(employee).includes("NA")
+        );
+
+        const insertResponse = await Employee.insertMany(insertableEntries);
+        if(insertResponse){
+            return res.status(201).json({
+                success:true,
+                message:"Excel-Data Saved Successfully.",
+                data:insertResponse
+            });
+        }
+        else{
+            return res.status(400).json({
+                success:false,
+                message:"Excel Data wrong!",
+                data:hrMap
+            })
+        }
+    } catch (error) {
+        return res.status(400).json({
+            success:false,
+            message:'Something is wrong please connect with developer.',
+            error:error.message
+        });
+    }
+}
+
+module.exports={
+    addEmployeeByExcel,
+    addHRByExcel
+}

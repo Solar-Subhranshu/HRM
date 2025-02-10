@@ -347,14 +347,12 @@ const dashboardReport = async(req,res)=>{
         return res.status(200).json({
             success:true,
             data:{
+            totalEmpData:empData.length,
             presentData:presentData,
             absentData:absentDataFormat,
             lateData:lateDataFormat
             }
         })
-
-        throw new Error("Function halted here for checking.")
-
 
     } catch (error) {
         return res.status(500).json({

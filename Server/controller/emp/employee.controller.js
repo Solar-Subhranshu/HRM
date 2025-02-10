@@ -7,6 +7,8 @@ const fs = require("fs/promises");
 const handleBase64Images = require("../../middlewares/base64ImageHandler");
 const absolutePath = require("../../utils/absolutePath");
 
+// attendance for when deleting employee
+const Attendance = require("../../models/attendance/attendance.model");
 //strictly for backend
 const addAdmin = async(req,res)=>{
     try {
@@ -285,7 +287,7 @@ const login = async(req,res) =>{
             httpOnly:true,
             secure:false
         };
-
+0
         const accessTokenData= {
             id:adminData._id,
             employeeCode:adminData.employeeCode
@@ -345,6 +347,54 @@ const logout = async(req,res)=> {
         success:true,
         message:"User Logged Out"
     })
+}
+
+const addHR = async(req,res)=>{
+    try {
+        const employeeId = req.employeeId;
+        const {name,phoneNum,employeeCode} = req.body;
+
+        if(!name || !phoneNum || !employeeCode){
+            return res.status(400).json({
+                success:false,
+                message:"Name and Phone Number are required!"
+            });
+        }
+
+        const isExist = await Employee.findOne(employeeCode).lean();
+        if(isExist){
+            return res.status(400).json({
+                success:false,
+                message:"HR with this employee code already exists."
+            });
+        }
+
+        const newHR = new Employee({
+            employeeCode,
+            name,
+            personalPhoneNum: phoneNum,
+
+            created_By:employeeId
+        });
+
+        const isSaved = await newHR.save();
+        if(isSaved){
+            return res.status(200).json({
+                success:true,
+                message:"New Hr saved successfully.",
+                data:newHR
+            });
+        }
+
+        return res.status(400).json({
+            success:false,
+            message:"Could not save new HR data."
+        })
+
+
+    } catch (error) {
+        
+    }
 }
 
 // done
@@ -804,6 +854,52 @@ const updateEmployee= async(req,res)=>{
     }
 }
 
+const deleteEmployee = async(req,res)=>{
+    try {
+        // only to run from backend
+
+        const {empId} = req.body;
+
+        if(!empId){
+            return res.status(400).json({
+                success:false,
+                message:"Employee ID is required"
+            });
+        }
+
+        const isExist = await Employee.findById(empId);
+        if(!isExist){
+            return res.status(269).json({
+                success:false,
+                message:"The employee you are trying to delete does not exist in Database"
+            });
+        }
+
+        const isDeleted = await Employee.findByIdAndDelete(empId);
+        const deleteAttendance = await Attendance.deleteMany({employeeId:empId});
+        if(isDeleted){
+            return res.status(200).json({
+                success:true,
+                message:`Employee Deleted Successfully along with its ${deleteAttendance.deletedCount} attendance logs.`,
+                data:isDeleted
+            });
+        }
+
+        return res.status(400).json({
+            success:false,
+            message:"Could Not Delete Employee"
+        });
+
+    } catch (error) {
+        return res
+        .status(500)
+        .json({
+            success:false,
+            message:"Internal Server Error",
+            error:error.message
+        });
+    }
+}
 
 module.exports = {
     registerEmployee,
@@ -814,6 +910,8 @@ module.exports = {
     showSingleEmployee,
     showJoiningHR,
     updateEmployee,
-    seeEmpBackend
+    seeEmpBackend,
+    deleteEmployee,
+    addHR
 };
 
