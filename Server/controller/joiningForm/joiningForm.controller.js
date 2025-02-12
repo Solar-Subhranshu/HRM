@@ -350,6 +350,22 @@ const showAllJoiningForms = async(req,res)=> {
             });
         }
         const response = await JoiningForm.find({status})
+        .populate({
+            path:"department",
+            select:"department"
+        })
+        .populate({
+            path:"designation",
+            select:"designation"
+        })
+        .populate({
+            path:"joiningHR",
+            select:"name"
+        })
+        .populate({
+            path:"companyId",
+            select:"name"
+        })
         .lean().select("-createdAt -updatedAt -__v");
 
         if(response){
@@ -518,7 +534,7 @@ const generateJoiningFormPDF = async (req, res) => {
         if(!formId){
             return res.status(400).json({
                 success:false,
-                message:"Form Id not Found, forrId is required."
+                message:"Form Id not Found, formId is required."
             });
         }
         const data = await JoiningForm.findById(formId).lean();

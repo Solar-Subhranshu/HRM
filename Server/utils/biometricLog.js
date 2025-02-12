@@ -1,6 +1,6 @@
 const { exec } = require("node:child_process");
 
-const filePath = "C://Users//gautam solar//Desktop//HRM machine test//BiometricApp//BiometricApp//bin//Debug//BiometricApp";
+const filePath = "C://Users//gautam solar//Desktop//Biometric Connection//NewBiometricConnect//NewBiometricConnect//bin//Debug//NewBiometricConnect";
 
 exec(`"${filePath}"`, (error, stdout, stderr) => {
     if (error) {
@@ -12,4 +12,8 @@ exec(`"${filePath}"`, (error, stdout, stderr) => {
         return;
     }
     console.log(`Biometric Logs:\n${stdout}`);
+    console.log(typeof stdout);
 });
+
+
+// {00853A19-BD51-419B-9269-2DABE57EB61F}
