@@ -396,7 +396,13 @@ const joiningFormApproval = async(req,res)=> {
             employeeType,
             modeOfRecruitment,
             reference,
-            joiningFormAttachment
+            joiningFormAttachment,
+            ctc,
+            inHand,
+            employeeESI,
+            employeePF,
+            employerESI,
+            employerPF,
         } = req.body;
         if(!formId){
             return res.status(400).json({
@@ -411,6 +417,15 @@ const joiningFormApproval = async(req,res)=> {
             });
         }
 
+        let salary={
+            ctc,
+            inHand,
+            employeeESI,
+            employeePF,
+            employerESI,
+            employerPF
+        }
+
         const isApproved = await JoiningForm.findByIdAndUpdate({_id:formId},{
             interviewDate,
             joiningDate,
@@ -421,7 +436,8 @@ const joiningFormApproval = async(req,res)=> {
             modeOfRecruitment,
             reference,
             joiningFormAttachment,
-            status:"Approved"
+            status:"Approved",
+            salary
         },{new:true});
         
         if (isApproved){

@@ -209,6 +209,17 @@ const joiningFormSchema = new mongoose.Schema({
         enum:["Pending","Approved","Rejected"],
         default:"Pending",
         required:true
+    },
+    salary:{
+        type:{
+            ctc:{type:Number},
+            inHand:{type:Number},
+            employeeESI:{type:Number},
+            employeePF:{type:Number},
+            employerESI:{type:Number},
+            employerPF:{type:Number},
+        },
+        _id:false
     }
 
 },{timestamps:true});
