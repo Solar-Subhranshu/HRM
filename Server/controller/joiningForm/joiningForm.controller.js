@@ -253,6 +253,7 @@ const addJoiningForm = async(req, res) =>{
             }
         })
     } catch (error) {
+        console.log("join")
         if (error.code === 'LIMIT_FILE_SIZE') {
             return res.status(400).json({
                 success: false,

@@ -30,7 +30,7 @@ const handleBase64Images = async (photos, folder) => {
       // console.log('hi-1')
 
       if (!match) {
-        throw new Error(`Image ${index + 1} does not have a valid base64 format.`);
+        throw new Error(`Image ${index + 1} does not have a valid base64 format. ${folder}`);
       }
       // console.log('hi-2');
       // console.log(match)
