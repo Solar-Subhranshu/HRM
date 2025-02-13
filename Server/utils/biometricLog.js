@@ -17,3 +17,31 @@ exec(`"${filePath}"`, (error, stdout, stderr) => {
 
 
 // {00853A19-BD51-419B-9269-2DABE57EB61F}
+//{00853A19-BD51-419B-9269-2DABE57EB61F}
+
+
+/*
+string dllPath = Path.Combine(AppDomain.CurrentDomain.BaseDirectory, "zkemkeeper.dll");
+
+// Extract COM DLL if not exists
+if (!File.Exists(dllPath))
+{
+    File.WriteAllBytes(dllPath, BiometricNetFramework3.Resources.zkemkeeper);
+}
+Console.WriteLine("DLL Extracted at: " + dllPath);
+
+
+
+
+
+
+string dllPath = Path.Combine(AppDomain.CurrentDomain.BaseDirectory, "zkemkeeper.dll");
+
+// Extract COM DLL if not exists
+if (!File.Exists(dllPath))
+{
+    File.WriteAllBytes(dllPath, BiometricNetFramework3.Resources.zkemkeeper);
+}
+Console.WriteLine("DLL Extracted at: " + dllPath);
+
+*/

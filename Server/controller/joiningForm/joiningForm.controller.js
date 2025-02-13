@@ -82,7 +82,7 @@ const addJoiningForm = async(req, res) =>{
             // !employeeType ||
             // !modeOfRecruitment ||
             // reference ||
-            !joiningHR ||
+            // !joiningHR ||
             !bankName ||
             !branchName ||
             !bankAccount ||
@@ -389,6 +389,7 @@ const joiningFormApproval = async(req,res)=> {
         //take the remaining data from the HR and also the joining form pdf document.
         const {formId,
             companyId,
+            joiningHR,
             interviewDate,
             joiningDate, 
             department,
@@ -396,7 +397,8 @@ const joiningFormApproval = async(req,res)=> {
             employeeType,
             modeOfRecruitment,
             reference,
-            joiningFormAttachment,
+            officialContact,
+            officialEmail,
             ctc,
             inHand,
             employeeESI,
@@ -429,13 +431,15 @@ const joiningFormApproval = async(req,res)=> {
         const isApproved = await JoiningForm.findByIdAndUpdate({_id:formId},{
             interviewDate,
             joiningDate,
+            joiningHR,
             companyId,
             department,
             designation,
             employeeType,
             modeOfRecruitment,
             reference,
-            joiningFormAttachment,
+            officialContact,
+            officialEmail,
             status:"Approved",
             salary
         },{new:true});
