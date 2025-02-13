@@ -64,59 +64,20 @@
 //     console.log("🔌 Connection closed.");
 // });
 
+//testing new console app
+const { exec } = require("node:child_process");
 
+const filePath = "C://Users//gautam solar//Desktop//HRM machine test//BiometricApp//BiometricNetFramework2//bin//Debug//BiometricNetFramework2";
 
-
-
-
-
-
-
-
-
-
-
-//new code
-const net = require("net");
-
-const DEVICE_IP = "192.168.1.140"; // Replace with your actual device IP
-const DEVICE_PORT = 4370;
-
-const client = new net.Socket();
-
-// Extracted commands from Wireshark
-const handshakeCommand = Buffer.from("c50d11126ba2a07ac2ef80045010040084060000", "hex");
-const sessionResponse = Buffer.from("response_from_device", "hex"); // Placeholder for session response
-const logRequestCommand = Buffer.from("c50d11126ba2a07ac2ef80045018040084160000", "hex");
-const logRequestData = Buffer.from("5050827d08000000e80317fc00000000", "hex");
-
-client.connect(DEVICE_PORT, DEVICE_IP, () => {
-    console.log("✅ Connected to biometric device.");
-
-    // Step 1: Send Handshake
-    console.log("📤 Sending Handshake...");
-    client.write(handshakeCommand);
-});
-
-client.on("data", (data) => {
-    console.log("📥 Received Response (HEX):", data.toString("hex"));
-
-    if (data.toString("hex").includes("5010")) {
-        console.log("✅ Handshake Acknowledged. Sending Log Request...");
-
-        setTimeout(() => {
-            client.write(logRequestCommand);
-            client.write(logRequestData);
-        }, 2000); // Wait 2 seconds before sending log request
-    } else if (data.toString("hex").includes("5018")) {
-        console.log("✅ Attendance Data Received!");
+exec(`"${filePath}"`, (error, stdout, stderr) => {
+    if (error) {
+        console.error(`Error: ${error.message}`);
+        return;
     }
-});
-
-client.on("error", (err) => {
-    console.error("❌ Connection Error:", err);
-});
-
-client.on("close", () => {
-    console.log("🔌 Connection closed.");
+    if (stderr) {
+        console.error(`STDERR: ${stderr}`);
+        return;
+    }
+    console.log(`Biometric Logs:\n${stdout}`);
+    console.log(typeof stdout);
 });
