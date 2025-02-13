@@ -119,6 +119,9 @@ function Navbars() {
     navigate('/layout/dailyreportcomponent')
   }
 
+  const handleApproveFormClick = ()=>{
+    navigate('/layout/showJoiningData')
+  }
   
   
   return (
@@ -319,6 +322,9 @@ function Navbars() {
                  </li>
                  <li className="hover:bg-gray-200 py-1 px-2 rounded  text-sm ">
                    <a href="#" onClick={handleTest} className="whitespace-nowrap">Change Password</a>
+                 </li>
+                 <li className="hover:bg-gray-200 py-1 px-2 rounded  text-sm ">
+                   <a href="#" onClick={handleApproveFormClick} className="whitespace-nowrap">Approve Form</a>
                  </li>
                </ul>
              </div>

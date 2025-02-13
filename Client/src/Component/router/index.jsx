@@ -17,6 +17,9 @@ import CompanyBranchTable from '../../Pages/CompanyBranchtable/index'
 import ManualPunch from '../../Pages/ManualPunch/index'
 import DailyReportPage from '../../Pages/DailyReport/index'
 import TestPage from '../../Pages/TestPage/index'
+import ApproveForm from '../../Pages/ApproveForm/index'
+import ShowJoiningData from '../../Pages/ShowJoiningData/index'
+import ShowSingleJoiningData from '../../Component/ShowSingleJoiningData/index'
 
 import Errorpage from '../../Pages/404ErrorPage/index'
 
@@ -47,6 +50,9 @@ const Router = () => {
             <Route path='manualpunch' element={<ManualPunch />} />
             <Route path='dailyreportcomponent' element={<DailyReportPage/>} />
             <Route path='testpage' element={<TestPage/>} />
+            <Route path='approveForm' element={<ApproveForm/>} />
+            <Route path='showJoiningData' element={<ShowJoiningData/>} />
+            <Route path='showsinglejoiningData' element={<ShowSingleJoiningData/>} />
 
             <Route path='*' element={<Errorpage/>} />
             
