@@ -203,7 +203,7 @@ function TableListofCompany2() {
   return (
     <div className="ml-2 mr-2 mt-4">
       <div className="bgMainColor flex py-4 pl-1 gap-3">
-        <h4 className="text-white">List of Company</h4>
+        <h4 className="text-white">List of Department</h4>
       </div>
 
       <div className="flex justify-center gap-20 pt-6">
