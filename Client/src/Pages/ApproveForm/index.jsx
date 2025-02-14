@@ -4,8 +4,16 @@ import { showDepartment } from '../../Utils/Api/ShowDepartment'
 import { showDesignation } from '../../Utils/Api/ShowDesignation'
 import { showCompany } from '../../Utils/Api/ShowCompany'
 import { useState } from 'react'
+import axios from 'axios'
+import { useLocation } from 'react-router-dom';
+import { toast } from 'react-toastify';
+import 'react-toastify/dist/ReactToastify.css';
+
 
 function Index() {
+ 
+    const location = useLocation();
+    const { formId } = location.state || {}; // Retrieve formId
 
     const [showDepartmentList, setShowDepartmentList]=useState([]);
     const [showDesignationList, setShowDeginationList]=useState([]);
@@ -13,8 +21,10 @@ function Index() {
     const [showCompanyList, setShowCompanyList]=useState([]);
 
     const [formData, setFormData]=useState({
-        // formId,
+        formId: formId || "",
         companyId : "",
+        officialEmail:"",
+        officialContact: "",
         department: "",
         designation : "",
         joiningDate: "",
@@ -38,14 +48,50 @@ function Index() {
             console.log('my form data is ', formData)
             const response = await axios.patch(
                 'http://localhost:8000/auth/approve-joiningForm',
-                formData,
+                { ...formData, formId },
                 { withCredentials: true }
             );
 
             console.log("my formdata is ", formData)
-            console.log("Form submitted successfully", response.data);
+          
+            // Show success toast
+            toast.success("Form submitted successfully!", {
+                position: "top-right",
+                autoClose: 3000, // Closes after 3 seconds
+                hideProgressBar: false,
+                closeOnClick: true,
+                pauseOnHover: true,
+                draggable: true,
+                progress: undefined,
+            });
+
+            // Reset form data after submission
+            setFormData({
+                formId: formId || "",
+                companyId: "",
+                officialEmail:"",
+                officialContact: "",
+                department: "",
+                designation: "",
+                joiningDate: "",
+                employeeType: "",
+                interviewDate: "",
+                modeOfRecruitment: "",
+                reference: "",
+                ctc: "",
+                inHand: "",
+                employeeESI: "",
+                employeePF: "",
+                employerESI: "",
+                employerPF: "",
+            });
+
         } catch (error) {
-            console.error("Error submitting form", error);
+            // console.error("Error submitting form", error);
+            toast.error("Form submission failed!", {
+                position: "top-right",
+                autoClose: 3000,
+            });
         }
     };
   
@@ -78,7 +124,7 @@ function Index() {
             <h1 className='text-center text-white font-bold text-xl'>Joining Details</h1>
         </div>
         <div >
-            <form>
+            <form onSubmit={handleSubmit}>
                 <div className='grid grid-cols-4 gap-4'>
                     {/* company name field  */}
                     <div className="flex flex-col">
@@ -119,7 +165,9 @@ function Index() {
                         <label>Official Contact</label>
                         <input 
                             type='text' 
-                            name='' 
+                            name='officialContact'
+                            
+                            value={formData.officialContact}
                             onChange={handleFormData}
                             className='border border-gray-500 px-4 py-2 rounded-md' />
                     </div>
@@ -127,7 +175,8 @@ function Index() {
                         <label>Official Email</label>
                         <input 
                             type='email' 
-                            name='' 
+                            name='officialEmail' 
+                            value={formData.officialEmail}
                             onChange={handleFormData}
                             className='border border-gray-500 px-4 py-2 rounded-md' />
                     </div>
@@ -160,6 +209,8 @@ function Index() {
                             console.log("name", name, "value", value);
                             setFormData((prev) => ({ ...prev, [name] : value}))
                         }}
+                        value={formData.designation}
+                       
                         className='border border-gray-500 px-4 py-2 rounded-md'>
                         {showDesignationList?.map(({designation, _id})=>(
                         <option key={_id} value={_id}>{designation}</option>
@@ -264,7 +315,7 @@ function Index() {
                 </div>
 
                 <div className='mt-4'>
-                    <button onClick={handleSubmit} className='py-2 px-4 bg-red-500 rounded-md text-white font-semibold'>Submit</button>
+                    <button type='submit' className='py-2 px-4 bg-red-500 rounded-md text-white font-semibold'>Submit</button>
                 </div>
             </form>
         </div>

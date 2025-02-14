@@ -11,12 +11,12 @@ function EmployeeDetails() {
     }
 
     const handleApproveClicked = ()=>{
-        navigate('/layout/approveForm')
+        navigate('/layout/approveForm', { state: { formId : employee?._id } })
     }
 
     return (
         <div className="p-4">
-            <h2 className="">Employee Details</h2>
+            <h2 className="text-center text-[#8B5DFF] text-xl font-semibold mb-2">Employee Details</h2>
             <div className="grid grid-cols-1 md:grid-cols-4 border rounded-md shadow-lg p-2 gap-1 w-full">
                 <div><strong>Company Name:</strong> {employee?.companyId?.name}</div>
                 <div><strong>Employee Name:</strong> {employee?.name}</div>
@@ -60,17 +60,17 @@ function EmployeeDetails() {
             </div>
 
             <div className='mt-4 flex gap-2 pb-4'>
-                <button onClick={handleApproveClicked} className='px-4 py-2 rounded-md bg-green-500 text-white font-semibold' >Approve</button>
-                <button className='px-4 py-2 rounded-md bg-red-500 text-white font-semibold'>Rejected</button>
+                {employee?.status=='Pending' && (
+                    <>
+                        <button onClick={handleApproveClicked} className='px-4 py-2 rounded-md bg-green-500 text-white font-semibold' >Approve</button>
+                        <button className='px-4 py-2 rounded-md bg-red-500 text-white font-semibold'>Rejected</button>
+                    </>
+                )}
+                
             </div>
             
                 
-            <button
-                className="mt-4  bg-red-500 text-white p-2 rounded-md"
-                onClick={() => navigate(-1)}
-            >
-                Go Back
-            </button>
+            <button className="mt-4  bg-red-500 text-white p-2 rounded-md" onClick={() => navigate(-1)}>Go Back</button>
         </div>
     );
 }

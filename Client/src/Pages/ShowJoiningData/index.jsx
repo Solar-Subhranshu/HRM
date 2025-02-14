@@ -54,7 +54,7 @@ function Index() {
                             <button
                                 key={item}
                                 onClick={() => setStatus(item)}
-                                className={`px-4 py-2 rounded-md text-white ${status === item ? 'bg-blue-600' : 'bg-red-500'}`}
+                                className={`px-4 py-2 rounded-md text-white ${status === item ? 'bg-green-500' : 'bg-red-500'}`}
                             >
                                 {item}
                             </button>
@@ -64,7 +64,7 @@ function Index() {
 
            <div className='overflow-auto h-[calc(100vh-14rem)]'>
             <div className="relative">
-                <table className=" text-gray-500 dark:text-gray-400" style={{ position: 'relative'}}>
+                <table className=" " style={{ position: 'relative'}}>
                     <thead className="text-xs border border-gray-150 bg-gray-800 text-gray-100 uppercase dark:bg-gray-800 dark:text-gray-400 ">
                     <tr>
                         <th className="px-6 py-3 text-center font-semibold text-nowrap">Select</th>
@@ -122,7 +122,7 @@ function Index() {
                                     onClick={() => handleRowClick(emp)}
                                    >
                                     <td className="px-4 py-3 text-center"><input type="checkbox" /></td>
-                                    <td className="px-4 py-2 text-center">{emp?.companyId?.name}</td>
+                                    <td className="px-4 py-2 text-center">{emp?.companyId?.name || 'N/A'}  </td>
                                     <td className="px-4 py-2 text-center">{emp?.name}</td>
                                     <td className="px-4 py-2 text-center">{emp?.father_husbandName}</td>
                                     <td className="px-4 py-2 text-center">{formatDate(emp?.dateOfBirth)}</td>
