@@ -628,7 +628,7 @@ function Registration() {
               <div>
                 <label>
                   <span>Branch Name</span>
-                </label>
+                </label>  
                 <input type='text' 
                   value={formData.branchName || " "}
                   name='branchName'

@@ -56,7 +56,7 @@ const addJoiningForm = async(req, res) =>{
             postGraduationAttachment,
             // joiningFormAttachment
         }=req.body;
-        // console.log(req.body);
+        console.log(req.body);
         if(
             // !companyId ||
             !name ||
@@ -254,6 +254,7 @@ const addJoiningForm = async(req, res) =>{
             }
         })
     } catch (error) {
+        console.log("join")
         if (error.code === 'LIMIT_FILE_SIZE') {
             return res.status(400).json({
                 success: false,
