@@ -4,7 +4,7 @@ const cors = require('cors');
 const cookieParser = require('cookie-parser');
 const moment = require("moment");
 const path = require("path")
-require("./db/db");
+const {connectDB} = require("./db/db");
 require("./middlewares/multer.middleware")
 const authEmpRoute = require("./routes/authEmp.route");
 const commonRoute = require('./routes/common.router');
@@ -36,6 +36,10 @@ app.use("/uploads", express.static(path.join(__dirname, "uploads")));
 //     res.send("Hello World");
 // });
 
-app.listen(PORT, () => {
-    console.log(`Server running at port ${PORT}`);
+connectDB()
+.then(()=>{
+    app.listen(PORT, () => {
+        console.log(`⚙️  Server running at port ${PORT}`);
+    })
 })
+.catch((err)=> console.log(`Connection Error ${err.message}`))

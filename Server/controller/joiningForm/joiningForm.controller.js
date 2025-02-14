@@ -169,6 +169,7 @@ const addJoiningForm = async(req, res) =>{
 
 
         // attachment urls
+        
         const aadharCardUrl = aadharCardImage.length>0 ? `${req.protocol}://${req.get("host")}/uploads/aadharCardAttachments/${aadharCardImage[0].fileName}` : null;
         const panCardUrl = panCardImage.length>0 ? `${req.protocol}://${req.get("host")}/uploads/panCardAttachments/${panCardImage[0].fileName}` : null;
         const bankAccountUrl = bankAccountImage.length>0 ? `${req.protocol}://${req.get("host")}/uploads/bankAttachments/${bankAccountImage[0].fileName}` : null;

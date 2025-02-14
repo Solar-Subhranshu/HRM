@@ -237,8 +237,10 @@ const registerEmployee = async(req,res)=>{
 const login = async(req,res) =>{
     try {
         //checking if both id and password are given
-        const {employeeCode, password}= req.body;
+        let {employeeCode, password}= req.body;
         console.log("Login Body", req.body);
+        
+        employeeCode=String(employeeCode).trim();
         if(!employeeCode || !password){
             return res.status(400).json({
                 success:false,
