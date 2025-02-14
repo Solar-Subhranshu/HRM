@@ -237,8 +237,9 @@ const registerEmployee = async(req,res)=>{
 const login = async(req,res) =>{
     try {
         //checking if both id and password are given
-        const {employeeCode, password}= req.body;
-        console.log("Login Body", req.body);
+        let {employeeCode, password}= req.body;
+        
+        employeeCode=String(employeeCode).trim();
         if(!employeeCode || !password){
             return res.status(400).json({
                 success:false,
@@ -250,7 +251,6 @@ const login = async(req,res) =>{
         //checking if valid id is given
         const adminData = await Employee.findOne({employeeCode:employeeCode}).populate("department");
         // console.log(adminData.department.department);
-        console.log("Admin Data: ", adminData);
         if(adminData?.department?.department !== 'Admin'){
             return res.status(400).json({
                 success: false,
