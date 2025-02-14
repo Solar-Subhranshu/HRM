@@ -67,7 +67,7 @@
 //testing new console app
 const { exec } = require("node:child_process");
 
-const filePath = "C://Users//gautam solar//Desktop//HRM machine test//BiometricApp//BiometricNetFramework2//bin//Debug//BiometricNetFramework2";
+const filePath = "C://Users//gautam solar//Desktop//HRM machine test//BiometricApp//BiometricNetFramework3//bin//Debug//BiometricNetFramework3";
 
 exec(`"${filePath}"`, (error, stdout, stderr) => {
     if (error) {
