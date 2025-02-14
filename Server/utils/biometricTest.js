@@ -70,9 +70,9 @@
 // const filePath = "..//BiometricNetFramework//bin//Debug//BiometricNetFramework4"
 
 const { exec } = require("node:child_process");
+const path = require("path");
 
 const scriptPath = path.join(__dirname, "BiometricNetFramework", "bin", "Debug", "BiometricNetFramework4.exe");
-const path = require("path");
 
 exec(`wine "${scriptPath}"`, (error, stdout, stderr) => {
     if (error) {
