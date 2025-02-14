@@ -67,14 +67,14 @@
 //testing new console app
 
 // const scriptPath = path.join(__dirname, "BiometricNetFramework//bin//Debug//BiometricNetFramework4.exe");
-// const filePath = "..//BiometricNetFramework//bin//Debug//BiometricNetFramework4"
 
 const { exec } = require("node:child_process");
 const path = require("path");
 
-const scriptPath = path.join(__dirname, "BiometricNetFramework", "bin", "Debug", "BiometricNetFramework4.exe");
+// const scriptPath = path.join(__dirname, "BiometricNetFramework", "bin", "Debug", "BiometricNetFramework4.exe");
+const filePath = "/root/HRM/Server/BiometricNetFramework/bin/Debug/BiometricNetFramework4.exe"
 
-exec(`wine "${scriptPath}"`, (error, stdout, stderr) => {
+exec(`wine "${filePath}"`, (error, stdout, stderr) => {
     if (error) {
         console.error(`Error: ${error.message}`);
         return;
