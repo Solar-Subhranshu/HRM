@@ -185,27 +185,27 @@ const employeeSchema = new mongoose.Schema({
 
         aadharCardAttachment : {
             type :String,
-            required:true
+            // required:true
         },
         
         panCardAttachment  :{
             type :String,
-            required:true
+            // required:true
         },
         
         bankAttachment : {
             type:String,
-            required:true
+            // required:true
         },
           
         joiningFormAttachment : {
             type :String,
-            required:true
+            // required:true
             },
        
         otherAttachment : {
             type:String,
-            required:true
+            // required:true
         },
 
 

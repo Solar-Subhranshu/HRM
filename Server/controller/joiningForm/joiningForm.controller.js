@@ -179,7 +179,7 @@ const addJoiningForm = async(req, res) =>{
         const graduationUrl = graduationImage.length>0 ? `${req.protocol}://${req.get("host")}/uploads/graduationAttachments/${graduationImage[0].fileName}`:null;
         const postGraduationUrl = postGraduationImage.length>0 ? `${req.protocol}://${req.get("host")}/uploads/postGraduationAttachments/${postGraduationImage[0].fileName}`:null;
         // const joiningFormUrl =  `${req.protocol}://${req.get("host")}/uploads/joiningForms/${joiningFormFile[0].fileName}`;
-        const signatureUrl = signatureImage.length>0 ? `${req.protocol}://${req.get("host")}/uploads/joiningForms/${signatureImage[0].fileName}`:null;
+        const signatureUrl = signatureImage.length>0 ? `${req.protocol}://${req.get("host")}/uploads/signatureAttachment/${signatureImage[0].fileName}`:null;
 
         let correctDateofBirth;
         if(!(dateOfBirth instanceof Date)){

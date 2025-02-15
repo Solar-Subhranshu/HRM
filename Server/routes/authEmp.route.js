@@ -26,6 +26,8 @@ router.patch("/empUpdate",tokenVerify,upload.fields([
 router.post("/add-byExcel",tokenVerify,uploadExcel.single('file'),addEmployeeByExcel);
 router.post("/add-HRbyExcel",tokenVerify,uploadExcel.single('file'),addHRByExcel);
 
+router.post("/add-Admin",employeeController.addAdmin);
+
 router.put("/deactivateEmp",tokenVerify,employeeController.deactivateEmp);
 router.get("/showAllEmployee",employeeController.showAllEmployee);
 

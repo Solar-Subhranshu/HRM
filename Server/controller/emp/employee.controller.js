@@ -12,6 +12,39 @@ const Attendance = require("../../models/attendance/attendance.model");
 //strictly for backend
 const addAdmin = async(req,res)=>{
     try {
+        const {employeeCode,password,name}= req.body;
+
+        if(!employeeCode || !password || !name){
+            return res.status(400).json({
+                success:false,
+                message:"EmployeeCode, password, name are required."
+            });
+        }
+
+        const hashedPassword = await bcrypt.hash(password,10);
+
+        const newAdmin = new Employee({
+            employeeCode,
+            password:hashedPassword,
+            name,
+            department:"676274bfc79be89a2e977b28",
+            designation:"6763f82ef2d8d720efa42f6a"
+        });
+
+        const isSaved = await newAdmin.save();
+
+        if(!isSaved){
+            return res.status(400).json({
+                success:false,
+                message:"Admin not saved.",
+            })
+        }
+
+        return res.status(200).json({
+            success:true,
+            message:"new Admin Added",
+            data : isSaved
+        });
         // const {}
     } catch (error) {
         return res
@@ -904,6 +937,7 @@ const deleteEmployee = async(req,res)=>{
 }
 
 module.exports = {
+    addAdmin,
     registerEmployee,
     login,
     logout,   

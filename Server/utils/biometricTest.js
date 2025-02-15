@@ -65,11 +65,16 @@
 // });
 
 //testing new console app
+
+// const scriptPath = path.join(__dirname, "BiometricNetFramework//bin//Debug//BiometricNetFramework4.exe");
+
 const { exec } = require("node:child_process");
+const path = require("path");
 
-const filePath = "C://Users//gautam solar//Desktop//HRM machine test//BiometricApp//BiometricNetFramework2//bin//Debug//BiometricNetFramework2";
+// const scriptPath = path.join(__dirname, "BiometricNetFramework", "bin", "Debug", "BiometricNetFramework4.exe");
+const filePath = "/root/HRM/Server/BiometricNetFramework/bin/Debug/BiometricNetFramework4.exe"
 
-exec(`"${filePath}"`, (error, stdout, stderr) => {
+exec(`wine "${filePath}"`, (error, stdout, stderr) => {
     if (error) {
         console.error(`Error: ${error.message}`);
         return;
