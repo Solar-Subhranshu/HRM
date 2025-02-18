@@ -8,6 +8,8 @@ import Admin from '../../Assets/Images/admin.png';
 import { useNavigate } from 'react-router-dom';
 import { FaUserGraduate } from "react-icons/fa";
 import { RiLogoutCircleRLine } from "react-icons/ri";
+import { toast } from "react-toastify";
+import "react-toastify/dist/ReactToastify.css";
 import axios from 'axios';
 
 
@@ -61,11 +63,19 @@ function Navbars() {
       if (response.data.success) {
         console.log(response.data.message); // "User Logged Out"
 
+        // Show red toast notification
+        toast.error("Logout Successful!", {
+          position: "top-right",
+          autoClose: 2000,
+          progressStyle: { backgroundColor: "red" },  // Custom red styling
+        });
+
         // Remove token if using token-based authentication
         localStorage.removeItem("token");
 
         // Redirect to login page
-        navigate("/");
+        // navigate("/");
+        setTimeout(() => navigate("/"), 2000);
       } else {
         console.error("Logout failed:", response.data.message);
         alert("Logout failed");
