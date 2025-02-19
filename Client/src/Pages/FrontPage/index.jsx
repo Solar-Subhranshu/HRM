@@ -9,6 +9,8 @@ import axios from 'axios';
 import { LuCircleUserRound } from "react-icons/lu";
 import { FaRegEyeSlash, FaRegEye } from "react-icons/fa";
 import { MdLockOpen } from "react-icons/md";
+import { toast } from 'react-toastify';
+import 'react-toastify/dist/ReactToastify.css';
 
 axios.defaults.withCredentials = true;
 
@@ -67,7 +69,26 @@ function FrontPage() {
         );
 
             if (response.data.success) {
-                alert('Login successful!');
+                // Show multiple success toasts
+                toast.success("Login successfully!", {
+                    position: "top-right",
+                    autoClose: 2000,
+                    hideProgressBar: false,
+                    closeOnClick: true,
+                    pauseOnHover: true,
+                    draggable: true,
+                    progress: undefined,
+                });             
+                
+               toast.success("Login successfully!", { 
+                    position: "top-right", 
+                    autoClose: 3000 
+                });
+                toast.success("Login successfully!", { 
+                    position: "top-right", 
+                    autoClose: 4000 
+                });
+                
                 navigate('/layout/dashboard');
             } else {
                 alert('Invalid username or password!');

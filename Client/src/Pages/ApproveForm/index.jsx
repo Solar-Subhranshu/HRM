@@ -64,6 +64,7 @@ function Index() {
                 draggable: true,
                 progress: undefined,
             });
+            
 
             // Reset form data after submission
             setFormData({
