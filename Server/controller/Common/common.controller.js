@@ -53,7 +53,7 @@ const showDegree = async (req,res) =>{
 const addDegree = async(req,res) => {
     try {
         const employeeId = req.employeeId;
-        const {qualificationID,degreeName } = req.body;
+        const {qualificationID,degreeName} = req.body;
         if(!qualificationID || !degreeName){
             return res.status(400).json({
                 success:false,

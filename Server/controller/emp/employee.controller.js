@@ -97,10 +97,10 @@ const registerEmployee = async(req,res)=>{
             officeTimePolicy,
             shift,
             workType,
+            biometricPunchId,
             aadharCardAttachment,
             panCardAttachment,
             bankAttachment,
-            joiningFormAttachment,
             otherAttachment
         }=req.body;
         
@@ -113,8 +113,9 @@ const registerEmployee = async(req,res)=>{
             || !joiningDate 
             || !company || !branch || !department || !designation 
             || !workType || !shift || !officeTimePolicy 
+            || !biometricPunchId
             || !aadharCardAttachment || !panCardAttachment 
-            || !bankAttachment || !joiningFormAttachment 
+            || !bankAttachment  
             || !otherAttachment){
             return res.status(400).json({
                 success:false,

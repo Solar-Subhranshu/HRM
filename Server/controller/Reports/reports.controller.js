@@ -264,7 +264,7 @@ const dashboardReport = async(req,res)=>{
         const date =currDate.toISOString().split('T')[0]
 
         //employee data
-        const empData = await Employee.find().lean()
+        const empData = await Employee.find({department :{$not : { $eq:"676274bfc79be89a2e977b28" }}}).lean()
         .populate({
             path:"department",
             select:"-updatedAt -createdAt -__v -created_By -updated_By"
@@ -346,6 +346,7 @@ const dashboardReport = async(req,res)=>{
 
         return res.status(200).json({
             success:true,
+            message:"Dashboard data of total, present, absent and late employees",
             data:{
             totalEmpData:empData.length,
             presentData:presentData,

@@ -180,7 +180,10 @@ const employeeSchema = new mongoose.Schema({
             ref:"WorkType",
             required:true
         },
-    
+        biometricPunchId:{
+            type:Number,
+            required:true
+        },
         // Attachments
 
         aadharCardAttachment : {
@@ -198,10 +201,10 @@ const employeeSchema = new mongoose.Schema({
             // required:true
         },
           
-        joiningFormAttachment : {
-            type :String,
-            // required:true
-            },
+        // joiningFormAttachment : {
+        //     type :String,
+        //     // required:true
+        //     },
        
         otherAttachment : {
             type:String,
