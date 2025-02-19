@@ -479,7 +479,7 @@ const deactivateEmp = async (req,res)=>{
 const showAllEmployee= async (req,res) =>{
 
     try{
-        const allEmp = await Employee.find()
+        const allEmp = await Employee.find({department :{$not : { $eq:"676274bfc79be89a2e977b28" }}}) //hide admin data
         .populate({
             path:"department",
             select:"-updatedAt -createdAt -__v -created_By -updated_By"
@@ -525,12 +525,13 @@ const showAllEmployee= async (req,res) =>{
             select:"workType"
         })
         .select("-createdAt -updatedAt -updated_By -created_By -__v -password -refreshToken ")
+        .lean()
 
-
-        if(allEmp===0){
+        if(allEmp.length===0){
             return res.status(200).json({
                 success:true,
-                message : "No Employee Found, Please Register Employee First"
+                message : "No Employee Found, Please Register Employee First",
+                data:[]
             });
         }
         
