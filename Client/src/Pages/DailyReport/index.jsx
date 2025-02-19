@@ -21,8 +21,8 @@ function DailyReport() {
   const fetchAllEmployeeNameWithId = async () => {
     try {
       const response = await axios.get(`${process.env.REACT_APP_SERVER_ADDRESS}/auth/showAllEmployee`);
-      setShowAllEmployee(response.data.data);
-      setFilteredEmployees(response.data.data);
+      setShowAllEmployee(response?.data?.data);
+      setFilteredEmployees(response?.data?.data);
     } catch (error) {
       console.log("Enable to fetch Employee Name With Id", error);
     }
