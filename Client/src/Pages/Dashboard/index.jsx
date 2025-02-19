@@ -9,7 +9,7 @@ import RecentPuchShowTable from '../../Component/Common/RecentPuchShowTable/inde
 import Card from '../../Component/Common/Card/index';
 import axios from 'axios';
 
-const index = () => {
+const Index = () => {
     
     const [data, setData] = useState(null);
 
@@ -85,4 +85,4 @@ const index = () => {
     )
 }
 
-export default index;
+export default Index;
