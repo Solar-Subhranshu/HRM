@@ -29,7 +29,7 @@ function Registration() {
     // Fetch the reporting managers data from the backend
     axios.get(`${process.env.REACT_APP_SERVER_ADDRESS}/auth/showAllEmployee`)
       .then((response) => {
-        setReportingManagers(response.data.data);
+        setReportingManagers(response?.data?.data);
       })
       .catch((error) => {
         console.error('Error fetching reporting managers:', error);
@@ -112,7 +112,7 @@ function Registration() {
   const fetchDepartmentName = async () => {
     try {
       const response = await axios.get(`${process.env.REACT_APP_SERVER_ADDRESS}/common/show-department`);
-      setDepartmentName(response.data.data);
+      setDepartmentName(response?.data?.data);
     } catch (error) {
       alert('Error: Unable to fetch Department data');
     }
@@ -121,7 +121,7 @@ function Registration() {
   const fetchDeginationData = async (_id) => {
     try {
       const response = await axios.get(`${process.env.REACT_APP_SERVER_ADDRESS}/common/show-designation?departmentId=${_id}`);
-      setDeginationData(response.data.data);
+      setDeginationData(response?.data?.data);
     } catch (error) {
       alert('Error: Unable to fetch Degination Name data');
     }
@@ -130,7 +130,7 @@ function Registration() {
   const fetchCompanyNameData = async () => {
     try {
       const response = await axios.get(`${process.env.REACT_APP_SERVER_ADDRESS}/common/show-company`);
-      setCompanyName(response.data.data);
+      setCompanyName(response?.data?.data);
     } catch (error) {
       alert('Error: Unable to fetch Company Name data');
     }
@@ -139,7 +139,7 @@ function Registration() {
   const fetchBranchNameData = async (_id) => {
     try {
       const response = await axios.get(`${process.env.REACT_APP_SERVER_ADDRESS}/common/show-branch?companyID=${_id}`);
-      setBranchNameData(response.data.data);
+      setBranchNameData(response?.data?.data);
     } catch (error) {
       alert('Error: Unable to fetch Branch Name data');
     }
@@ -148,7 +148,7 @@ function Registration() {
   const fetchQulificationData = async () => {
     try {
       const response = await axios.get(`${process.env.REACT_APP_SERVER_ADDRESS}/common/show-qualification`);
-      setQulificationData(response.data.data);
+      setQulificationData(response?.data?.data);
     } catch (error) {
       alert('Error: Unable to fetch  Qualification data');
     }
@@ -157,7 +157,7 @@ function Registration() {
   const fetchDegreeData = async (_id) => {
     try {
       const response = await axios.get(`${process.env.REACT_APP_SERVER_ADDRESS}/common/show-degree?qualificationId=${_id}`);
-      setDegreeData(response.data.data);
+      setDegreeData(response?.data?.data);
     } catch (error) {
       alert('Error: Unable to fetch Degree data');
     }
@@ -166,7 +166,7 @@ function Registration() {
   const fetchShiftNameData = async () => {
     try {
       const response = await axios.get(`${process.env.REACT_APP_SERVER_ADDRESS}/common/show-shift`);
-      setShiftName(response.data.data);
+      setShiftName(response?.data?.data);
     } catch (error) {
       alert('Error: Unable to fetch  Shift Name data');
     }
@@ -175,7 +175,7 @@ function Registration() {
   const fetchJoiningHrNameData = async () => {
     try {
       const response = await axios.get(`${process.env.REACT_APP_SERVER_ADDRESS}/auth/show-joining-HR`);
-      setJoiningHrNameData(response.data.data);
+      setJoiningHrNameData(response?.data?.data);
     } catch (error) {
       alert('Error: Unable to fetch Hr Name data ');
     }
@@ -184,7 +184,7 @@ function Registration() {
   const fetchOfficeTimePolicyData = async () => {
     try {
       const response = await axios.get(`${process.env.REACT_APP_SERVER_ADDRESS}/common/show-officeTimePolicy`);
-      setOfficeTimePolicy(response.data.data);
+      setOfficeTimePolicy(response?.data?.data);
     } catch (error) {
       alert('Unable to Fetch office time policy Data');
     }
@@ -193,7 +193,7 @@ function Registration() {
   const fetchWorkTypeData = async () => {
     try {
       const response = await axios.get(`${process.env.REACT_APP_SERVER_ADDRESS}/common/show-workType`);
-      setWorkTypeData(response.data.data);
+      setWorkTypeData(response?.data?.data);
     } catch (error) {
       alert('Unable to Fetch Data work type data');
     }

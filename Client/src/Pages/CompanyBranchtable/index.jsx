@@ -175,7 +175,7 @@ function AddNewCompany() {
   const fetchCompanyNameData = async () => {
     try {
       const response = await axios.get(`${process.env.REACT_APP_SERVER_ADDRESS}/common/show-company`);
-      setCompanyName(response.data.data);
+      setCompanyName(response?.data?.data);
     } catch (error) {
       alert("Error: Unable to fetch company name data");
     }
@@ -184,7 +184,7 @@ function AddNewCompany() {
   const fetchAllCompanyDetails = async () => {
     try {
       const response = await axios.get(`${process.env.REACT_APP_SERVER_ADDRESS}/common/show-all-companyDetails`);
-      setAllCompanyDetails(response.data.data);
+      setAllCompanyDetails(response?.data?.data);
     } catch (error) {
       alert("Unable to fetch all company data", error);
     }
@@ -200,7 +200,7 @@ function AddNewCompany() {
     fetchAllCompanyDetails();
   }, []);
 
-  const filteredBranchDetails = showAllCompanyDetails.filter(
+  const filteredBranchDetails = showAllCompanyDetails?.filter(
     (item) => item.companyID?._id === selectedCompanyID
   );
 
@@ -234,7 +234,7 @@ function AddNewCompany() {
           <div className="max-h-[200px] overflow-y-auto">
             <table className="table-auto w-full border-collapse border border-black">
               <tbody>
-                {companynamedata.map(({ _id, name }) => (
+                {companynamedata?.map(({ _id, name }) => (
                   <tr key={_id}>
                     <td className="border-t border-gray-300 flex justify-center items-center align-middle h-8">
                       <input
@@ -277,7 +277,7 @@ function AddNewCompany() {
               </tr>
             </thead>
             <tbody>
-              {filteredBranchDetails.map(({ _id, name, address, pin }) => (
+              {filteredBranchDetails?.map(({ _id, name, address, pin }) => (
                 <tr key={_id}>
                   <td className="border-t border-gray-300 flex justify-center items-center align-middle h-8">
                     <input 
