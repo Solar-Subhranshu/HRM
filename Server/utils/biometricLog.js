@@ -19,9 +19,12 @@ exec(`"${filePath}"`, (error, stdout, stderr) => {
 
 // {00853A19-BD51-419B-9269-2DABE57EB61F}
 //{00853A19-BD51-419B-9269-2DABE57EB61F}
-
+// wine reg query "HKCR\CLSID\{00853A19-BD51-419B-9269-2DABE57EB61F}"
 
 /*
+wine reg query "HKCR\CLSID" /s | grep -i "zkemkeeper"
+
+
 string dllPath = Path.Combine(AppDomain.CurrentDomain.BaseDirectory, "zkemkeeper.dll");
 
 // Extract COM DLL if not exists
