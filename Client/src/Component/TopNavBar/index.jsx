@@ -75,6 +75,7 @@ function Navbars() {
 
         // Redirect to login page
         // navigate("/");
+
         setTimeout(() => navigate("/"), 2000);
       } else {
         console.error("Logout failed:", response.data.message);

@@ -351,7 +351,7 @@ function Registration() {
           // status: fetchedData.status ?? prev.status,
           company: fetchedData.companyId ?? prev.company,
           employeeType: fetchedData.employeeType ?? prev.employeeType,
-          salary: fetchedData.salary ?? prev.salary,
+          // salary: fetchedData.salary ?? prev.salary,
         }));
       } else {
         alert("No employee found with this phone number.");
@@ -377,7 +377,7 @@ function Registration() {
     }
 
     try {
-      console.log("formData", formData);
+      console.log(" employee formData is ", formData);
       const response = await axios.post(`${process.env.REACT_APP_SERVER_ADDRESS}/auth/empRegister`, formData, {
         headers: { 'Content-Type': 'application/json' },
       });
