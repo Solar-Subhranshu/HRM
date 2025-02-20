@@ -314,7 +314,7 @@ function Registration() {
   const fetchEmployeeData = async (phoneNumber) => {
     try {
       const response = await axios.post(
-        "http://localhost:8000/auth/show-joiningFormData",
+        `${process.env.REACT_APP_SERVER_ADDRESS}/auth/show-joiningFormData`,
         { phoneNumber }
       );
   
