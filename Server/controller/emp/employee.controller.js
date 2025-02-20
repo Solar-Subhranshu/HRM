@@ -109,14 +109,16 @@ const registerEmployee = async(req,res)=>{
             || !dateOfBirth || !personalPhoneNum || !personalEmail 
             || !panCard || !aadharCard || !qualification || !degree
             || !permanentAddress || !permanentPinCode ||!currentAddress 
-            || !currentPinCode || !reportingManager || !joiningHR 
+            || !currentPinCode || !reportingManager 
+            || !joiningHR 
             || !joiningDate 
             || !company || !branch || !department || !designation 
             || !workType || !shift || !officeTimePolicy 
             || !biometricPunchId
             || !aadharCardAttachment || !panCardAttachment 
             || !bankAttachment  
-            || !otherAttachment){
+            || !otherAttachment
+        ){
             return res.status(400).json({
                 success:false,
                 message : "All Fields Are Required!"
@@ -166,7 +168,8 @@ const registerEmployee = async(req,res)=>{
             // console.log(hashedPassword)
         }
         else{
-            hashedPassword = String(employeeCode + "-" + generateRandomNumbers());
+            // hashedPassword = String(employeeCode + "-" + generateRandomNumbers());
+            hashedPassword = String(employeeCode);
             // console.log(hashedPassword)
         }
 
@@ -217,6 +220,7 @@ const registerEmployee = async(req,res)=>{
             officeTimePolicy,
             shift,
             workType,
+            biometricPunchId,
             aadharCardAttachment: aadharCardUrl,
             panCardAttachment: panCardUrl,
             bankAttachment: bankAccountUrl,
