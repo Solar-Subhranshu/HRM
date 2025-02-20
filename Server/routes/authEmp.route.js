@@ -48,6 +48,7 @@ router.get("/show-reportingManager",reportingManagerController.showReportingMana
 router.post("/add-reportingManager",tokenVerify,reportingManagerController.addReportingManager);
 router.put("/update-reportingManager",tokenVerify,reportingManagerController.updateReportingManager);
 
+router.delete("/delete-reportingManager",reportingManagerController.deleteReportingManager);
 
 //joining form
 router.post("/add-joiningForm",upload.fields([
@@ -63,7 +64,7 @@ router.post("/add-joiningForm",upload.fields([
     { name: 'signatureAttachment', maxCount: 1 },
 ]),joiningFormController.addJoiningForm);
 
-router.get("/show-joiningFormData",tokenVerify,joiningFormController.showJoiningFormData);
+router.post("/show-joiningFormData",tokenVerify,joiningFormController.showJoiningFormData);
 router.get("/show-allJoiningForms",tokenVerify,joiningFormController.showAllJoiningForms);
 router.patch("/approve-joiningForm",tokenVerify,joiningFormController.joiningFormApproval);
 router.patch("/reject-joiningForm",tokenVerify,joiningFormController.joiningFormRejection);

@@ -124,14 +124,33 @@ const deleteReportingManager = async(req,res)=>{
             });
         }
 
-        
+        const isDeleted = await ReportingManager.findByIdAndDelete(managerId);
+
+        if(isDeleted){
+            return res.status(200).json({
+                success:true,
+                message:"Reporting Manager deleted Successfully.",
+                data:isDeleted
+            });
+        }
+        else{
+            return res.status(400).json({
+                success:false,
+                message:"Couldn't Delete. Try Again",
+            })
+        }
     } catch (error) {
-        
+        return res.status(500).json({
+            success:false,
+            message:"Internal Server Error.",
+            error:error.message
+        });
     }
 }
 
 module.exports={
     addReportingManager,
     updateReportingManager,
-    showReportingManager
+    showReportingManager,
+    deleteReportingManager
 }
