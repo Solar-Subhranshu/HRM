@@ -203,3 +203,136 @@ function FrontPage() {
 }
 
 export default FrontPage;
+
+
+
+// import React, { useState } from 'react'
+// import logo from '../../Assets/u-man-logo.jpeg'
+// import bgimg2 from '../../Assets/bgimage2.png';
+// import bgimg1 from '../../Assets/bgimage1.png';
+// import bgimg from '../../Assets/image.png';
+// import { useNavigate } from 'react-router-dom';
+// import axios from 'axios';
+// import { LuCircleUserRound } from "react-icons/lu";
+// import { FaRegEyeSlash, FaRegEye } from "react-icons/fa";
+// import { MdLockOpen } from "react-icons/md";
+// import { toast } from 'react-toastify';
+// import 'react-toastify/dist/ReactToastify.css';
+
+// axios.defaults.withCredentials = true;
+
+// function FrontPage() {
+//     const navigate = useNavigate();
+//     const [inputData, setInputData] = useState({
+//         employeeCode: '',
+//         password: '',
+//     });
+
+//     const [errors, setErrors] = useState({
+//         employeeCode: '',
+//         password: '',
+//     });
+    
+//     const [isPasswordVisible, setIsPasswordVisible] = useState(false);
+
+//     const handleFormdata = (e) => {
+//         const { name, value } = e.target;
+//         setInputData({
+//             ...inputData,
+//             [name]: value,
+//         });
+//     };
+
+//     const validateForm = () => {
+//         let formIsValid = true;
+//         const newErrors = { employeeCode: '', password: '' };
+
+//         // User Name validation
+//         if (inputData.employeeCode.length < 6) {
+//             newErrors.employeeCode = 'User Name must be at least 6 characters long.';
+//             formIsValid = false;
+//         }
+
+//         // Password validation
+//         if (inputData.password.length < 8) {
+//             newErrors.password = 'Password is wrong';
+//             formIsValid = false;
+//         }
+
+//         setErrors(newErrors);
+//         return formIsValid;
+//     };
+
+//     const handleSubmit = async (e) => {
+//         e.preventDefault();
+//         if (!validateForm()) {
+//             return;
+//         }
+//         try {
+//             const response = await axios.post(`${process.env.REACT_APP_SERVER_ADDRESS}/auth/login`, {
+//                 employeeCode: inputData.employeeCode,
+//                 password: inputData.password,
+//             }
+//         );
+
+//             if (response.data.success) {
+//                 // Show multiple success toasts
+//                 toast.success("Login successfully!", {
+//                     position: "top-right",
+//                     autoClose: 2000,
+//                     hideProgressBar: false,
+//                     closeOnClick: true,
+//                     pauseOnHover: true,
+//                     draggable: true,
+//                     progress: undefined,
+//                 });             
+                
+//                toast.success("Login successfully!", { 
+//                     position: "top-right", 
+//                     autoClose: 3000 
+//                 });
+//                 toast.success("Login successfully!", { 
+//                     position: "top-right", 
+//                     autoClose: 4000 
+//                 });
+                
+//                 navigate('/layout/dashboard');
+//             } else {
+//                 alert('Invalid username or password!');
+//             }
+//         } catch (error) {
+//             console.log(error);
+//             alert('Login failed. Please try again later.');
+//         }
+//     };
+    
+//     const togglePasswordVisibility = () => {
+//         setIsPasswordVisible(!isPasswordVisible);
+//     };
+
+//     return (
+//         <div className="h-screen  w-screen">
+//             {/* Header part */}
+//             <div className="bgMainColor opacity-90 h-20 relative">
+//                 <div className="flex justify-between  items-center">
+//                     <div className="flex flex-col items-center">
+//                         <img className="mix-blend-screen scale-65" src={logo} alt="logo" />
+//                     </div>
+//                     <div className="flex flex-col items-center pr-6">
+//                         <span className="text-3xl font-bold text-white irish-grover-regular">HRM's</span>
+//                         <span className="text-white text-xl irish-grover-regular">System</span>
+//                     </div>
+//                 </div>
+//             </div>
+              
+            
+
+//             {/* Footer part */}
+//             <div className="bgMainColor absolute w-full h-12 pt-3 text-center ">
+//                <p className=' text-white'>@Uda Mandi All copy rights reserved</p>
+//             </div>
+//         </div>
+//     );
+// }
+
+// export default FrontPage;

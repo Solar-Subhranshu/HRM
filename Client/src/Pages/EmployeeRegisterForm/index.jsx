@@ -106,6 +106,7 @@ function Registration() {
     designation: "",
     workType:'',
     joiningHR : " ",
+    biometricPunchId: " ",
   });
 
   // Fetching functions
@@ -239,6 +240,7 @@ function Registration() {
     if (!formData.otherAttachment) newErrors.otherAttachment = 'Other documents are required';
     if (!formData.reportingManager) newErrors.reportingManager = 'Reporting Manager is required';
     if (!formData.joiningHR) newErrors.joiningHR = 'Joining Hr Name is required';
+    if (!formData.biometricPunchId) newErrors.biometricPunchId = 'Biometric Punch Id is required';
     return newErrors;
   };
 
@@ -350,6 +352,8 @@ function Registration() {
           designation: "",
           workType:" ",
           joiningHR: " ",
+          biometricPunchId: " ",
+
         });
       } else {
         alert('Something went wrong during registration.');
@@ -367,8 +371,9 @@ function Registration() {
       <div className='mx-10 pt-6'>
         <form method='post' onSubmit={handleFormSubmit}>
           <fieldset className='border-2  rounded-md mb-4' style={{ borderColor: '#740FD6'}}>
-            <legend className='font-semibold text-lg ml-8 ' style={{color : '#740FD6'}}> &nbsp;&nbsp; Employee Details &nbsp;&nbsp;</legend>
+            <legend className='font-semibold text-lg ml-8 ' style={{color : '#740FD6'}}> &nbsp;&nbsp; Personal Details &nbsp;&nbsp;</legend>
             <div className='grid gap-3 m-6 md:grid-cols-4'>
+
 
               {/* name input field   */}
               <div>
@@ -380,7 +385,7 @@ function Registration() {
                   value={formData.name}
                   name='name'
                   onChange={handleFormData}
-                  className="w-full rounded-md border-2 py-1 px-4 focus:outline-none focus:ring-2 focus:ring-black"
+                  className="w-full rounded-md border-2 py-1 px-4 border-gray-400"
                 />
                 {errors.name && <span className="text-red-600">{errors.name}</span>}
               </div>
@@ -395,7 +400,7 @@ function Registration() {
                   value={formData.father_husbandName}
                   name='father_husbandName'
                   onChange={handleFormData}
-                  className="w-full rounded-md border-2 py-1 px-4 focus:outline-none focus:ring-2 focus:ring-black"
+                  className="w-full rounded-md border-2 py-1 px-4  border-gray-400"
                 />
                 {errors.father_husbandName && <span className="text-red-600">{errors.father_husbandName}</span>}
               </div>
@@ -410,7 +415,7 @@ function Registration() {
                   value={formData.dateOfBirth}
                   name='dateOfBirth'
                   onChange={handleFormData}
-                  className="w-full rounded-md border-2 py-1 px-4 focus:outline-none focus:ring-2 focus:ring-black"
+                  className="w-full rounded-md border-2 py-1 px-4  border-gray-400"
                 />
                 {errors.dateOfBirth && <span className="text-red-600">{errors.dateOfBirth}</span>}
               </div>
@@ -425,7 +430,7 @@ function Registration() {
                   value={formData.personalPhoneNum}
                   name='personalPhoneNum'
                   onChange={handleFormData}
-                  className="w-full rounded-md border-2 py-1 px-4 focus:outline-none focus:ring-2 focus:ring-black"
+                  className="w-full rounded-md border-2 py-1 px-4  border-gray-400"
                 />
                 {errors.personalPhoneNum && <span className="text-red-600">{errors.personalPhoneNum}</span>}
               </div>
@@ -440,7 +445,7 @@ function Registration() {
                   value={formData.personalEmail}
                   name='personalEmail'
                   onChange={handleFormData}
-                  className="w-full rounded-md border-2 py-1 px-4 focus:outline-none focus:ring-2 focus:ring-black"
+                  className="w-full rounded-md border-2 py-1 px-4  border-gray-400"
                 />
                 {errors.personalEmail && <span className="text-red-600">{errors.personalEmail}</span>}
               </div>
@@ -455,7 +460,7 @@ function Registration() {
                   value={formData.aadharCard}
                   name='aadharCard'
                   onChange={handleFormData}
-                  className="w-full rounded-md border-2 py-1 px-4 focus:outline-none focus:ring-2 focus:ring-black"
+                  className="w-full rounded-md border-2 py-1 px-4  border-gray-400"
                 />
                 {errors.aadharCard && <span className="text-red-600">{errors.aadharCard}</span>}
               </div>
@@ -470,7 +475,7 @@ function Registration() {
                   value={formData.permanentAddress}
                   name='permanentAddress'
                   onChange={handleFormData}
-                  className="w-full rounded-md border-2 py-1 px-4 focus:outline-none focus:ring-2 focus:ring-black"
+                  className="w-full rounded-md border-2 py-1 px-4  border-gray-400"
                 />
                 {errors.permanentAddress && <span className="text-red-600">{errors.permanentAddress}</span>}
               </div>
@@ -485,7 +490,7 @@ function Registration() {
                   value={formData.permanentPinCode}
                   name='permanentPinCode'
                   onChange={handleFormData}
-                  className="w-full rounded-md border-2 py-1 px-4 focus:outline-none focus:ring-2 focus:ring-black"
+                  className="w-full rounded-md border-2 py-1 px-4  border-gray-400"
                 />
                 {errors.permanentPinCode && <span className="text-red-600">{errors.permanentPinCode}</span>}
               </div>
@@ -500,7 +505,7 @@ function Registration() {
                   value={formData.currentAddress}
                   name='currentAddress'
                   onChange={handleFormData}
-                  className="w-full rounded-md border-2 py-1 px-4 focus:outline-none focus:ring-2 focus:ring-black"
+                  className="w-full rounded-md border-2 py-1 px-4  border-gray-400"
                 />
                 {errors.currentAddress && <span className="text-red-600">{errors.currentAddress}</span>}
               </div>
@@ -515,7 +520,7 @@ function Registration() {
                   value={formData.currentPinCode}
                   name='currentPinCode'
                   onChange={handleFormData}
-                  className="w-full rounded-md border-2 py-1 px-4 focus:outline-none focus:ring-2 focus:ring-black"
+                  className="w-full rounded-md border-2 py-1 px-4  border-gray-400"
                 />
                 {errors.currentPinCode && <span className="text-red-600">{errors.currentPinCode}</span>}
               </div>
@@ -527,7 +532,7 @@ function Registration() {
                   <span className='text-red-600'>*</span>
                 </label>
                 <select 
-                  className="w-full rounded-md border-2 py-1 px-4 focus:outline-none focus:ring-2 focus:ring-black"
+                  className="w-full rounded-md border-2 py-1 px-4  border-gray-400"
                   onChange={(e) => {
                     setFormData(prevState => ({
                       ...prevState,
@@ -553,7 +558,7 @@ function Registration() {
                 <select
                   name='degree'
                   // value={formData.degree}
-                  className="w-full rounded-md border-2 py-1 px-4 focus:outline-none focus:ring-2 focus:ring-black"
+                  className="w-full rounded-md border-2 py-1 px-4  border-gray-400"
                   onChange={(event) => {
                     const { name, value} = event.target;
                     // console.log("name", name, "value", value);
@@ -577,31 +582,9 @@ function Registration() {
                   value={formData.panCard}
                   name='panCard'
                   onChange={handleFormData}
-                  className="w-full rounded-md border-2 py-1 px-4 focus:outline-none focus:ring-2 focus:ring-black"
+                  className="w-full rounded-md border-2 py-1 px-4  border-gray-400"
                 />
                 {errors.panCard && <span className="text-red-600">{errors.panCard}</span>}
-              </div>
-
-              {/* Work Type Field   */}
-              <div>
-                <label>
-                  <span>Work Type</span>
-                </label>
-                <select
-                  name='workType'
-                  // value={formData.degree}
-                  className="w-full rounded-md border-2 py-1 px-4 focus:outline-none focus:ring-2 focus:ring-black"
-                  onChange={(event) => {
-                    const { name, value} = event.target;
-                    // console.log("name", name, "value", value);
-                    setFormData((prev) => ({ ...prev, [name] : value}))
-                  }}
-                >
-                  <option>--Select Work Type--</option>
-                  {workTypeData?.map(({_id, workType})=>(
-                    <option key={_id} value={_id} name={workType}>{workType}</option>
-                  ))}
-                </select>
               </div>
 
             </div>
@@ -620,7 +603,7 @@ function Registration() {
                   value={formData.bankName || " "}
                   name='bankName'
                   onChange={handleFormData}
-                  className="w-full rounded-md border-2 py-1 px-4 focus:outline-none focus:ring-2 focus:ring-black"
+                  className="w-full rounded-md border-2 py-1 px-4  border-gray-400"
                 />
               </div>
               
@@ -633,7 +616,7 @@ function Registration() {
                   value={formData.branchName || " "}
                   name='branchName'
                   onChange={(event) => setFormData((prev) => ({ ...prev, branchName: event.target.value}))}
-                  className="w-full rounded-md border-2 py-1 px-4 focus:outline-none focus:ring-2 focus:ring-black"
+                  className="w-full rounded-md border-2 py-1 px-4  border-gray-400"
                 />
               </div>
               
@@ -646,7 +629,7 @@ function Registration() {
                   value={formData.bankAccount || " "}
                   name='bankAccount'
                   onChange={handleFormData}
-                  className="w-full rounded-md border-2 py-1 px-4 focus:outline-none focus:ring-2 focus:ring-black"
+                  className="w-full rounded-md border-2 py-1 px-4  border-gray-400"
                 />
               </div>
               
@@ -659,7 +642,7 @@ function Registration() {
                   value={formData.confirmAccountNumber || " "}
                   name='confirmAccountNumber'
                   onChange={handleFormData}
-                  className="w-full rounded-md border-2 py-1 px-4 focus:outline-none focus:ring-2 focus:ring-black"
+                  className="w-full rounded-md border-2 py-1 px-4  border-gray-400"
                 />
               </div>
               
@@ -672,7 +655,7 @@ function Registration() {
                   value={formData.bankIFSC || " "}
                   name='bankIFSC'
                   onChange={handleFormData}
-                  className="w-full rounded-md border-2 py-1 px-4 focus:outline-none focus:ring-2 focus:ring-black"
+                  className="w-full rounded-md border-2 py-1 px-4  border-gray-400"
                 />
               </div>
               
@@ -685,7 +668,7 @@ function Registration() {
                   value={formData.bankAccountHolderName || " "}
                   name='bankAccountHolderName'
                   onChange={handleFormData}
-                  className="w-full rounded-md border-2 py-1 px-4 focus:outline-none focus:ring-2 focus:ring-black"
+                  className="w-full rounded-md border-2 py-1 px-4  border-gray-400"
                 />
               </div>
               
@@ -698,15 +681,17 @@ function Registration() {
                   value={formData.bankAddress || " "}
                   name='bankAddress'
                   onChange={handleFormData}
-                  className="w-full rounded-md border-2 py-1 px-4 focus:outline-none focus:ring-2 focus:ring-black"
+                  className="w-full rounded-md border-2 py-1 px-4  border-gray-400"
                 />
               </div>
+
+              
 
             </div>
           </fieldset>
           
           <fieldset className='border-2  rounded-md mb-4' style={{ borderColor: '#740FD6'}}>
-            <legend className='font-semibold text-lg ml-8' style={{color : '#740FD6'}}> &nbsp;&nbsp; Other Details &nbsp;&nbsp;</legend>
+            <legend className='font-semibold text-lg ml-8' style={{color : '#740FD6'}}> &nbsp;&nbsp; Company Details &nbsp;&nbsp;</legend>
             <div className='grid gap-3 m-6 md:grid-cols-4'>
 
               {/* Hr Name field    */}
@@ -724,7 +709,7 @@ function Registration() {
                       }));
                   
                     }}
-                  className="w-full rounded-md border-2 py-1 px-4 focus:outline-none focus:ring-2 focus:ring-black">
+                  className="w-full rounded-md border-2 py-1 px-4  border-gray-400">
                   <option>--Select Joining Hr--</option>
                   {joiningHrNameData?.map(({name, _id})=>(
                     <option key={_id} value={_id}>{name}</option>
@@ -804,7 +789,7 @@ function Registration() {
                   value={formData.employeeCode || " "}
                   name='employeeCode'
                   onChange={handleFormData}
-                  className="w-full rounded-md border-2 py-1 px-4 focus:outline-none focus:ring-2 focus:ring-black"
+                  className="w-full rounded-md border-2 py-1 px-4  border-gray-400"
                 />
                 {errors.employeeCode && <span className="text-red-600">{errors.employeeCode}</span>}
               </div>
@@ -818,7 +803,7 @@ function Registration() {
                   value={formData.companyEmail || " "}
                   name='companyEmail'
                   onChange={handleFormData}
-                  className="w-full rounded-md border-2 py-1 px-4 focus:outline-none focus:ring-2 focus:ring-black"
+                  className="w-full rounded-md border-2 py-1 px-4  border-gray-400"
                 />
               </div>
               
@@ -831,7 +816,7 @@ function Registration() {
                   value={formData.companyPhoneNum || " "}
                   name='companyPhoneNum'
                   onChange={handleFormData}
-                  className="w-full rounded-md border-2 py-1 px-4 focus:outline-none focus:ring-2 focus:ring-black"
+                  className="w-full rounded-md border-2 py-1 px-4  border-gray-400"
                 />
               </div>
               
@@ -845,7 +830,7 @@ function Registration() {
                   value={formData.joiningDate || " "}
                   name='joiningDate'
                   onChange={handleFormData}
-                  className="w-full rounded-md border-2 py-1 px-4 focus:outline-none focus:ring-2 focus:ring-black"
+                  className="w-full rounded-md border-2 py-1 px-4  border-gray-400"
                 />
                 {errors.joiningDate && <span className="text-red-600">{errors.joiningDate}</span>}
               </div>
@@ -859,7 +844,7 @@ function Registration() {
                   value={formData.lastAppraisalDate}
                   name='lastAppraisalDate'
                   onChange={handleFormData}
-                  className="w-full rounded-md border-2 py-1 px-4 focus:outline-none focus:ring-2 focus:ring-black"
+                  className="w-full rounded-md border-2 py-1 px-4  border-gray-400"
                 />
                 {/* {errors.lastAppraisalDate && <span className="text-red-600">{errors.lastAppraisalDate}</span>} */}
               </div>
@@ -873,7 +858,7 @@ function Registration() {
                   value={formData.regisnationDate}
                   name='regisnationDate'
                   onChange={handleFormData}
-                  className="w-full rounded-md border-2 py-1 px-4 focus:outline-none focus:ring-2 focus:ring-black"
+                  className="w-full rounded-md border-2 py-1 px-4  border-gray-400"
                 />
                 {/* {errors.regisnationDate && <span className="text-red-600">{errors.regisnationDate}</span>} */}
               </div>
@@ -890,7 +875,7 @@ function Registration() {
                     // console.log("name", name, "value", value);
                     setFormData((prev) => ({ ...prev, [name] : value}))
                   }}
-                  className="w-full rounded-md border-2 py-1 px-4 focus:outline-none focus:ring-2 focus:ring-black"
+                  className="w-full rounded-md border-2 py-1 px-4  border-gray-400"
                 >
                   <option>--Select Office Time--</option>
                   {officeTimePolicy?.map(({policyName, _id})=>(
@@ -908,7 +893,7 @@ function Registration() {
                   name="shift"
                   value={formData.shift || ""}
                   onChange={handleFormData}
-                  className="w-full rounded-md border-2 py-1 px-4 focus:outline-none focus:ring-2 focus:ring-black">
+                  className="w-full rounded-md border-2 py-1 px-4  border-gray-400">
                 <option>--Select Shift--</option>
                   {shiftName?.map(({name, _id})=>(
                     <option key={_id} value={_id}>{name}</option>
@@ -928,7 +913,7 @@ function Registration() {
                     handleFormData(e);
                     setSelectedCompanyNameId(e.target.value);
                   }}
-                  className="w-full rounded-md border-2 py-1 px-4 focus:outline-none focus:ring-2 focus:ring-black"
+                  className="w-full rounded-md border-2 py-1 px-4  border-gray-400"
                 >
                   <option>---Select Company Name--- </option>
                   {companynamedata?.map(({name, _id})=>(
@@ -950,7 +935,7 @@ function Registration() {
                     setFormData((prev) => ({ ...prev, [name] : value}))
                   }}
 
-                  className="w-full rounded-md border-2 py-1 px-4 focus:outline-none focus:ring-2 focus:ring-black">
+                  className="w-full rounded-md border-2 py-1 px-4  border-gray-400">
                   {branchnamedata?.map(({name, _id})=>(
                     <option key={_id} value={_id}>{name}</option>
                   ))}
@@ -968,7 +953,7 @@ function Registration() {
                      handleFormData(e);
                      setSelectedDepartmentId(e.target.value);
                    }}
-                  className="w-full rounded-md border-2 py-1 px-4 focus:outline-none focus:ring-2 focus:ring-black"
+                  className="w-full rounded-md border-2 py-1 px-4  border-gray-400"
                   // onChange={(e) => {setSelectedDepartmentId(e.target.value)}}
                 >
                   <option value=''>--Select Department --</option>
@@ -990,9 +975,46 @@ function Registration() {
                     console.log("name", name, "value", value);
                     setFormData((prev) => ({ ...prev, [name] : value}))
                   }}
-                  className="w-full rounded-md border-2 py-1 px-4 focus:outline-none focus:ring-2 focus:ring-black">
+                  className="w-full rounded-md border-2 py-1 px-4  border-gray-400">
                   {DesginationData.map(({designation, _id})=>(
                    <option key={_id} value={_id}>{designation}</option>
+                  ))}
+                </select>
+              </div>
+
+               {/* punch input field   */}
+               <div>
+                <label>
+                  <span>Biometric Punch Id</span>
+                  <span className='text-red-600'>*</span>
+                </label>
+                <input type='text' 
+                  value={formData.biometricPunchId}
+                  name='biometricPunchId'
+                  onChange={handleFormData}
+                  className="w-full rounded-md border-2 py-1 px-4   border-gray-400 "
+                />
+                {errors.name && <span className="text-red-600">{errors.name}</span>}
+              </div>
+
+              {/* Work Type Field   */}
+              <div>
+                <label>
+                  <span>Work Type</span>
+                </label>
+                <select
+                  name='workType'
+                  // value={formData.degree}
+                  className="w-full rounded-md border-2 py-1 px-4  border-gray-400"
+                  onChange={(event) => {
+                    const { name, value} = event.target;
+                    // console.log("name", name, "value", value);
+                    setFormData((prev) => ({ ...prev, [name] : value}))
+                  }}
+                >
+                  <option>--Select Work Type--</option>
+                  {workTypeData?.map(({_id, workType})=>(
+                    <option key={_id} value={_id} name={workType}>{workType}</option>
                   ))}
                 </select>
               </div>
@@ -1015,7 +1037,7 @@ function Registration() {
                   name='aadharCardAttachment'
                   // onChange={handleFormData}
                   onChange={(e) => handleFileChange(e, 'aadharCardAttachment')}
-                  className="w-full rounded-md border-2 py-1 px-4 focus:outline-none focus:ring-2 focus:ring-black"
+                  className="w-full rounded-md border-2 py-1 px-4  border-gray-400"
                 />
                 {errors.aadharCardAttachment && <span className="text-red-600">{errors.aadharCardAttachment}</span>}
               </div>
@@ -1030,7 +1052,7 @@ function Registration() {
                   // value={formData.panCardAttachment}
                   name='panCardAttachment'
                   onChange={(e) => handleFileChange(e, 'panCardAttachment')}
-                  className="w-full rounded-md border-2 py-1 px-4 focus:outline-none focus:ring-2 focus:ring-black"
+                  className="w-full rounded-md border-2 py-1 px-4  border-gray-400"
                 />
                 {errors.panCardAttachment && <span className="text-red-600">{errors.panCardAttachment}</span>}
               </div>
@@ -1045,7 +1067,7 @@ function Registration() {
                   // value={formData.bankAttachment}
                   name='bankAttachment'
                   onChange={(e) => handleFileChange(e, 'bankAttachment')}
-                  className="w-full rounded-md border-2 py-1 px-4 focus:outline-none focus:ring-2 focus:ring-black"
+                  className="w-full rounded-md border-2 py-1 px-4  border-gray-400"
                 />
                 {errors.bankAttachment && <span className="text-red-600">{errors.bankAttachment}</span>}
               </div>
@@ -1060,7 +1082,7 @@ function Registration() {
                   // value={formData.joiningFormAttachment}
                   name='joiningFormAttachment'
                   onChange={(e) => handleFileChange(e, 'joiningFormAttachment')}
-                  className="w-full rounded-md border-2 py-1 px-4 focus:outline-none focus:ring-2 focus:ring-black"
+                  className="w-full rounded-md border-2 py-1 px-4  border-gray-400"
                 />
                 {errors.joiningFormAttachment && <span className="text-red-600">{errors.joiningFormAttachment}</span>}
               </div>
@@ -1074,7 +1096,7 @@ function Registration() {
                 <input type='file' 
                   onChange={(e) => handleFileChange(e, 'otherAttachment')}
                   name='otherAttachment'
-                  className="w-full rounded-md border-2 py-1 px-4 focus:outline-none focus:ring-2 focus:ring-black"
+                  className="w-full rounded-md border-2 py-1 px-4  border-gray-400"
                 />
                 {errors.otherAttachment && <span className="text-red-600">{errors.otherAttachment}</span>}
               </div>

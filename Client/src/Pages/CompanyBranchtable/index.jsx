@@ -6,13 +6,8 @@ import Cookies from'js-cookie'
 function AddNewCompany() {
   const [companynamedata, setCompanyName] = useState([]);
   const [showAllCompanyDetails, setAllCompanyDetails] = useState([]);
-
   const [selectedBranchID, setSelectedBranchID] = useState( null);
-
   const [selectedCompanyID, setSelectedCompanyID] = useState(null);
- 
-  
-
   const [isCompanyModalOpen, setIsCompanyModalOpen] = useState(false); // State for "Add New Company" modal
   const [isBranchModalOpen, setIsBranchModalOpen] = useState(false); // State for "Add New Branch" modal
   const [isUpdateCompanyModalOpen, setIsUpdateCompanyModalOpen] = useState(false);
@@ -68,6 +63,7 @@ function AddNewCompany() {
     address: "",
     companyID: " ",
     branchId:" ",
+    pin: " ",
   });
   
   // Save a new company
@@ -155,6 +151,7 @@ function AddNewCompany() {
         companyID: inputData.companyID,
         name: inputData.branch,
         address: inputData.address,
+        pin:inputData.pin,
       });
       alert("Branch added successfully");
       closeBranchModal();
@@ -207,10 +204,10 @@ function AddNewCompany() {
   return (
     <div className="pl-2 w-full pr-2 pt-4 ">
       {/* Header Section */}
-      <div className="bgMainColor flex py-4 pl-1 pb-3 justify-between">
+      <div className="bgMainColor flex py-2 pl-1 pb-1 justify-between">
         <div className="flex justify-start">
-          <FaListUl size={24} />
-          <h4 className="text-white ml-3">List of Company</h4>
+
+          <h4 className="text-white ml-2">List of Company</h4>
         </div>
         <div className="flex justify-end">
         <button onClick={openCompanyModal} className="font-semibold mr-2 text-white bg-gradient-to-r from-green-400 via-green-500 to-green-600 hover:bg-gradient-to-br focus:ring-4 focus:outline-none focus:ring-green-300 dark:focus:ring-green-800  rounded-lg text-sm px-5 py-2.5 text-center me-2 mb-2">Add Company</button>
@@ -221,29 +218,29 @@ function AddNewCompany() {
       {/* Table Section */}
       <div className="flex gap-10 mt">
         {/* Company Table */}
-        <div className="w-[20%] border border-black">
-          <table className="table-auto w-full border-collapse border border-black">
-            <thead className="border border-black sticky top-0 bg-white z-2">
+        <div className="w-[20%] ">
+          <table className="table-auto w-full border-collapse border border-gray-400">
+            <thead className="border border-gray-400 sticky top-0 bg-white z-2">
               <tr>
-                <th className="text-blue-600/100 border border-black w-20">Select</th>
-                <th className="text-blue-600/100 border border-black">Company</th>
+                <th className="text-blue-600/100 border border-gray-400 w-14">Select</th>
+                <th className="text-blue-600/100 border border-gray-400">Company</th>
               </tr>
             </thead>
           </table>
           
           <div className="max-h-[200px] overflow-y-auto">
-            <table className="table-auto w-full border-collapse border border-black">
+            <table className="table-auto w-full border-collapse border border-gray-400">
               <tbody>
                 {companynamedata?.map(({ _id, name }) => (
                   <tr key={_id}>
-                    <td className="border-t border-gray-300 flex justify-center items-center align-middle h-8">
+                    <td className="border border-gray-400 flex justify-center items-center  h-8 w-14">
                       <input
                         type="checkbox"
                         checked={selectedCompanyID === _id}
                         onChange={() => handleCompanytSelect(_id)}
                       />
                     </td>
-                    <td className="border border-black">{name}</td>
+                    <td className="border border-gray-400">{name}</td>
                   </tr>
                 ))}
               </tbody>
@@ -255,10 +252,9 @@ function AddNewCompany() {
 
     
       {/* Header Section */}
-      <div className="bgMainColor flex py-4 pl-1 pb-3 justify-between mt-4">
+      <div className="bgMainColor flex py-2 pl-1 pb-1 justify-between mt-4">
         <div className="flex justify-start ">
-          <FaListUl size={24} />
-          <h4 className="text-white ml-3">List of Branch</h4>
+          <h4 className="text-white ml-2 mt-2">List of Branch</h4>
         </div>
         <div className="flex justify-end">
           <button onClick={openBranchModal} className="font-semibold mr-2 text-white bg-gradient-to-r from-green-400 via-green-500 to-green-600 hover:bg-gradient-to-br focus:ring-4 focus:outline-none focus:ring-green-300 dark:focus:ring-green-800  rounded-lg text-sm px-5 py-2.5 text-center me-2 mb-2">Add Branch</button>
@@ -266,7 +262,7 @@ function AddNewCompany() {
         </div>
       </div>
       
-      <div className="w-[80%] ">
+      <div className="w-full ">
           <table className="table-auto w-full border border-black">
             <thead className="border border-black">
               <tr>
@@ -293,7 +289,7 @@ function AddNewCompany() {
               ))}
             </tbody>
           </table>
-        </div>
+      </div>
 
         {/* Add New Company Modal */}
         {isCompanyModalOpen && (
@@ -422,6 +418,21 @@ function AddNewCompany() {
                   onChange={handleFormData}
                   id="address"
                   placeholder="Enter address"
+                  className="mt-1 py-2 block w-full border border-gray-400 rounded-md shadow-sm focus:ring-blue-500 focus:border-blue-500"
+                />
+              </div>
+
+              <div className="mb-4">
+                <label htmlFor="address" className="block font-medium text-gray-700">
+                  Pin
+                </label>
+                <input
+                  type="text"
+                  value={inputData.pin}
+                  name="pin"
+                  onChange={handleFormData}
+                  id="pin"
+                  placeholder="Enter pin"
                   className="mt-1 py-2 block w-full border border-gray-400 rounded-md shadow-sm focus:ring-blue-500 focus:border-blue-500"
                 />
               </div>
