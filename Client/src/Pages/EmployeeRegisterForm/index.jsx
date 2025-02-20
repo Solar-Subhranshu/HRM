@@ -27,7 +27,7 @@ function Registration() {
 
   useEffect(() => {
     // Fetch the reporting managers data from the backend
-    axios.get(`${process.env.REACT_APP_SERVER_ADDRESS}/auth/showAllEmployee`)
+    axios.get(`${process.env.REACT_APP_SERVER_ADDRESS}/auth/show-reportingManager`)
       .then((response) => {
         setReportingManagers(response?.data?.data);
       })
@@ -288,6 +288,81 @@ function Registration() {
     }
   };
 
+   // Function to fetch existing employee data by phone number
+  //  const fetchEmployeeData = async (phoneNumber) => {
+  //   try {
+  //     const response = await axios.post(
+  //       "http://localhost:8000/auth/show-joiningFormData",
+  //       { phoneNumber } // Sending phoneNumber as request body
+  //     );
+
+  //     if (response?.data?.data) {
+  //       const fetchedData = response.data.data;
+  //       setFormData((prev) => ({
+  //         ...prev,
+  //         ...fetchedData, // Set formData with fetched API data
+  //       }));
+  //     } else {
+  //       alert("No employee found with this phone number.");
+  //     }
+  //   } catch (error) {
+  //     console.error("Error fetching employee data:", error);
+  //     alert("Error fetching employee data.");
+  //   }
+  // };
+
+  const fetchEmployeeData = async (phoneNumber) => {
+    try {
+      const response = await axios.post(
+        "http://localhost:8000/auth/show-joiningFormData",
+        { phoneNumber }
+      );
+  
+      if (response?.data?.data) {
+        const fetchedData = response.data.data;
+  
+        setFormData((prev) => ({
+          ...prev,
+          name: fetchedData.name ?? prev.name,
+          father_husbandName: fetchedData.father_husbandName ?? prev.father_husbandName,
+          dateOfBirth: fetchedData.dateOfBirth ? fetchedData.dateOfBirth.split("T")[0] : prev.dateOfBirth,
+          personalPhoneNum: fetchedData.personalPhoneNum ?? prev.personalPhoneNum,
+          personalEmail: fetchedData.personalEmail ?? prev.personalEmail,
+          panCard: fetchedData.panCard ?? prev.panCard,
+          aadharCard: fetchedData.aadharCard ?? prev.aadharCard,
+          permanentAddress: fetchedData.permanentAddress ?? prev.permanentAddress,
+          permanentPinCode: fetchedData.permanentPinCode ?? prev.permanentPinCode,
+          currentAddress: fetchedData.currentAddress ?? prev.currentAddress,
+          currentPinCode: fetchedData.currentPinCode ?? prev.currentPinCode,
+          bankName: fetchedData.bankName ?? prev.bankName,
+          branchName: fetchedData.branchName ?? prev.branchName,
+          bankAccount: fetchedData.bankAccount ?? prev.bankAccount,
+          bankIFSC: fetchedData.bankIFSC ?? prev.bankIFSC,
+          bankAccountHolderName: fetchedData.bankAccountHolderName ?? prev.bankAccountHolderName,
+          bankAddress: fetchedData.bankAddress ?? prev.bankAddress,
+          department: fetchedData.department ?? prev.department,
+          designation: fetchedData.designation ?? prev.designation,
+          aadharCardAttachment: fetchedData.aadharCardAttachment ?? prev.aadharCardAttachment,
+          panCardAttachment: fetchedData.panCardAttachment ?? prev.panCardAttachment,
+          bankAttachment: fetchedData.bankAttachment ?? prev.bankAttachment,
+          // otherAttachment: fetchedData.photoAttachment ?? prev.photoAttachment,
+          otherAttachment: fetchedData.photoAttachment ?? prev.otherAttachment ?? "",
+          signatureAttachment: fetchedData.signatureAttachment ?? prev.signatureAttachment,
+          // status: fetchedData.status ?? prev.status,
+          company: fetchedData.companyId ?? prev.company,
+          employeeType: fetchedData.employeeType ?? prev.employeeType,
+          salary: fetchedData.salary ?? prev.salary,
+        }));
+      } else {
+        alert("No employee found with this phone number.");
+      }
+    } catch (error) {
+      console.error("Error fetching employee data:", error);
+      alert("Error fetching employee data.");
+    }
+  };
+  
+
   // Handling form submission
   const handleFormSubmit = async (e) => {
     e.preventDefault();
@@ -430,6 +505,7 @@ function Registration() {
                   value={formData.personalPhoneNum}
                   name='personalPhoneNum'
                   onChange={handleFormData}
+                  onBlur={(e) => fetchEmployeeData(e.target.value)}
                   className="w-full rounded-md border-2 py-1 px-4  border-gray-400"
                 />
                 {errors.personalPhoneNum && <span className="text-red-600">{errors.personalPhoneNum}</span>}
@@ -1099,6 +1175,13 @@ function Registration() {
                   className="w-full rounded-md border-2 py-1 px-4  border-gray-400"
                 />
                 {errors.otherAttachment && <span className="text-red-600">{errors.otherAttachment}</span>}
+                {formData.otherAttachment && (
+    <div className="mt-2">
+      <a href={formData.otherAttachment} target="_blank" rel="noopener noreferrer" className="text-blue-600 underline">
+        View Uploaded Document
+      </a>
+    </div>
+  )}
               </div>
 
             </div>
