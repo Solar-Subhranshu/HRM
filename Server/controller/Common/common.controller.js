@@ -1283,7 +1283,7 @@ const addOfficeTimePolicy = async (req,res)=>{
             pByTwo,
             absent,
             multiPunch,
-            lateComingRule,
+            lateComingRule, 
         }=req.body;
 
         let { lateArrival1,
@@ -1303,7 +1303,7 @@ const addOfficeTimePolicy = async (req,res)=>{
         }=req.body;
 
 
-        if(!policyName || !permittedLateArrival ||!pByTwo || !absent){
+        if(!policyName || !permittedLateArrival ||!pByTwo || !absent || !multiPunch){
             return res.status(400).json({
                 success:false,
                 message: "Required Fields Can't be Empty"

@@ -1,5 +1,6 @@
 const employeeController= require("../controller/emp/employee.controller");
 const joiningFormController = require("../controller/joiningForm/joiningForm.controller");
+const reportingManagerController = require("../controller/emp/reportingManager.controller");
 const {addEmployeeByExcel,addHRByExcel} = require("../controller/emp/addEmployeeBYExcel");
     
 const router = require("express").Router();
@@ -41,6 +42,11 @@ router.post("/logout",employeeController.logout);
 router.get("/show-joining-HR",employeeController.showJoiningHR);
 router.delete("/delete-Employee",tokenVerify,employeeController.deleteEmployee);
 
+
+//reporting Manager
+router.get("/show-reportingManager",reportingManagerController.showReportingManager);
+router.post("/add-reportingManager",tokenVerify,reportingManagerController.addReportingManager);
+router.put("/update-reportingManager",tokenVerify,reportingManagerController.updateReportingManager);
 
 
 //joining form
