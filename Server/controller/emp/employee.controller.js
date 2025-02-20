@@ -173,13 +173,13 @@ const registerEmployee = async(req,res)=>{
         const aadharCardImage = aadharCardAttachment ? await handleBase64Images([aadharCardAttachment], "aadharCardAttachments") : [];
         const panCardImage = panCardAttachment ? await handleBase64Images([panCardAttachment], "panCardAttachments") : [];
         const bankAccountImage = bankAttachment ? await handleBase64Images([bankAttachment], "bankAttachments") : [];
-        const joiningFormImage = joiningFormAttachment ? await handleBase64Images([joiningFormAttachment], "joiningForms") : [];
+        // const joiningFormImage = joiningFormAttachment ? await handleBase64Images([joiningFormAttachment], "joiningForms") : [];
         const otherAttachmentImage = otherAttachment ? await handleBase64Images([otherAttachment], "otherAttachments") : [];
 
         const aadharCardUrl = `${req.protocol}://${req.get("host")}/uploads/aadharCardAttachments/${aadharCardImage[0].fileName}`;
         const panCardUrl = `${req.protocol}://${req.get("host")}/uploads/panCardAttachments/${panCardImage[0].fileName}`;
         const bankAccountUrl = `${req.protocol}://${req.get("host")}/uploads/bankAttachments/${bankAccountImage[0].fileName}`;
-        const joiningFormUrl = `${req.protocol}://${req.get("host")}/uploads/joiningForms/${joiningFormImage[0].fileName}`;
+        // const joiningFormUrl = `${req.protocol}://${req.get("host")}/uploads/joiningForms/${joiningFormImage[0].fileName}`;
         const otherAttachmentUrl = `${req.protocol}://${req.get("host")}/uploads/otherAttachments/${otherAttachmentImage[0].fileName}`;
         
         const newEmployee = new Employee({
@@ -220,7 +220,7 @@ const registerEmployee = async(req,res)=>{
             aadharCardAttachment: aadharCardUrl,
             panCardAttachment: panCardUrl,
             bankAttachment: bankAccountUrl,
-            joiningFormAttachment: joiningFormUrl,
+            // joiningFormAttachment: joiningFormUrl,
             otherAttachment: otherAttachmentUrl,
         
             password :hashedPassword,
