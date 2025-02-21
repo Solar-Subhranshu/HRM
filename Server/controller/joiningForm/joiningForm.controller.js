@@ -56,7 +56,7 @@ const addJoiningForm = async(req, res) =>{
             postGraduationAttachment,
             // joiningFormAttachment
         }=req.body;
-        // console.log(req.body);
+        console.log(req.body);
         if(
             // !companyId ||
             !name ||
