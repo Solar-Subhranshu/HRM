@@ -126,6 +126,7 @@ const addJoiningForm = async(req, res) =>{
             aadharCard:aadharCard,
             status: { $ne: "rejected" }
         }).lean();
+        console.log("isAadharCardExists", isAadharCardExists)
         if(isAadharCardExists){
             return res.status(400).json({
                 success:false,
