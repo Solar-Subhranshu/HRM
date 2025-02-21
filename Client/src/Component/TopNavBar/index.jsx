@@ -12,14 +12,10 @@ import { toast } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
 import axios from 'axios';
 
-
-
 function Navbars() {
 
   const navigate = useNavigate();
  
-  
-
   const [isDropdownOpen, setIsDropdownOpen] = useState([false, false, false, false, false ]);
   const dropdownRef = useRef(null);
   const handleDropdownToggle = (index) => {
@@ -358,8 +354,7 @@ function Navbars() {
           
         </div>
       </nav>
-        
-        
+         
     </div>
   );
 }

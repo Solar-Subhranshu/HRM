@@ -370,6 +370,7 @@ function Registration() {
     setErrors(formErrors);
     
     console.log(formData.degree , " my degree data")
+    console.log("my branch is ", formData.branch);
 
     if (Object.keys(formErrors).length > 0) {
       alert('Please correct the highlighted fields.');
@@ -1005,13 +1006,17 @@ function Registration() {
                 </label>
                 <select 
                   name="branch"
+                  defaultValue={formData.branch || ""}
                   onChange={(event) => {
-                    const { name, value} = event.target;
+                    const { name, value } = event.target;
+                    console.log(event.target.value);
                     console.log("name", name, "value", value);
-                    setFormData((prev) => ({ ...prev, [name] : value}))
+                    setFormData((prev) => ({ ...prev, [name] : value}));
                   }}
 
-                  className="w-full rounded-md border-2 py-1 px-4  border-gray-400">
+                  className="w-full rounded-md border-2 py-1 px-4  border-gray-400"
+                >
+                  <option >--Select the Branch--</option>
                   {branchnamedata?.map(({name, _id})=>(
                     <option key={_id} value={_id}>{name}</option>
                   ))}
