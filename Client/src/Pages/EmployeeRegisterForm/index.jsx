@@ -319,19 +319,19 @@ function Registration() {
       );
   
       if (response?.data?.data) {
-        const fetchedData = response.data.data;
+        const fetchedData = response?.data?.data;
   
         setFormData((prev) => ({
           ...prev,
-          name: fetchedData.name ?? prev.name,
-          father_husbandName: fetchedData.father_husbandName ?? prev.father_husbandName,
+          name: fetchedData?.name ?? prev.name,
+          father_husbandName: fetchedData?.father_husbandName ?? prev.father_husbandName,
           dateOfBirth: fetchedData.dateOfBirth ? fetchedData.dateOfBirth.split("T")[0] : prev.dateOfBirth,
-          personalPhoneNum: fetchedData.personalPhoneNum ?? prev.personalPhoneNum,
-          personalEmail: fetchedData.personalEmail ?? prev.personalEmail,
-          panCard: fetchedData.panCard ?? prev.panCard,
-          aadharCard: fetchedData.aadharCard ?? prev.aadharCard,
-          permanentAddress: fetchedData.permanentAddress ?? prev.permanentAddress,
-          permanentPinCode: fetchedData.permanentPinCode ?? prev.permanentPinCode,
+          personalPhoneNum: fetchedData?.personalPhoneNum ?? prev.personalPhoneNum,
+          personalEmail: fetchedData?.personalEmail ?? prev.personalEmail,
+          panCard: fetchedData?.panCard ?? prev.panCard,
+          aadharCard: fetchedData?.aadharCard ?? prev.aadharCard,
+          permanentAddress: fetchedData?.permanentAddress ?? prev.permanentAddress,
+          permanentPinCode: fetchedData?.permanentPinCode ?? prev.permanentPinCode,
           currentAddress: fetchedData.currentAddress ?? prev.currentAddress,
           currentPinCode: fetchedData.currentPinCode ?? prev.currentPinCode,
           bankName: fetchedData.bankName ?? prev.bankName,
