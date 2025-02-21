@@ -56,7 +56,7 @@ const addJoiningForm = async(req, res) =>{
             postGraduationAttachment,
             // joiningFormAttachment
         }=req.body;
-        console.log(req.body);
+        // console.log(req.body);
         if(
             // !companyId ||
             !name ||
@@ -109,18 +109,19 @@ const addJoiningForm = async(req, res) =>{
                 message:'All fields are required'
             });
         }
-
+        console.log("add field work");
         const isPhoneNumberExists = await JoiningForm.findOne({
             personalPhoneNum:personalPhoneNum,
             status: { $ne: "rejected" }
         }).lean();
+        console.log("isPhoneNumberExist")
         if(isPhoneNumberExists){
             return res.status(400).json({
                 success:false,
                 message:"Joining form already submitted with same Phone Num details. Contact your HR"
             });
         }
-        
+        console.log("check adhar card")
         const isAadharCardExists = await JoiningForm.findOne({
             aadharCard:aadharCard,
             status: { $ne: "rejected" }
@@ -131,7 +132,7 @@ const addJoiningForm = async(req, res) =>{
                 message:"Joining form already submitted with same aadhar details. Contact your HR"
             });
         }
-
+        console.log("is pen exist")
         const isPanCardExists = await JoiningForm.findOne({
             panCard:panCard,
             status: { $ne: "rejected" }
@@ -235,7 +236,7 @@ const addJoiningForm = async(req, res) =>{
             // joiningFormAttachment : joiningFormUrl,
             signatureAttachment : signatureUrl
         })
-
+        console.log("save form")
         await newJoiningForm.save()
         .then((response,error)=>{
             if(response){
