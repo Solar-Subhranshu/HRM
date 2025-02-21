@@ -246,6 +246,7 @@ const addJoiningForm = async(req, res) =>{
                 })
             }
             if(error){
+                console.log("AddJoiningForm", error )
                 return res.status(401).json({
                     success:false,
                     message : "Something Went Wrong, Try Again Later",
