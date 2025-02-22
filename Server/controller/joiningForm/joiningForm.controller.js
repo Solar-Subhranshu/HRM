@@ -116,6 +116,7 @@ const addJoiningForm = async(req, res) =>{
         }).lean();
         console.log("isPhoneNumberExist")
         if(isPhoneNumberExists){
+            console.log("Phone Already Exists");
             return res.status(400).json({
                 success:false,
                 message:"Joining form already submitted with same Phone Num details. Contact your HR"
@@ -128,6 +129,7 @@ const addJoiningForm = async(req, res) =>{
         }).lean();
         console.log("isAadharCardExists", isAadharCardExists)
         if(isAadharCardExists){
+            console.log("Aadhar Already Exists");
             return res.status(400).json({
                 success:false,
                 message:"Joining form already submitted with same aadhar details. Contact your HR"
@@ -139,6 +141,7 @@ const addJoiningForm = async(req, res) =>{
             status: { $ne: "rejected" }
         });
         if(isPanCardExists){
+            console.log("Pancard Already Exists");
             return res.status(400).json({
                 success:false,
                 message:"Joining form already submitted with same pan card detail. Contact your HR"
@@ -150,12 +153,13 @@ const addJoiningForm = async(req, res) =>{
             status: { $ne: "rejected" }
         });
         if(isBankAccountExists){
+            console.log("Account Already Exists");
             return res.status(400).json({
                 success:false,
                 message:"Joining form already submitted with same bank account detail. Contact your HR"
             });
         }
-
+        console.log("bank exists")
         //make sure if the base 64 value come in array or not?
         const aadharCardImage = aadharCardAttachment ? await handleBase64Images([aadharCardAttachment], "aadharCardAttachments") : [];
         const panCardImage = panCardAttachment ? await handleBase64Images([panCardAttachment], "panCardAttachments") : [];
@@ -190,7 +194,7 @@ const addJoiningForm = async(req, res) =>{
         else{
             correctDateofBirth=dateOfBirth;
         }
-
+        console.log("Photo uploaded")
         const newJoiningForm = new JoiningForm({
             // companyId,
             name,
@@ -242,6 +246,7 @@ const addJoiningForm = async(req, res) =>{
         await newJoiningForm.save()
         .then((response,error)=>{
             if(response){
+                console.log("reponse", response);
                 return res.status(200).json({
                     success:true,
                     message:"Joining Form Submitted Successfully.",
@@ -258,7 +263,8 @@ const addJoiningForm = async(req, res) =>{
             }
         })
     } catch (error) {
-        console.log("join")
+        console.log("join");
+        console.log(error);
         if (error.code === 'LIMIT_FILE_SIZE') {
             return res.status(400).json({
                 success: false,
