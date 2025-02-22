@@ -155,7 +155,7 @@ const addJoiningForm = async(req, res) =>{
                 message:"Joining form already submitted with same bank account detail. Contact your HR"
             });
         }
-
+        console.log("bank exists")
         //make sure if the base 64 value come in array or not?
         const aadharCardImage = aadharCardAttachment ? await handleBase64Images([aadharCardAttachment], "aadharCardAttachments") : [];
         const panCardImage = panCardAttachment ? await handleBase64Images([panCardAttachment], "panCardAttachments") : [];
@@ -189,7 +189,7 @@ const addJoiningForm = async(req, res) =>{
             correctDateofBirth = new Date(dateOfBirth);
             // console.log(correctDateofBirth);
         }
-
+        console.log("Photo uploaded")
         const newJoiningForm = new JoiningForm({
             // companyId,
             name,
