@@ -18,7 +18,7 @@ const commonUtil = require("../../utils/common.util");
 
 */ 
 // 
-const recordAttendance = async(req,res)=>{
+const recordOnlineAttendance = async(req,res)=>{
     try {
         const {employeeId} = req.body;
         if (!employeeId) {
@@ -240,6 +240,216 @@ const recordAttendance = async(req,res)=>{
 */
 
 
+const recordAttendanceFromMachine = async(data)=>{
+    try {
+        const punchID = Number(data.userId);
+        const attTime = data.attTime;
+
+        console.log(punchID, attTime);
+        if(!punchID || !attTime){
+            return {
+                success:false,
+                message:"Provide both parameters to the function, PunchID, attTime",
+            }
+        }
+
+        const employee = await Employee.findOne({biometricPunchId: punchID})
+                            .populate("officeTimePolicy")
+                            .populate("shift")
+                            .select("name employeeCode officeTimePolicy shift isActive")
+                            .lean();
+        // console.log(employee);
+
+
+        if(!employee){
+            return {
+                success:false,
+                message:"This employee is currently not in the database.",
+            }
+        }
+
+        if(!employee.isActive){
+            return {
+                success:false,
+                message:"You are no longer active, hence your attendance is not marked.",
+            };
+        }
+        
+        const currentDate = moment(attTime).format("YYYY-MM-DD");
+        const currentTime = moment(attTime).format("HH:mm");
+        const currTimeMin = commonUtil.timeDurationInMinutes('00:00',currentTime);
+
+        if(currTimeMin < commonUtil.timeDurationInMinutes('00:00',employee.shift.maxEarlyAllowed)){
+            // console.log(employee.shift.maxEarlyAllowed);
+            // console.log(currTimeMin, commonUtil.timeDurationInMinutes('00:00',employee.shift.maxEarlyAllowed));
+            return {
+                success:false,
+                message:"Punch-In too early, attendance not recorded."
+            };
+        }
+
+        let attendanceRecord = await Attendance.findOne({
+            employeeId : employee._id,
+            date :currentDate
+        });
+
+        if(!attendanceRecord){
+            attendanceRecord= new Attendance({
+                employeeId:employee._id,
+                date:currentDate,
+                punchInTime:attTime,
+                status:"Present",
+            });
+
+            console.log("new attendance record ",attendanceRecord);
+
+            //check for time-policy
+            let response = await helper.applyLateArrivalPenalty(employee,attTime);
+            if(response==="success" && response.data!=null){
+                attendanceRecord.penalty=response.data;
+                if(response.data.deduction>=0.5){
+                    attendanceRecord.status= "P/2"
+                }
+                if(response.data.deduction==1){
+                    attendanceRecord.status = "Absent"
+                }
+            }
+            else if(response.status==="error"){
+                throw response.error
+            }
+
+            console.log("attendance record before it is being saved.");
+            const isSaved = await attendanceRecord.save();
+            if(isSaved){
+                console.log("is Saved Data ",isSaved);
+                return {
+                    success:true,
+                    message:`Punch-In Time for ${employee.name} Recorded Successfully!`,
+                    data:attendanceRecord
+                }
+            }
+            else{
+                console.log(isSaved);
+                throw new Error("Couldn't Store Punch-In Record.")
+            }
+        }
+
+        if(!attendanceRecord.punchOutTime){
+            if(currTimeMin > commonUtil.timeDurationInMinutes('00:00',employee.shift.maxLateAllowed)){
+                return {
+                    success:false,
+                    message:"Punch-Out too late, attendance not recorded."
+                };
+            }
+            attendanceRecord.punchOutTime = attTime;
+
+            let punchIn, punchOut;
+            if(commonUtil.timeDurationInMinutes(employee.shift.startTime,moment(attendanceRecord.punchInTime).format("HH:mm"))<0)
+            {
+                punchIn = employee.shift.startTime;
+            }
+            else{
+                punchIn = moment(attendanceRecord.punchInTime).format("HH:mm");
+            }
+
+            if(commonUtil.timeDurationInMinutes(employee.shift.endTime,moment(attendanceRecord.punchOutTime).format("HH:mm"))>0){
+                punchOut = employee.shift.endTime;
+            }
+            else{
+                punchOut = moment(attendanceRecord.punchOutTime).format("HH:mm");
+            }
+            const totalMinutes = commonUtil.timeDurationInMinutes(punchIn,punchOut);
+
+            //early departure penalty
+            const response = helper.applyEarlyDeparturePenalty(employee,totalMinutes);
+            if(response.isPenalized)
+            {
+                attendanceRecord.penalty = response;
+                if(response.deduction>=0.5){
+                    attendanceRecord.status = "P/2"
+                }
+                if(response.deduction===1){
+                    attendanceRecord.status = "Absent"
+                }
+            }
+            attendanceRecord.totalMinutes = totalMinutes;
+            attendanceRecord.updated_By= employee._id;   
+
+            const isSaved = await attendanceRecord.save();
+            if(isSaved){
+                return {
+                    success: true,
+                    message: `Punch-out for ${employee.name} recorded successfully.`,
+                    data: attendanceRecord,
+                };
+            }
+        }
+
+        // If both punch-in and punch-out are already recorded && {multi-punch=true}
+        if(employee.officeTimePolicy.multiPunch){
+            attendanceRecord.punchOutTime = attTime;
+
+            let punchIn, punchOut;
+            if(commonUtil.timeDurationInMinutes(employee.shift.startTime,moment(attendanceRecord.punchInTime).format("HH:mm"))<0)
+            {
+                punchIn = employee.shift.startTime;
+            }
+            else{
+                punchIn = moment(attendanceRecord.punchInTime).format("HH:mm");
+            }
+
+            if(commonUtil.timeDurationInMinutes(employee.shift.endTime,moment(attendanceRecord.punchInTime).format("HH:mm"))>0){
+                punchOut = employee.shift.endTime;
+            }
+            else{
+                punchOut = moment(attendanceRecord.punchOutTime).format("HH:mm");
+            }
+
+            const totalMinutes = commonUtil.timeDurationInMinutes(punchIn,punchOut);
+            
+            //early departure penalty
+            const response = helper.applyEarlyDeparturePenalty(employee,totalMinutes);
+            console.log(response);
+            if(response.isPenalized)
+            {
+                attendanceRecord.penalty = response;
+                if(response.deduction>=0.5){
+                    attendanceRecord.status = "P/2"
+                }
+                if(response.deduction===1){
+                    attendanceRecord.status = "Absent"
+                }
+            }
+
+            attendanceRecord.totalMinutes = totalMinutes;
+            attendanceRecord.updated_By= employee._id;
+
+            const isSaved = await attendanceRecord.save();
+            if(isSaved){
+                return {
+                    success: true,
+                    message: "Punch-out updated successfully.",
+                    data: attendanceRecord,
+                };
+            }
+        }
+        else{
+            // If both punch-in and punch-out are already recorded && {multi-punch=false}
+            return {
+                success: false,
+                message: "Attendance already recorded for today.",
+            };
+        }
+    } catch (error) {
+        console.log(error);
+        return {
+            success:false,
+            message:"An error occured while recording attendance.",
+            error:error.message
+        };
+    }
+}
+
 
 const viewAttendance = async(req,res)=>{
     try {
@@ -313,7 +523,9 @@ const viewAttendance = async(req,res)=>{
 
 
 
+
 module.exports = {
-    recordAttendance,
-    viewAttendance
+    recordOnlineAttendance,
+    recordAttendanceFromMachine,
+    viewAttendance,
 }

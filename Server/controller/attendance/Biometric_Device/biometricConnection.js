@@ -1,6 +1,8 @@
-require("dotenv").config(
-    {path:"../../../.env"}
-);
+// require("dotenv").config(
+//     {path:"../../../.env"}
+// );
+
+const {recordAttendanceFromMachine} = require("../attendance.controller");
 const zkInstance = require("zkteco-js");
 //defining constants
 //important for connection with the biometric machine 
@@ -22,13 +24,15 @@ const biometricDeviceHandler = async()=>{
         //socket-connection
         await device.createSocket();
         
-        const registeredUsers = await device.getUsers();
-        
+        // const registeredUsers = await device.getUsers();
+        // console.log(registeredUsers);
         
         await device.enableDevice();
-        await device.getRealTimeLogs((data)=>{
-            console.log(`log data of userId ${data.userId}`);
-            console.log(data);
+        await device.getRealTimeLogs(async (data)=>{
+            // console.log(`log data of userId ${data.userId}`);
+            // console.log(data);
+            const isSaved = await recordAttendanceFromMachine(data);
+            console.log(isSaved);
         });
 
     } catch (error) {
@@ -37,6 +41,6 @@ const biometricDeviceHandler = async()=>{
 }
 
 
-
-
-biometricDeviceHandler()
+module.exports={
+    biometricDeviceHandler
+}

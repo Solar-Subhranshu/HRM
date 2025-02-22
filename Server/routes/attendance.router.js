@@ -7,7 +7,8 @@ const tokenVerify = require("../middlewares/tokenVerification");
 const router = require("express").Router()
 
 //attendance
-router.post("/mark-attendance",attendanceController.recordAttendance);
+router.post("/mark-attendance",attendanceController.recordOnlineAttendance);
+// router.post("/markMachine-attendance",attendanceController.recordAttendanceFromMachine);
 router.get("/view-attendance",tokenVerify,attendanceController.viewAttendance);
 
 //manualPunch

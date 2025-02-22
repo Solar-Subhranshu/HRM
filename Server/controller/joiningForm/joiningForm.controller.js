@@ -388,14 +388,16 @@ const showAllJoiningForms = async(req,res)=> {
 
 const joiningFormApproval = async(req,res)=> {
     try {
+        const employeeId = req.employeeId;
+
         //take the remaining data from the HR and also the joining form pdf document.
         const {formId,
             companyId,
+            department,
+            designation,
             joiningHR,
             interviewDate,
             joiningDate, 
-            department,
-            designation,
             employeeType,
             modeOfRecruitment,
             reference,
@@ -443,7 +445,9 @@ const joiningFormApproval = async(req,res)=> {
             officialContact,
             officialEmail,
             status:"Approved",
-            salary
+            salary,
+            approved_By:employeeId,
+            updated_By:employeeId
         },{new:true});
         
         if (isApproved){
@@ -550,6 +554,15 @@ const deleteJoiningForm = async(req,res)=> {
     }
 }
 
+const updateJoiningForm = async(req,res)=> {
+    try {
+        const employeeId = req.employeeId;
+        // const {} =req.body;
+    } catch (error) {
+        
+    }
+}
+
 const generateJoiningFormPDF = async (req, res) => {
     try {
         const {formId} =req.query;
@@ -560,6 +573,13 @@ const generateJoiningFormPDF = async (req, res) => {
             });
         }
         const data = await JoiningForm.findById(formId).lean();
+
+        if(data.status!="Approved"){
+            return res.status(400).json({
+                success:false,
+                message:"The joining form you want to download is not yet approved!",
+            });
+        }
 
         // console.log(data);
         const doc = new PDFDocument({ size: "A4", margin: 20 });

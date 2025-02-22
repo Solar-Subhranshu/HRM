@@ -47,11 +47,11 @@ const applyLateArrivalPenalty = async(employee,punchInTime)=>{
 
                 if (lateDaysThisMonth > officePolicy.allowedLateDaysInMonth){
                     if(officePolicy.continuous){
-                        deduction = officePolicy.salaryCutPercentage;
+                        deduction = parseFloat(officePolicy.salaryCutPercentage/100);
                         reason = "Excessive Late Arrivals";
                     }
                     else if(lateDaysThisMonth % officePolicy.allowedLateDaysInMonth == 1){
-                        deduction = officePolicy.salaryCutPercentage;
+                        deduction = parseFloat(officePolicy.salaryCutPercentage/100);
                         reason = "Excessive Late Arrivals";
                     }
                 }

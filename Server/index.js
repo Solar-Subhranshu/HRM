@@ -9,6 +9,7 @@ require("./middlewares/multer.middleware")
 const authEmpRoute = require("./routes/authEmp.route");
 const commonRoute = require('./routes/common.router');
 const attendanceRoute = require('./routes/attendance.router');
+const biometricDevice = require("./controller/attendance/Biometric_Device/biometricConnection");
 
 const app=express();
 
@@ -41,6 +42,9 @@ connectDB()
 .then(()=>{
     app.listen(PORT, () => {
         console.log(`⚙️  Server running at port ${PORT}`);
-    })
+    });
+    // while(true){
+        // biometricDevice.biometricDeviceHandler();
+    // }
 })
 .catch((err)=> console.log(`Connection Error ${err.message}`))
