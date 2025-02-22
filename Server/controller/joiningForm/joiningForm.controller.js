@@ -514,6 +514,39 @@ const joiningFormRejection = async(req,res)=> {
     }
 }
 
+// to be used only and only for testing purpose
+// -DEVELOPER
+const setJoiningFormStatusToPending = async(req,res)=>{
+    try {
+        const {formId} = req.query;
+        if(!formId){
+            return res.status(400).json({
+                success:false,
+                message:"Form id is required"
+            });
+        }
+
+        const setPending = await JoiningForm.findByIdAndUpdate({_id:formId},{
+            status:"Pending"
+        },{new:true});
+
+        if(setPending){
+            return res.status(200).json({
+                success:true,
+                message:"Joining Form is Set to Pending.",
+                data:setPending
+            });
+        }
+        else{ throw new Error("Something went wrong while setting the status pending the Joining Form.")}
+    } catch (error) {
+        return res.status(500).json({
+            success:false,
+            message:"Internal Server Error",
+            error: error.message
+        });
+    }
+}
+
 //only for backend
 const deleteJoiningForm = async(req,res)=> {
     try {
@@ -841,6 +874,7 @@ module.exports = {
     showAllJoiningForms,
     joiningFormApproval,
     joiningFormRejection,
+    setJoiningFormStatusToPending,
     deleteJoiningForm,
     generateJoiningFormPDF
 }
