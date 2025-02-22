@@ -319,19 +319,19 @@ function Registration() {
       );
   
       if (response?.data?.data) {
-        const fetchedData = response.data.data;
+        const fetchedData = response?.data?.data;
   
         setFormData((prev) => ({
           ...prev,
-          name: fetchedData.name ?? prev.name,
-          father_husbandName: fetchedData.father_husbandName ?? prev.father_husbandName,
+          name: fetchedData?.name ?? prev.name,
+          father_husbandName: fetchedData?.father_husbandName ?? prev.father_husbandName,
           dateOfBirth: fetchedData.dateOfBirth ? fetchedData.dateOfBirth.split("T")[0] : prev.dateOfBirth,
-          personalPhoneNum: fetchedData.personalPhoneNum ?? prev.personalPhoneNum,
-          personalEmail: fetchedData.personalEmail ?? prev.personalEmail,
-          panCard: fetchedData.panCard ?? prev.panCard,
-          aadharCard: fetchedData.aadharCard ?? prev.aadharCard,
-          permanentAddress: fetchedData.permanentAddress ?? prev.permanentAddress,
-          permanentPinCode: fetchedData.permanentPinCode ?? prev.permanentPinCode,
+          personalPhoneNum: fetchedData?.personalPhoneNum ?? prev.personalPhoneNum,
+          personalEmail: fetchedData?.personalEmail ?? prev.personalEmail,
+          panCard: fetchedData?.panCard ?? prev.panCard,
+          aadharCard: fetchedData?.aadharCard ?? prev.aadharCard,
+          permanentAddress: fetchedData?.permanentAddress ?? prev.permanentAddress,
+          permanentPinCode: fetchedData?.permanentPinCode ?? prev.permanentPinCode,
           currentAddress: fetchedData.currentAddress ?? prev.currentAddress,
           currentPinCode: fetchedData.currentPinCode ?? prev.currentPinCode,
           bankName: fetchedData.bankName ?? prev.bankName,
@@ -351,7 +351,7 @@ function Registration() {
           // status: fetchedData.status ?? prev.status,
           company: fetchedData.companyId ?? prev.company,
           employeeType: fetchedData.employeeType ?? prev.employeeType,
-          salary: fetchedData.salary ?? prev.salary,
+          // salary: fetchedData.salary ?? prev.salary,
         }));
       } else {
         alert("No employee found with this phone number.");
@@ -370,6 +370,7 @@ function Registration() {
     setErrors(formErrors);
     
     console.log(formData.degree , " my degree data")
+    console.log("my branch is ", formData.branch);
 
     if (Object.keys(formErrors).length > 0) {
       alert('Please correct the highlighted fields.');
@@ -377,7 +378,7 @@ function Registration() {
     }
 
     try {
-      console.log("formData", formData);
+      console.log(" employee formData is ", formData);
       const response = await axios.post(`${process.env.REACT_APP_SERVER_ADDRESS}/auth/empRegister`, formData, {
         headers: { 'Content-Type': 'application/json' },
       });
@@ -1005,13 +1006,17 @@ function Registration() {
                 </label>
                 <select 
                   name="branch"
+                  defaultValue={formData.branch || ""}
                   onChange={(event) => {
-                    const { name, value} = event.target;
+                    const { name, value } = event.target;
+                    console.log(event.target.value);
                     console.log("name", name, "value", value);
-                    setFormData((prev) => ({ ...prev, [name] : value}))
+                    setFormData((prev) => ({ ...prev, [name] : value}));
                   }}
 
-                  className="w-full rounded-md border-2 py-1 px-4  border-gray-400">
+                  className="w-full rounded-md border-2 py-1 px-4  border-gray-400"
+                >
+                  <option >--Select the Branch--</option>
                   {branchnamedata?.map(({name, _id})=>(
                     <option key={_id} value={_id}>{name}</option>
                   ))}

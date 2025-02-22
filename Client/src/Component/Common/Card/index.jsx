@@ -4,16 +4,6 @@ import { IoPlaySkipForward } from "react-icons/io5";
 
 function Card({ iconName, cardHeading, count }) {
 
-//  const [showData, setShowData]=useState([]);
-//  const fetcheLateEmployee= async ()=>{
-//   try {
-//     const response=await axios.get('');
-//     setShowData(response.data);
-//   } catch (error) {
-//     console.log("error in showing  data");
-//   }
-//  }
-
   return (
     <div className=" w-56 p-4">
       <fieldset className="border-2 border-gray-400">

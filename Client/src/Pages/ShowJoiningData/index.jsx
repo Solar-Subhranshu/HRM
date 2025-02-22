@@ -15,7 +15,7 @@ function Index() {
         setLoading(true);
         setError('');
         try {
-            const response = await axios.get(`http://localhost:8000/auth/show-allJoiningForms?status=${status}`, {
+            const response = await axios.get(`${process.env.REACT_APP_SERVER_ADDRESS}/auth/show-allJoiningForms?status=${status}`, {
                 withCredentials: true
             });
             setData(response?.data?.data); // Set data from API response
