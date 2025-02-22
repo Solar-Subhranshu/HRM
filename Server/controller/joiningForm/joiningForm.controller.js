@@ -184,10 +184,11 @@ const addJoiningForm = async(req, res) =>{
         const signatureUrl = signatureImage.length>0 ? `${req.protocol}://${req.get("host")}/uploads/signatureAttachment/${signatureImage[0].fileName}`:null;
 
         let correctDateofBirth;
-        if(!(dateOfBirth instanceof Date)){
-            // console.log(dateOfBirth);
+        if(!(dateOfBirth instanceof Date)){ 
             correctDateofBirth = new Date(dateOfBirth);
-            // console.log(correctDateofBirth);
+        }
+        else{
+            correctDateofBirth=dateOfBirth;
         }
 
         const newJoiningForm = new JoiningForm({

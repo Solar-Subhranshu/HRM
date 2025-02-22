@@ -932,6 +932,12 @@ const addDesignation = async(req,res)=>{
                 message : "Designation added Successfully! "
             });
         }
+        else{
+            return res.status(400).json({
+                success:false,
+                message:"DB Network Issue, Couldn't save data."
+            })
+        }
     }   
     catch(error){
         return res.status(500).json({
