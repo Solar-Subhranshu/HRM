@@ -116,6 +116,7 @@ const addJoiningForm = async(req, res) =>{
         }).lean();
         console.log("isPhoneNumberExist")
         if(isPhoneNumberExists){
+            console.log("Phone Already Exists");
             return res.status(400).json({
                 success:false,
                 message:"Joining form already submitted with same Phone Num details. Contact your HR"
@@ -128,6 +129,7 @@ const addJoiningForm = async(req, res) =>{
         }).lean();
         console.log("isAadharCardExists", isAadharCardExists)
         if(isAadharCardExists){
+            console.log("Aadhar Already Exists");
             return res.status(400).json({
                 success:false,
                 message:"Joining form already submitted with same aadhar details. Contact your HR"
@@ -139,6 +141,7 @@ const addJoiningForm = async(req, res) =>{
             status: { $ne: "rejected" }
         });
         if(isPanCardExists){
+            console.log("Pancard Already Exists");
             return res.status(400).json({
                 success:false,
                 message:"Joining form already submitted with same pan card detail. Contact your HR"
@@ -150,6 +153,7 @@ const addJoiningForm = async(req, res) =>{
             status: { $ne: "rejected" }
         });
         if(isBankAccountExists){
+            console.log("Account Already Exists");
             return res.status(400).json({
                 success:false,
                 message:"Joining form already submitted with same bank account detail. Contact your HR"
@@ -241,6 +245,7 @@ const addJoiningForm = async(req, res) =>{
         await newJoiningForm.save()
         .then((response,error)=>{
             if(response){
+                console.log("reponse", response);
                 return res.status(200).json({
                     success:true,
                     message:"Joining Form Submitted Successfully.",
