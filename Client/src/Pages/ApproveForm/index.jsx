@@ -105,7 +105,7 @@ function Index() {
                 `${process.env.REACT_APP_SERVER_ADDRESS}/auth/download-JoiningPdf?formId=${formId}`,
                 { responseType: 'blob' } // Ensure the response is a Blob
             );
-
+            
             // Create a blob URL for the response data
             const blob = new Blob([response.data], { type: 'application/pdf' });
             const link = document.createElement('a');
@@ -245,6 +245,7 @@ function Index() {
                         value={formData.designation}
                        
                         className='border border-gray-500 px-4 py-2 rounded-md'>
+                        <option>---select Designation---</option>
                         {showDesignationList?.map(({designation, _id})=>(
                         <option key={_id} value={_id}>{designation}</option>
                         ))}
@@ -282,9 +283,7 @@ function Index() {
                             value={formData.reference}
                             onChange={handleFormData}
                             className='border border-gray-500 px-4 py-2 rounded-md' />
-                    </div>
-
-                    
+                    </div> 
                 </div>
                 
                 <div className='py-1 rounded-md bgMainColor mt-4 shadow-xl'>
