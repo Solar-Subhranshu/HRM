@@ -47,7 +47,7 @@ function Index() {
         try {
             console.log('my form data is ', formData)
             const response = await axios.patch(
-                'http://localhost:8000/auth/approve-joiningForm',
+                `${process.env.REACT_APP_SERVER_ADDRESS}/auth/approve-joiningForm`,
                 { ...formData, formId },
                 { withCredentials: true }
             );
@@ -87,9 +87,41 @@ function Index() {
                 employerPF: "",
             });
 
+            await downloadJoiningPDF();
+
         } catch (error) {
             // console.error("Error submitting form", error);
             toast.error("Form submission failed!", {
+                position: "top-right",
+                autoClose: 3000,
+            });
+        }
+    };
+
+    // Function to download the PDF
+    const downloadJoiningPDF = async () => {
+        try {
+            const response = await axios.get(
+                `${process.env.REACT_APP_SERVER_ADDRESS}/auth/download-JoiningPdf?formId=${formId}`,
+                { responseType: 'blob' } // Ensure the response is a Blob
+            );
+
+            // Create a blob URL for the response data
+            const blob = new Blob([response.data], { type: 'application/pdf' });
+            const link = document.createElement('a');
+            link.href = window.URL.createObjectURL(blob);
+            link.setAttribute('download', 'JoiningForm.pdf');
+            document.body.appendChild(link);
+            link.click();
+            link.remove();
+
+            toast.success("PDF downloaded successfully!", {
+                position: "top-right",
+                autoClose: 3000,
+            });
+
+        } catch (error) {
+            toast.error("Failed to download PDF!", {
                 position: "top-right",
                 autoClose: 3000,
             });
