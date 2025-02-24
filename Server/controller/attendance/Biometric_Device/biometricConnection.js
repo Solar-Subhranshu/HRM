@@ -13,7 +13,7 @@ const biometricDeviceHandler = async()=>{
 
     // console.log(`device ip ${process.env.BIOMETRIC_DEVICE_IP} \ndevice port ${process.env.BIOMETRIC_DEVICE_PORT}`);
     try {
-        const device = new zkInstance(process.env.BIOMETRIC_DEVICE_IP,
+        const device = new zkInstance('192.168.1.140',
             process.env.BIOMETRIC_DEVICE_PORT,
             TCP_TIMEOUT,
             UDP_INPORT
@@ -21,9 +21,10 @@ const biometricDeviceHandler = async()=>{
 
         console.log("Awating the socket connection.");
 
+        await device.createSocket();
         //socket-connection
-        const temp = await device.createSocket();
-        console.log(temp);
+        // const temp = await device.createSocket();
+        // console.log(temp);
         // const registeredUsers = await device.getUsers();
         // console.log(registeredUsers);
         

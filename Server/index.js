@@ -22,7 +22,7 @@ app.use(cors({
     origin: true,
     credentials:true
 }));
-app.use(express.urlencoded({ extended:true }));
+app.use(express.urlencoded({ extended:true,limit:'100mb' }));
 // app.use((req, res, next) => {
 //     console.log(`(${moment().tz("Asia/Kolkata").format("DD-MM-YYYY hh:mm A")}) ${req.method} ${req.url}`); //for show api urls
 //     next();
@@ -56,7 +56,7 @@ connectDB()
         console.log(`⚙️  Server running at port ${PORT}`);
     });
     // while(true){
-        biometricDevice.biometricDeviceHandler();
+        // biometricDevice.biometricDeviceHandler();
     // }
 })
 .catch((err)=> console.log(`Connection Error ${err.message}`))

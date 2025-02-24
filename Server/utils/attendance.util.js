@@ -123,10 +123,11 @@ const recalculateAttendance = async(policyId)=>{
             date: { $gte: firstDayOfMonth, $lte: lastDayOfMonth }
         }).populate({
             path:"employeeId",
-            populate: {
-                path: "shift"
-            },
-            select:"shift"
+            populate: [
+                {path: "shift"},
+                {path: "officeTimePolicy"}
+            ],
+            select:"shift officeTimePolicy"
         })
         .lean();
 
