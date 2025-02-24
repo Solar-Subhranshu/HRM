@@ -23,10 +23,22 @@ app.use(cors({
     credentials:true
 }));
 app.use(express.urlencoded({ extended:true }));
+// app.use((req, res, next) => {
+//     console.log(`(${moment().tz("Asia/Kolkata").format("DD-MM-YYYY hh:mm A")}) ${req.method} ${req.url}`); //for show api urls
+//     next();
+// });
+
 app.use((req, res, next) => {
-    console.log(`(${moment().tz("Asia/Kolkata").format("DD-MM-YYYY hh:mm A")}) ${req.method} ${req.url}`); //for show api urls
+    const now = new Date();
+    const istTime = new Date(now.getTime() + (5.5 * 60 * 60 * 1000)) // Convert to IST
+      .toISOString()
+      .replace("T", " ") // Replace "T" with space for readability
+      .replace("Z", " IST"); // Add "IST" at the end
+  
+    console.log(`[${istTime}] ${req.method} ${req.url}`);
     next();
-});
+  });
+
 app.use("/auth", authEmpRoute);
 app.use("/common",commonRoute);
 app.use("/attendance",attendanceRoute);
