@@ -24,7 +24,7 @@ app.use(cors({
 }));
 app.use(express.urlencoded({ extended:true }));
 app.use((req, res, next) => {
-    console.log(`(${moment().format("DD-MM-YYYY hh:mm A")}) ${req.method} ${req.url}`); //for show api urls
+    console.log(`(${moment().tz("Asia/Kolkata").format("DD-MM-YYYY hh:mm A")}) ${req.method} ${req.url}`); //for show api urls
     next();
 });
 app.use("/auth", authEmpRoute);
@@ -44,7 +44,7 @@ connectDB()
         console.log(`⚙️  Server running at port ${PORT}`);
     });
     // while(true){
-        // biometricDevice.biometricDeviceHandler();
+        biometricDevice.biometricDeviceHandler();
     // }
 })
 .catch((err)=> console.log(`Connection Error ${err.message}`))

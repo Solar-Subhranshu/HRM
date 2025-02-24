@@ -136,6 +136,8 @@ const recalculateAttendance = async(policyId)=>{
             let newPenalty = { isPenalized: false, reason: "", deduction: 0 };
             let newStatus = "Present";
             //checking record for late arrival penalty
+            console.log("one of many attendance records. ",record);
+
             let response = await applyLateArrivalPenalty(record.employeeId,record.punchInTime);
             if(response.status==="success" && response.data!=null){
                 newPenalty = response.data;

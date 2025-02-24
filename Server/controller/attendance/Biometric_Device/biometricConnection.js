@@ -22,8 +22,8 @@ const biometricDeviceHandler = async()=>{
         console.log("Awating the socket connection.");
 
         //socket-connection
-        await device.createSocket();
-        
+        const temp = await device.createSocket();
+        console.log(temp);
         // const registeredUsers = await device.getUsers();
         // console.log(registeredUsers);
         
