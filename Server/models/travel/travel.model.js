@@ -57,6 +57,7 @@ const travelSchema = new mongoose.Schema({
     },
     reasonForRejection:{
         type:String,
+        trim:true,
         default:null
     },
     isActive:{  // will check if a particular trip has started or not.
