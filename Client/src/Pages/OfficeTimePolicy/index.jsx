@@ -50,8 +50,8 @@ function OfficePolicyTable() {
                 </div>
             </div>
 
-            <div className='p-4'>
-                <table className='table-auto w-full border border-black'>
+            <div className='md:p-4'>
+                <table className='table-auto w-full border border-gray-400'>
                     <thead className='border border-black'>
                         <tr>
                             <th className='text-blue-600/100 border border-black w-20'>Select</th>

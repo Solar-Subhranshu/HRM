@@ -22,7 +22,7 @@ function AddNewCompany() {
   }, []);
 
   return (
-    <div className="ml-1 w-[calc(100%-30%)]">
+    <div className="w-[calc(100%-30%)]">
       {/* Header Section */}
       <div className="bgMainColor flex py-2 pl-1 gap-3">
         <FaListUl size={24} />

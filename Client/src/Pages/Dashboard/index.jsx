@@ -48,7 +48,7 @@ const Index = () => {
             <div className='flex justify-between' style={{ height: '40vh'}} >
                 <AttendenceChart />
                 <div className='flex flex-col justify-between items-end' style={{ height: '40vh'}}>
-                    <div className='flex'>
+                    <div className='md:flex'>
                         <Card
                             iconName={Icon4}
                             cardHeading='Total Employee'
@@ -60,7 +60,7 @@ const Index = () => {
                             count={data?.presentEmployees || '0'}
                         />
                     </div>
-                    <div className='flex'>
+                    <div className='md:flex'>
                         <Card
                             iconName={Icon2}
                             cardHeading='Absent Employee'

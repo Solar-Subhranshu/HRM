@@ -2,11 +2,11 @@ import React from 'react'
 
 const TableComponent2 = () => {
   return (
-    <div className="w-[calc(100%-72%)] overflow-x-auto pl-1">
-        <table className="table-auto w-full border-collapse border border-black">
+    <div className="w-[calc(100%-65%)] overflow-x-auto pl-3">
+        <table className="table-auto w-full border-collapse border border-gray-400">
             <thead className="bgMainColor">
-                    <th className="text-left text-white px-4 py-2 ">Recent Punch</th>
-                    <th className="text-right text-white px-4 py-2">View All</th>
+                    <th className="text-left text-white md:px-4 md:py-2 ">Recent Punch</th>
+                    <th className="text-right text-white md:px-4 md:py-2">View All</th>
             </thead>
             <tbody>
                  {/* data are come from dynamically here */}
