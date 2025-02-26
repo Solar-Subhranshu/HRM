@@ -107,6 +107,12 @@ function Registration() {
     workType:'',
     joiningHR : " ",
     biometricPunchId: " ",
+    ctc: "",
+    inHand: "",
+    employeeESI: "",
+    employeePF: "",
+    employerESI: "",
+    employerPF: "",
   });
 
   // Fetching functions
@@ -350,8 +356,13 @@ function Registration() {
           signatureAttachment: fetchedData.signatureAttachment ?? prev.signatureAttachment,
           // status: fetchedData.status ?? prev.status,
           company: fetchedData.companyId ?? prev.company,
-          employeeType: fetchedData.employeeType ?? prev.employeeType,
-          // salary: fetchedData.salary ?? prev.salary,
+         // Salary-related fields (handling missing data safely)
+          ctc: fetchedData?.salary?.ctc ?? "",
+          inHand: fetchedData?.salary?.inHand ?? "",
+          employeeESI: fetchedData?.salary?.employeeESI ?? "",
+          employeePF: fetchedData?.salary?.employeePF ?? "",
+          employerESI: fetchedData?.salary?.employerESI ?? "",
+          employerPF: fetchedData?.salary?.employerPF ?? "",
         }));
       } else {
         alert("No employee found with this phone number.");
@@ -429,6 +440,12 @@ function Registration() {
           workType:" ",
           joiningHR: " ",
           biometricPunchId: " ",
+          ctc: "",
+          inHand: "",
+          employeeESI: "",
+          employeePF: "",
+          employerESI: "",
+          employerPF: "",
 
         });
       } else {
@@ -1188,6 +1205,103 @@ function Registration() {
     </div>
   )}
               </div>
+
+            </div>
+          </fieldset>
+
+          
+          <fieldset className='border-2  rounded-md mb-4' style={{ borderColor: '#740FD6'}}>
+            <legend className='font-semibold text-lg ml-8 ' style={{color : '#740FD6'}}> &nbsp;&nbsp; Salary Details &nbsp;&nbsp;</legend>
+            <div className='grid gap-3 m-6 md:grid-cols-4'>
+
+
+              {/* ctc input field   */}
+              <div>
+                <label>
+                  <span>CTC</span>
+                  <span className='text-red-600'>*</span>
+                </label>
+                <input type='text' 
+                  value={formData.ctc}
+                  name='ctc'
+                  onChange={handleFormData}
+                  className="w-full rounded-md border-2 py-1 px-4 border-gray-400"
+                />
+                
+                
+              </div>
+              
+              {/* inhand salary input field  */}
+              <div>
+                <label>
+                  <span>Inhand Salary</span>
+                  <span className='text-red-600'>*</span>
+                </label>
+                <input type='text' 
+                  value={formData.inHand}
+                  name='inHand'
+                  onChange={handleFormData}
+                  className="w-full rounded-md border-2 py-1 px-4  border-gray-400"
+                />
+                
+                
+              </div>
+              
+              {/* employee pf  input field  */}
+              <div>
+                <label><span>Employee PF</span></label>
+                <input type='text' 
+                  value={formData.employeePF}
+                  name='employeePF'
+                  onChange={handleFormData}
+                  className="w-full rounded-md border-2 py-1 px-4  border-gray-400"
+                />
+               
+               
+              </div>
+              
+              {/* employee esi input field  */}
+              <div>
+                <label><span>Employee ESI</span></label>
+                <input 
+                  type='text' 
+                  value={formData.employeeESI}
+                  name='employeeESI'
+                  onChange={handleFormData}
+                  className="w-full rounded-md border-2 py-1 px-4  border-gray-400"
+                />
+              </div>
+              
+              {/* employer pf input field  */}
+              <div>
+                <label><span>Employer PF</span></label>
+                <input 
+                  type='text' 
+                  value={formData.employerPF}
+                  name='employerPF'
+                  onChange={handleFormData}
+                  className="w-full rounded-md border-2 py-1 px-4  border-gray-400"
+                />
+              </div>
+              
+              {/* employer esi input field  */}
+              <div>
+                <label><span>Employer ESI</span></label>
+                <input type='text' 
+                  value={formData.employerESI}
+                  name='employerESI'
+                  onChange={handleFormData}
+                  className="w-full rounded-md border-2 py-1 px-4  border-gray-400"
+                />
+              </div>
+             
+             
+             
+             
+             
+              
+              
+             
 
             </div>
           </fieldset>

@@ -14,6 +14,8 @@ function Index() {
  
     const location = useLocation();
     const { formId } = location.state || {}; // Retrieve formId
+    const [joiningHrNameData, setJoiningHrNameData]=useState([]);
+    
 
     const [showDepartmentList, setShowDepartmentList]=useState([]);
     const [showDesignationList, setShowDeginationList]=useState([]);
@@ -23,6 +25,7 @@ function Index() {
     const [formData, setFormData]=useState({
         formId: formId || "",
         companyId : "",
+        joiningHR: " ",
         officialEmail:"",
         officialContact: "",
         department: "",
@@ -85,6 +88,7 @@ function Index() {
                 employeePF: "",
                 employerESI: "",
                 employerPF: "",
+                joiningHR: "",
             });
 
             await downloadJoiningPDF();
@@ -128,6 +132,18 @@ function Index() {
         }
     };
   
+    const fetchJoiningHrNameData = async () => {
+        try {
+          const response = await axios.get(`${process.env.REACT_APP_SERVER_ADDRESS}/auth/show-joining-HR`);
+          setJoiningHrNameData(response?.data?.data);
+        } catch (error) {
+          alert('Error: Unable to fetch Hr Name data ');
+        }
+      };
+
+      useEffect(()=>{
+        fetchJoiningHrNameData();
+      }, []);
 
     
     const handleFormData = (e) => {
@@ -158,7 +174,7 @@ function Index() {
         </div>
         <div >
             <form onSubmit={handleSubmit}>
-                <div className='grid grid-cols-4 gap-4'>
+                <div className='grid md:grid-cols-4 gap-4'>
                     {/* company name field  */}
                     <div className="flex flex-col">
                         <label>Company Name</label>
@@ -170,6 +186,22 @@ function Index() {
                         >
                         <option>---Select Company Name--- </option>
                         {showCompanyList?.map(({name, _id})=>(
+                            <option key={_id} value={_id}>{name}</option>
+                        ))}
+                        </select>
+                    </div>
+
+                     {/* joining hr name  */}
+                     <div className="flex flex-col">
+                        <label>Joining Hr Name</label>
+                        <select 
+                        name="companyId"
+                        value={formData.companyId || ""}
+                        onChange={handleFormData}
+                        className="border border-gray-500 rounded-md  py-2 px-4 "
+                        >
+                        <option>---Select Joining Hr Name--- </option>
+                        {joiningHrNameData?.map(({name, _id})=>(
                             <option key={_id} value={_id}>{name}</option>
                         ))}
                         </select>
@@ -290,7 +322,7 @@ function Index() {
                    <h2 className='text-center  text-white text-xl font-bold'>Salary Break Down </h2>
                 </div>
 
-                <div className='grid grid-cols-4 gap-4'>
+                <div className='grid md:grid-cols-4  gap-4'>
                     <div className='flex flex-col'>
                         <label>CTC </label>
                         <input 

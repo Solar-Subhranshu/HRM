@@ -5,10 +5,10 @@ import { IoPlaySkipForward } from "react-icons/io5";
 function Card({ iconName, cardHeading, count }) {
 
   return (
-    <div className=" w-56 p-4">
+    <div className=" md:w-56 md:p-4">
       <fieldset className="border-2 border-gray-400">
         <legend>
-          <img src={iconName} className="h-8 w-8 pl-1 rounded-full object-cover border-2  border-gray-500" alt={cardHeading}  />
+          <img src={iconName} className="h-6 md:h-8 md:w-8 md:pl-1 rounded-full object-cover border-2  border-gray-500" alt={cardHeading}  />
         </legend>
         <div className="pl-4 items-center">
           <div className="flex flex-col items-end pr-2">

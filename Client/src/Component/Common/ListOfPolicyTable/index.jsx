@@ -855,7 +855,7 @@ const EmpPolicyDetailTable =()=> {
                 </div>
             </div>
         
-            <div className='grid grid-cols-1 md:grid-cols-5 gap-4 mt-4'>
+            <div className='grid grid-cols-1 md:grid-cols-3 lg:grid-cols-5 gap-4 mt-4'>
                 {/* policy name field  */}
                 <div className='flex flex-col mt-6'>
                     <label className='pb-1'>
