@@ -68,6 +68,7 @@ router.post("/show-joiningFormData",tokenVerify,joiningFormController.showJoinin
 router.get("/show-allJoiningForms",tokenVerify,joiningFormController.showAllJoiningForms);
 router.patch("/approve-joiningForm",tokenVerify,joiningFormController.joiningFormApproval);
 router.patch("/reject-joiningForm",tokenVerify,joiningFormController.joiningFormRejection);
+router.patch("/setPending-joiningForm",tokenVerify,joiningFormController.setJoiningFormStatusToPending);
 router.delete("/delete-joiningForm",tokenVerify, joiningFormController.deleteJoiningForm);
 router.get("/download-JoiningPdf",joiningFormController.generateJoiningFormPDF);
 

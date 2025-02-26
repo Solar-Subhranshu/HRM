@@ -4,18 +4,21 @@ const path = require("path");
 
 const handleBase64Images = async (photos, folder) => {
   try {
+    // console.log("photos", photos, "folder", folder);
     // console.log(photos,path);
     if (!photos || !Array.isArray(photos) || photos.length === 0) {   
+      // console.log("Error1");
       throw new Error("No images provided!");
     }
 
     if (photos.length > 4) {
+      // console.log("error2");
         throw new Error("You can only upload up to 4 images.");
     }
 
     // const allowedFormats = ["jpeg", "jpg", "png","pdf"]; 
     const uploadDir = path.join(__dirname, `../uploads/${folder}`);
-    
+    // console.log(uploadDir);
 
     // Ensure the directory exists
     await fs.mkdir(uploadDir, { recursive: true });
@@ -30,7 +33,7 @@ const handleBase64Images = async (photos, folder) => {
       // console.log('hi-1')
 
       if (!match) {
-        console.log("folderName", folder)
+        // console.log("folderName", folder)
         throw new Error(`Image ${index + 1} does not have a valid base64 format. ${folder}`);
       }
       // console.log('hi-2');
@@ -61,7 +64,7 @@ const handleBase64Images = async (photos, folder) => {
         const buffer = Buffer.from(imageData, "base64");
         await fs.writeFile(filePath, buffer); // Write the buffer to a file
         savedFiles.push({ fileName, filePath });
-
+        // console.log("savedfiles",  savedFiles);
         // console.log('hi-6')
 
       } catch (err) {
@@ -72,6 +75,7 @@ const handleBase64Images = async (photos, folder) => {
     return savedFiles; // Return the list of saved file info
 
   } catch (error) {
+    // console.log(error);
     throw new Error(`Error processing base64 images: ${error.message}`);
   }
 };

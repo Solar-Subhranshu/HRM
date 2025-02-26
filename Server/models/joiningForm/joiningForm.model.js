@@ -221,6 +221,14 @@ const joiningFormSchema = new mongoose.Schema({
             employerPF:{type:Number},
         },
         _id:false
+    },
+    approved_By:{  //who is approving the first time.
+        type:mongoose.Schema.Types.ObjectId,
+        ref:"Employee"
+    },
+    updated_By:{  //if any one updates it second time
+        type:mongoose.Schema.Types.ObjectId,
+        ref:"Employee"
     }
 
 },{timestamps:true});

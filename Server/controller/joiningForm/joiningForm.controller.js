@@ -34,7 +34,7 @@ const addJoiningForm = async(req, res) =>{
             // employeeType,
             // modeOfRecruitment,
             // reference,
-            joiningHR,
+            // joiningHR,
             bankName,
             branchName,
             bankAccount,
@@ -116,6 +116,7 @@ const addJoiningForm = async(req, res) =>{
         }).lean();
         console.log("isPhoneNumberExist")
         if(isPhoneNumberExists){
+            console.log("Phone Already Exists");
             return res.status(400).json({
                 success:false,
                 message:"Joining form already submitted with same Phone Num details. Contact your HR"
@@ -128,6 +129,7 @@ const addJoiningForm = async(req, res) =>{
         }).lean();
         console.log("isAadharCardExists", isAadharCardExists)
         if(isAadharCardExists){
+            console.log("Aadhar Already Exists");
             return res.status(400).json({
                 success:false,
                 message:"Joining form already submitted with same aadhar details. Contact your HR"
@@ -139,6 +141,7 @@ const addJoiningForm = async(req, res) =>{
             status: { $ne: "rejected" }
         });
         if(isPanCardExists){
+            console.log("Pancard Already Exists");
             return res.status(400).json({
                 success:false,
                 message:"Joining form already submitted with same pan card detail. Contact your HR"
@@ -150,12 +153,13 @@ const addJoiningForm = async(req, res) =>{
             status: { $ne: "rejected" }
         });
         if(isBankAccountExists){
+            console.log("Account Already Exists");
             return res.status(400).json({
                 success:false,
                 message:"Joining form already submitted with same bank account detail. Contact your HR"
             });
         }
-
+        console.log("bank exists")
         //make sure if the base 64 value come in array or not?
         const aadharCardImage = aadharCardAttachment ? await handleBase64Images([aadharCardAttachment], "aadharCardAttachments") : [];
         const panCardImage = panCardAttachment ? await handleBase64Images([panCardAttachment], "panCardAttachments") : [];
@@ -184,12 +188,13 @@ const addJoiningForm = async(req, res) =>{
         const signatureUrl = signatureImage.length>0 ? `${req.protocol}://${req.get("host")}/uploads/signatureAttachment/${signatureImage[0].fileName}`:null;
 
         let correctDateofBirth;
-        if(!(dateOfBirth instanceof Date)){
-            // console.log(dateOfBirth);
+        if(!(dateOfBirth instanceof Date)){ 
             correctDateofBirth = new Date(dateOfBirth);
-            // console.log(correctDateofBirth);
         }
-
+        else{
+            correctDateofBirth=dateOfBirth;
+        }
+        console.log("Photo uploaded")
         const newJoiningForm = new JoiningForm({
             // companyId,
             name,
@@ -215,7 +220,7 @@ const addJoiningForm = async(req, res) =>{
             // employeeType,
             // modeOfRecruitment,
             // reference,
-            joiningHR,
+            // joiningHR,
             bankName,
             branchName,
             bankAccount,
@@ -241,6 +246,7 @@ const addJoiningForm = async(req, res) =>{
         await newJoiningForm.save()
         .then((response,error)=>{
             if(response){
+                console.log("reponse", response);
                 return res.status(200).json({
                     success:true,
                     message:"Joining Form Submitted Successfully.",
@@ -257,7 +263,8 @@ const addJoiningForm = async(req, res) =>{
             }
         })
     } catch (error) {
-        console.log("join")
+        console.log("join");
+        console.log(error);
         if (error.code === 'LIMIT_FILE_SIZE') {
             return res.status(400).json({
                 success: false,
@@ -391,14 +398,16 @@ const showAllJoiningForms = async(req,res)=> {
 
 const joiningFormApproval = async(req,res)=> {
     try {
+        const employeeId = req.employeeId;
+
         //take the remaining data from the HR and also the joining form pdf document.
         const {formId,
             companyId,
+            department,
+            designation,
             joiningHR,
             interviewDate,
             joiningDate, 
-            department,
-            designation,
             employeeType,
             modeOfRecruitment,
             reference,
@@ -417,7 +426,7 @@ const joiningFormApproval = async(req,res)=> {
                 message:"Joining Form Id is required."
             });
         }
-        if(!companyId || !department || !designation){
+        if(!companyId || !department || !designation || !joiningHR){
             return res.status(400).json({
                 success:false,
                 message:"Comnpany, Department and Designation is required, for Approval."
@@ -446,7 +455,9 @@ const joiningFormApproval = async(req,res)=> {
             officialContact,
             officialEmail,
             status:"Approved",
-            salary
+            salary,
+            approved_By:employeeId,
+            updated_By:employeeId
         },{new:true});
         
         if (isApproved){
@@ -510,6 +521,39 @@ const joiningFormRejection = async(req,res)=> {
     }
 }
 
+// to be used only and only for testing purpose
+// -DEVELOPER
+const setJoiningFormStatusToPending = async(req,res)=>{
+    try {
+        const {formId} = req.query;
+        if(!formId){
+            return res.status(400).json({
+                success:false,
+                message:"Form id is required"
+            });
+        }
+
+        const setPending = await JoiningForm.findByIdAndUpdate({_id:formId},{
+            status:"Pending"
+        },{new:true});
+
+        if(setPending){
+            return res.status(200).json({
+                success:true,
+                message:"Joining Form is Set to Pending.",
+                data:setPending
+            });
+        }
+        else{ throw new Error("Something went wrong while setting the status pending the Joining Form.")}
+    } catch (error) {
+        return res.status(500).json({
+            success:false,
+            message:"Internal Server Error",
+            error: error.message
+        });
+    }
+}
+
 //only for backend
 const deleteJoiningForm = async(req,res)=> {
     try {
@@ -553,6 +597,15 @@ const deleteJoiningForm = async(req,res)=> {
     }
 }
 
+const updateJoiningForm = async(req,res)=> {
+    try {
+        const employeeId = req.employeeId;
+        // const {} =req.body;
+    } catch (error) {
+        
+    }
+}
+
 const generateJoiningFormPDF = async (req, res) => {
     try {
         const {formId} =req.query;
@@ -563,6 +616,13 @@ const generateJoiningFormPDF = async (req, res) => {
             });
         }
         const data = await JoiningForm.findById(formId).lean();
+
+        if(data.status!="Approved"){
+            return res.status(400).json({
+                success:false,
+                message:"The joining form you want to download is not yet approved!",
+            });
+        }
 
         // console.log(data);
         const doc = new PDFDocument({ size: "A4", margin: 20 });
@@ -821,6 +881,7 @@ module.exports = {
     showAllJoiningForms,
     joiningFormApproval,
     joiningFormRejection,
+    setJoiningFormStatusToPending,
     deleteJoiningForm,
     generateJoiningFormPDF
 }

@@ -47,11 +47,11 @@ const applyLateArrivalPenalty = async(employee,punchInTime)=>{
 
                 if (lateDaysThisMonth > officePolicy.allowedLateDaysInMonth){
                     if(officePolicy.continuous){
-                        deduction = officePolicy.salaryCutPercentage;
+                        deduction = parseFloat(officePolicy.salaryCutPercentage/100);
                         reason = "Excessive Late Arrivals";
                     }
                     else if(lateDaysThisMonth % officePolicy.allowedLateDaysInMonth == 1){
-                        deduction = officePolicy.salaryCutPercentage;
+                        deduction = parseFloat(officePolicy.salaryCutPercentage/100);
                         reason = "Excessive Late Arrivals";
                     }
                 }
@@ -123,10 +123,11 @@ const recalculateAttendance = async(policyId)=>{
             date: { $gte: firstDayOfMonth, $lte: lastDayOfMonth }
         }).populate({
             path:"employeeId",
-            populate: {
-                path: "shift"
-            },
-            select:"shift"
+            populate: [
+                {path: "shift"},
+                {path: "officeTimePolicy"}
+            ],
+            select:"shift officeTimePolicy"
         })
         .lean();
 
@@ -136,6 +137,8 @@ const recalculateAttendance = async(policyId)=>{
             let newPenalty = { isPenalized: false, reason: "", deduction: 0 };
             let newStatus = "Present";
             //checking record for late arrival penalty
+            console.log("one of many attendance records. ",record);
+
             let response = await applyLateArrivalPenalty(record.employeeId,record.punchInTime);
             if(response.status==="success" && response.data!=null){
                 newPenalty = response.data;

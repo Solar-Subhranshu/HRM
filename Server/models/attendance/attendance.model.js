@@ -44,7 +44,7 @@ const attendanceSchema = new mongoose.Schema({
     //so that we do not need to keep updating the DB when changes occur in office-policy and shift timings 
     status:{
         type:String,
-        enum:["Present","Absent","Work-off","P/2","On-Leave"],
+        enum:["Present","Absent","Work-off","P/2","On-Leave","Pending"],
         default:'Absent'
     },
     
