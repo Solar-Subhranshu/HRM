@@ -9,6 +9,7 @@ require("./middlewares/multer.middleware")
 const authEmpRoute = require("./routes/authEmp.route");
 const commonRoute = require('./routes/common.router');
 const attendanceRoute = require('./routes/attendance.router');
+const reportRoute = require("./routes/reports.router");
 const biometricDevice = require("./controller/attendance/Biometric_Device/biometricConnection");
 
 const app=express();
@@ -42,6 +43,7 @@ app.use((req, res, next) => {
 app.use("/auth", authEmpRoute);
 app.use("/common",commonRoute);
 app.use("/attendance",attendanceRoute);
+app.use("/report",reportRoute);
 
 
 app.use("/uploads", express.static(path.join(__dirname, "uploads")));

@@ -5,6 +5,7 @@ const employeeSchema = new mongoose.Schema({
             type:String,
             required: true,
             unique : true,
+            trim:true,
             minLength : 6,
             maxLength : 9
         },
@@ -16,11 +17,13 @@ const employeeSchema = new mongoose.Schema({
         // Employee-Personal Details
         name : {
             type :String , 
+            trim:true,
             required : true
         },
 
         father_husbandName :{
             type : String,
+            trim:true,
             required :true
         },
 
@@ -38,6 +41,7 @@ const employeeSchema = new mongoose.Schema({
 
         personalEmail : {
             type : String,
+            trim:true,
             required:true
         },
    
@@ -90,10 +94,11 @@ const employeeSchema = new mongoose.Schema({
 
         // Employee Bank-Details
 
-        bankName : {type : String},
+        bankName : {type : String,   trim:true,},
 
         branchName:{
             type:String,
+            trim:true,
         },
 
         bankAccount :{
@@ -104,10 +109,12 @@ const employeeSchema = new mongoose.Schema({
         bankIFSC : {type :String},
 
         bankAccountHolderName: {
-            type:String
+            type:String,
+            trim:true,
         },
         bankAddress:{
-            type:String
+            type:String,
+            trim:true,
         },
    
 
@@ -129,7 +136,7 @@ const employeeSchema = new mongoose.Schema({
             minLength:10
         },
 
-        companyEmail: {type:String},
+        companyEmail: {type:String,   trim:true,},
 
         joiningDate : {
             type : Date,
@@ -183,6 +190,17 @@ const employeeSchema = new mongoose.Schema({
         biometricPunchId:{
             type:Number,
             required:true
+        },
+        salary:{
+            type:{
+                ctc:{type:Number},
+                inHand:{type:Number},
+                employeeESI:{type:Number},
+                employeePF:{type:Number},
+                employerESI:{type:Number},
+                employerPF:{type:Number},
+            },
+            _id:false
         },
         // Attachments
 

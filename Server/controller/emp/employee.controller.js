@@ -63,7 +63,7 @@ const registerEmployee = async(req,res)=>{
         //employeeID is "admin ID" used to track who is registering employee
         const employeeId=req.employeeId;
         const{employeeCode,
-            password,
+            // password,
             name,
             father_husbandName,
             dateOfBirth,
@@ -98,30 +98,61 @@ const registerEmployee = async(req,res)=>{
             shift,
             workType,
             biometricPunchId,
+            //salary
+            ctc,
+            inHand,
+            employeeESI,
+            employeePF,
+            employerESI,
+            employerPF,
+
             aadharCardAttachment,
             panCardAttachment,
             bankAttachment,
             otherAttachment
         }=req.body;
         
-        //checking necessary input fields
-        if(!employeeCode || !name || !father_husbandName 
-            || !dateOfBirth || !personalPhoneNum || !personalEmail 
-            || !panCard || !aadharCard || !qualification || !degree
-            || !permanentAddress || !permanentPinCode ||!currentAddress 
-            || !currentPinCode || !reportingManager 
-            || !joiningHR 
-            || !joiningDate 
-            || !company || !branch || !department || !designation 
-            || !workType || !shift || !officeTimePolicy 
-            || !biometricPunchId
-            || !aadharCardAttachment || !panCardAttachment 
-            || !bankAttachment  
-            || !otherAttachment
-        ){
+        // //checking necessary input fields
+        // if(!employeeCode || !name || !father_husbandName 
+        //     || !dateOfBirth || !personalPhoneNum || !personalEmail 
+        //     || !panCard || !aadharCard || !qualification || !degree
+        //     || !permanentAddress || !permanentPinCode ||!currentAddress 
+        //     || !currentPinCode || !reportingManager 
+        //     || !joiningHR 
+        //     || !joiningDate 
+        //     || !company || !branch || !department || !designation 
+        //     || !workType || !shift || !officeTimePolicy 
+        //     || !biometricPunchId
+        //     || !aadharCardAttachment || !panCardAttachment 
+        //     || !bankAttachment  
+        //     || !otherAttachment
+        // ){
+        //     return res.status(400).json({
+        //         success:false,
+        //         message : "All Fields Are Required!"
+        //     });
+        // }
+
+        //required fields
+        const requiredFields =[
+            "employeeCode", "name", "father_husbandName", 
+            "dateOfBirth", "personalPhoneNum", "personalEmail", 
+            "panCard", "aadharCard", "qualification", "degree",
+            "permanentAddress", "permanentPinCode", "currentAddress",
+            "currentPinCode", "reportingManager", 
+            "joiningHR", "joiningDate", 
+            "company", "branch", "department", "designation", 
+            "workType", "shift", "officeTimePolicy", 
+            "biometricPunchId", "ctc", "inHand",
+            "aadharCardAttachment", "panCardAttachment", 
+            "bankAttachment", "otherAttachment",
+        ];
+
+        const missingFields = requiredFields.filter(field => !req.body[field]);
+        if (missingFields.length > 0) {
             return res.status(400).json({
-                success:false,
-                message : "All Fields Are Required!"
+                success: false,
+                message: `The following fields are missing: ${missingFields.join(", ")}`
             });
         }
 
@@ -162,15 +193,27 @@ const registerEmployee = async(req,res)=>{
             });
         }
 
-        let hashedPassword;
-        if(password){
-            hashedPassword = await bcrypt.hash(password,10);
-            // console.log(hashedPassword)
-        }
-        else{
-            // hashedPassword = String(employeeCode + "-" + generateRandomNumbers());
-            hashedPassword = String(employeeCode);
-            // console.log(hashedPassword)
+        // --------x used in first version x------------ 
+        // let hashedPassword;
+        // if(password){
+        //     hashedPassword = await bcrypt.hash(password,10);
+        //     // console.log(hashedPassword)
+        // }
+        // else{
+        //     // hashedPassword = String(employeeCode + "-" + generateRandomNumbers());
+        //     hashedPassword = String(employeeCode);
+        //     // console.log(hashedPassword)
+        // }
+
+        const hashedPassword = await bcrypt.hash(employeeCode,10);
+
+        const salary={
+            ctc,
+            inHand,
+            employeeESI,
+            employeePF,
+            employerESI,
+            employerPF
         }
 
         const aadharCardImage = aadharCardAttachment ? await handleBase64Images([aadharCardAttachment], "aadharCardAttachments") : [];
@@ -221,6 +264,7 @@ const registerEmployee = async(req,res)=>{
             shift,
             workType,
             biometricPunchId,
+            salary,
             aadharCardAttachment: aadharCardUrl,
             panCardAttachment: panCardUrl,
             bankAttachment: bankAccountUrl,
@@ -733,7 +777,7 @@ const updateEmployee= async(req,res)=>{
         const employeeId=req.employeeId;
 
         const {employeeCode,
-            password,
+            // password,
             name,
             father_husbandName,
             dateOfBirth,
@@ -767,10 +811,19 @@ const updateEmployee= async(req,res)=>{
             officeTimePolicy,
             shift,
             workType,
+            biometricPunchId,
+            //salary
+            ctc,
+            inHand,
+            employeeESI,
+            employeePF,
+            employerESI,
+            employerPF,
+
             aadharCardAttachment,
             panCardAttachment,
             bankAttachment,
-            joiningFormAttachment,
+            // joiningFormAttachment,
             otherAttachment
         } = req.body;
 
@@ -800,7 +853,7 @@ const updateEmployee= async(req,res)=>{
         let aadharCardAttachmentUrl=employeeToUpdate.aadharCardAttachment;
         let panCardAttachmentUrl=employeeToUpdate.panCardAttachment;
         let bankAttachmentUrl=employeeToUpdate.bankAttachment;
-        let joiningFormAttachmentUrl=employeeToUpdate.joiningFormAttachment;
+        // let joiningFormAttachmentUrl=employeeToUpdate.joiningFormAttachment;
         let otherAttachmentUrl=employeeToUpdate.otherAttachment;
 
         //checking each 
@@ -824,13 +877,13 @@ const updateEmployee= async(req,res)=>{
             bankAttachmentUrl = `${req.protocol}://${req.get("host")}/uploads/bankAttachments/${bankAccountImage[0].fileName}`;
             // console.log(bankAttachmentUrl);
         }
-        if(Array.isArray(joiningFormAttachment)){
-            const actualPath = absolutePath(joiningFormAttachmentUrl);
-            await fs.unlink(actualPath);
-            const joiningFormImage = await handleBase64Images(joiningFormAttachment, "joiningForms");
-            joiningFormAttachmentUrl = `${req.protocol}://${req.get("host")}/uploads/joiningForms/${joiningFormImage[0].fileName}`;
-            // console.log(joiningFormAttachmentUrl);
-        }
+        // if(Array.isArray(joiningFormAttachment)){
+        //     const actualPath = absolutePath(joiningFormAttachmentUrl);
+        //     await fs.unlink(actualPath);
+        //     const joiningFormImage = await handleBase64Images(joiningFormAttachment, "joiningForms");
+        //     joiningFormAttachmentUrl = `${req.protocol}://${req.get("host")}/uploads/joiningForms/${joiningFormImage[0].fileName}`;
+        //     // console.log(joiningFormAttachmentUrl);
+        // }
         if(Array.isArray(otherAttachment)){
             const actualPath = absolutePath(otherAttachmentUrl);
             await fs.unlink(actualPath);
@@ -839,8 +892,17 @@ const updateEmployee= async(req,res)=>{
             // console.log(otherAttachmentUrl);
         }
 
+        const salary={
+            ctc,
+            inHand,
+            employeeESI,
+            employeePF,
+            employerESI,
+            employerPF,
+        }
+
         // code that updates
-        await Employee.findByIdAndUpdate(employeeToUpdate._id,{
+        const isUpdated = await Employee.findByIdAndUpdate(employeeToUpdate._id,{
             name,
             father_husbandName,
             dateOfBirth,
@@ -874,18 +936,28 @@ const updateEmployee= async(req,res)=>{
             officeTimePolicy,
             shift,
             workType,
+            biometricPunchId,
+            salary,
             aadharCardAttachment:aadharCardAttachmentUrl,
             panCardAttachment:panCardAttachmentUrl,
-            bankAttachment:panCardAttachmentUrl,
-            joiningFormAttachment:panCardAttachmentUrl,
-            otherAttachment:panCardAttachmentUrl,
+            bankAttachment:bankAttachmentUrl,
+            // joiningFormAttachment:panCardAttachmentUrl,
+            otherAttachment:otherAttachmentUrl,
             updated_By : employeeId
         },{new:true});
 
-        return res.status(201).json({
-            success:true,
-            message : "Employee Successfully Updated!"
-        });
+        if(isUpdated){
+            return res.status(201).json({
+                success:true,
+                message : "Employee Successfully Updated!"
+            });
+        }
+        else{
+            return res.status(400).json({
+                success:false,
+                message:"Employee Not Updated. DB network error."
+            })
+        }
     } catch (error) {
         return res.status(500).json({
             success:false,

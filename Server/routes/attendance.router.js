@@ -1,7 +1,7 @@
 const attendanceController = require("../controller/attendance/attendance.controller");
 const manualPunchController = require("../controller/attendance/manualPunch.controller");
 
-const reportController = require("../controller/Reports/reports.controller");
+const reportController = require("../controller/Reports/attendanceReports.controller");
 
 const tokenVerify = require("../middlewares/tokenVerification");
 const router = require("express").Router()

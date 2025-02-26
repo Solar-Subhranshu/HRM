@@ -426,7 +426,7 @@ const joiningFormApproval = async(req,res)=> {
                 message:"Joining Form Id is required."
             });
         }
-        if(!companyId || !department || !designation){
+        if(!companyId || !department || !designation || !joiningHR){
             return res.status(400).json({
                 success:false,
                 message:"Comnpany, Department and Designation is required, for Approval."

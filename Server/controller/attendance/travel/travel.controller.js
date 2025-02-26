@@ -209,6 +209,14 @@ const approveTravelRequest = async(req,res)=>{
             });
         }
 
+        const isAlreadyRejected = await Travel.findById(travelId).lean();
+        if(isAlreadyRejected.approvalStatus==="Rejected"){
+            return res.status(400).json({
+                success:false,
+                message:"The Travel request you are trying to Approve is already Rejected. You may not Approve it now."
+            })
+        }
+
         const isSaved = await Travel.findByIdAndUpdate({_id:travelId},
             {   
                 approvedBy:employeeId,
