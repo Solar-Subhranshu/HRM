@@ -5,6 +5,7 @@ const companySchema = new mongoose.Schema({
     name: {
         type:String,
         minLength : 2,
+        trim:true,
         required : true
     },
     // branch: {
