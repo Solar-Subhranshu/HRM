@@ -440,14 +440,14 @@ const joiningFormApproval = async(req,res)=> {
             "designation",
             "joiningHR",
             "joiningDate", 
-            "officialContact",
-            "officialEmail",
+            // "officialContact",
+            // "officialEmail",
             "ctc",
             "inHand",
-            "employeeESI",
-            "employeePF",
-            "employerESI",
-            "employerPF",
+            // "employeeESI",
+            // "employeePF",
+            // "employerESI",
+            // "employerPF",
         ]
 
         const missingFields = requiredFields.filter(field => ! req.body[field]);
