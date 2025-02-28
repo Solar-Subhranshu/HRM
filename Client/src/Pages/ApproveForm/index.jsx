@@ -177,7 +177,10 @@ function Index() {
                 <div className='grid md:grid-cols-4 gap-4'>
                     {/* company name field  */}
                     <div className="flex flex-col">
-                        <label>Company Name</label>
+                        <label>
+                            <span>Company Name</span>
+                            <span className='text-red-600'>*</span>
+                        </label>
                         <select 
                         name="companyId"
                         value={formData.companyId || ""}
@@ -193,10 +196,10 @@ function Index() {
 
                      {/* joining hr name  */}
                      <div className="flex flex-col">
-                        <label>Joining Hr Name</label>
+                        <label>Joining Hr Name <span className='text-red-600'>*</span></label>
                         <select 
-                        name="companyId"
-                        value={formData.companyId || ""}
+                        name="joiningHR"
+                        value={formData.joiningHR || ""}
                         onChange={handleFormData}
                         className="border border-gray-500 rounded-md  py-2 px-4 "
                         >
@@ -208,7 +211,7 @@ function Index() {
                     </div>
 
                     <div className='flex flex-col'>
-                        <label>Interview Date</label>
+                        <label>Interview Date<span className='text-red-600'>*</span></label>
                         <input type='date' 
                             name='interviewDate'
                             value={formData.interviewDate}
@@ -217,7 +220,7 @@ function Index() {
                     </div>
 
                     <div className='flex flex-col'>
-                        <label>Joining Date</label>
+                        <label>Joining Date<span className='text-red-600'>*</span></label>
                         <input 
                             type='date' 
                             name='joiningDate'
@@ -248,7 +251,7 @@ function Index() {
 
                     {/* department field    */}
                     <div className="flex flex-col">
-                        <label>Department</label>
+                        <label>Department<span className='text-red-600'>*</span></label>
                         <select 
                         name="department"
                         onChange={(e) => {
@@ -266,7 +269,7 @@ function Index() {
                         
                     {/* designation field  */}
                     <div className="flex flex-col">
-                        <label>Designation</label>
+                        <label>Designation<span className='text-red-600'>*</span></label>
                         <select 
                         name="designation"
                         onChange={(event) => {
@@ -324,7 +327,7 @@ function Index() {
 
                 <div className='grid md:grid-cols-4  gap-4'>
                     <div className='flex flex-col'>
-                        <label>CTC </label>
+                        <label>CTC<span className='text-red-600'>*</span> </label>
                         <input 
                             type='text' 
                             name='ctc' 
@@ -333,7 +336,7 @@ function Index() {
                             className='border border-gray-500 px-4 py-2 rounded-md' />
                     </div>
                     <div className='flex flex-col'>
-                        <label>Inhand Salary</label>
+                        <label>Inhand Salary<span className='text-red-600'>*</span></label>
                         <input 
                             type='text' 
                             name='inHand' 
