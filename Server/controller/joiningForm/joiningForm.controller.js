@@ -420,18 +420,43 @@ const joiningFormApproval = async(req,res)=> {
             employerESI,
             employerPF,
         } = req.body;
-        if(!formId){
+        
+        // if(!formId){
+        //     return res.status(400).json({
+        //         success:false,
+        //         message:"Joining Form Id is required."
+        //     });
+        // }
+        // if(!companyId || !department || !designation || !joiningHR){
+        //     return res.status(400).json({
+        //         success:false,
+        //         message:"Comnpany, Department and Designation is required, for Approval."
+        //     });
+        // }
+        const requiredFields= [
+            "formId",
+            "companyId",
+            "department",
+            "designation",
+            "joiningHR",
+            "joiningDate", 
+            "officialContact",
+            "officialEmail",
+            "ctc",
+            "inHand",
+            "employeeESI",
+            "employeePF",
+            "employerESI",
+            "employerPF",
+        ]
+
+        const missingFields = requiredFields.filter(field => ! req.body[field]);
+        if(missingFields.length>0){
             return res.status(400).json({
                 success:false,
-                message:"Joining Form Id is required."
-            });
-        }
-        if(!companyId || !department || !designation || !joiningHR){
-            return res.status(400).json({
-                success:false,
-                message:"Comnpany, Department and Designation is required, for Approval."
-            });
-        }
+                message:`The following fields are missing ${missingFields.join(", ")}`
+            })
+        } 
 
         let salary={
             ctc,
@@ -615,7 +640,20 @@ const generateJoiningFormPDF = async (req, res) => {
                 message:"Form Id not Found, formId is required."
             });
         }
-        const data = await JoiningForm.findById(formId).lean();
+        const data = await JoiningForm.findById(formId)
+                        .populate({
+                            path:"department",
+                            select:"department"
+                        })
+                        .populate({
+                            path:"companyId",
+                            select:"name"
+                        })
+                        .populate({
+                            path:"designation",
+                            select:"designation"
+                        })
+                        .lean();
 
         if(data.status!="Approved"){
             return res.status(400).json({
@@ -866,6 +904,91 @@ const generateJoiningFormPDF = async (req, res) => {
 
         doc.font("Helvetica-Bold").text("Employee Signature: ", startX, startY + 50 + rowHeight * 10);
         doc.font("Helvetica-Bold").text("Date: ", startX, startY + 50 + rowHeight * 11);
+
+        //new page for terms and conditions
+        doc.addPage();
+
+        doc.font("Helvetica-Bold").text("Terms & Conditions",startX, startY, {align:"center"});
+        
+        doc.moveDown(1);
+
+        doc.font("Helvetica").text("1. You have to click and accept this, which will mean you agree to accept all the terms and conditions of our company.",
+        {align:"left"});
+        
+        doc.moveDown(1);
+
+        doc.font("Helvetica").text("2. You will be put on a probation period for 6 months. Salary Appraisals will happen after completion of a year. It will follow an annual cycle from the date of joining.",
+        {align:"left"});
+        
+        doc.moveDown(1);
+
+        doc.font("Helvetica").text("3. You cannot use the name of any other customer or group company or sister concern of Uda-mandi Services in your resume and on your profile on any social media & any other public or private source of info. Using name of any customer or Group Company will lead to Brand Infringement and will be a Copy right Violation and legal action will be pursued against you for the same.",
+        {align:"left"});
+
+        doc.moveDown(1);
+
+        doc.font("Helvetica").text("4. When you plan to leave the company, you will be required to serve a notice period of 3 month. This is mandatory to get your dues & relieving letter or experience letter from the company. In case you do not complete your notice period, the company is not liable to clear dues or gives relieving letter/ experience letter and No reference checks will be given by the company. This has to be strictly followed.",
+        {align:"left"});
+
+        doc.moveDown(1);
+
+        doc.font("Helvetica").text("5. The Employee  voluntarily terminates their employment with the Organization before completing one year of service, the Employee agrees to pay a compensation fee of ₹5,00,000. This fee is intended to cover the costs associated with recruitment and training incurred by the Organization. The Employee acknowledges that this clause is fair and reasonable, and agrees to the terms outlined herein.",
+        {align:"left"});
+
+        doc.moveDown(1);
+        doc.font("Helvetica").text("6. You will not work with any other solar firm, in any capacity or start any business in solar, for a minimum time period of 1 year from the time of leaving this company. In case you are found to do any of the above actions, then strict legal action will be initiated against you. Also, no positive reference checks will be given and you can't show our or our group company name’s in experience throughout their career.",
+        {align:"left"});
+
+        doc.moveDown(1);
+        doc.font("Helvetica").text("7. All the work done by you during your tenure in the company will be the property of Uda-mandi Services Private Limited. You cannot disclose or use the same to any party without the consent of the Directors of Uda-mandi Services Private Limited. If you ever leak the secret of our solar company while working in the company, then strict legal action will be taken against you.",
+        {align:"left"});
+
+        doc.moveDown(1);
+        doc.font("Helvetica").text("8. You will not comment any type of irrelevant or disrespectful or damaging post online, including but not limited to any social media platform, or offline regarding our company.",
+        {align:"left"});
+
+        doc.moveDown(1);
+        doc.font("Helvetica").text("9. Any knowledge, IP, proprietary information, artwork, design etc created during the months you are working in the company, will be hundred percent owned by the company and you cannot use or disclose the same to any other party without written consent of the Directors of our company.",
+        {align:"left"});
+//
+        doc.moveDown(1);
+        doc.font("Helvetica").text("10. Any changes in government policy of statutory deductions like PF, ESI or any other mandatory contributions by government, will be directly passed on to the employee's salary , where the Cost to Company in the first year will remain same as offered in the offer letter. It is essential to acknowledge that such adjustments are beyond the control of the company and are mandated by government regulations.",
+        {align:"left"});
+
+        doc.moveDown(1);
+        doc.font("Helvetica").text("11. I undertake that none of my Relatives (Immediate / First Level / Second Level) are working in this company at HR or any other position. If it is discovered at a later date that HR or anyone else in this company is your relative, then both HR and Relative will have to resign from their positions immediately and their Salary will be held.",
+        {align:"left"});
+
+        doc.moveDown(1);
+        // doc.font("Helvetica").text("2. You will be put on a probation period for 6 months. Salary Appraisals will happen after completion of a year. It will follow an annual cycle from the date of joining.",
+        // startX, startY +110+ rowHeight * 12, {align:"left"});
+
+        // doc.font("Helvetica").text("2. You will be put on a probation period for 6 months. Salary Appraisals will happen after completion of a year. It will follow an annual cycle from the date of joining.",
+        // startX, startY +120+ rowHeight * 13, {align:"left"});
+
+        // doc.font("Helvetica").text("2. You will be put on a probation period for 6 months. Salary Appraisals will happen after completion of a year. It will follow an annual cycle from the date of joining.",
+        // startX, startY +130+ rowHeight * 14, {align:"left"});
+
+        doc.moveDown(2);
+        let signatureUrl = data.signatureAttachment; // Assuming `photoAttachment` is the URL of the image
+
+        if (signatureUrl) {
+            try {
+                // Fetch image using axios and convert to buffer
+                const imageResponse = await axios.get(imageUrl, { responseType: 'arraybuffer' });
+                const imageBuffer = Buffer.from(imageResponse.data);
+
+                // Check image dimensions (optional)
+                //console.log('Image fetched, buffer length:', imageBuffer.length);
+
+                // Add the image to the PDF (Position the image where you need)
+                doc.image(imageBuffer,{ width: 148, height: 148 });
+            } catch (error) {
+                console.error("Error fetching the image:", error);
+            }
+        } else {
+            console.log("No image URL provided");
+        }
 
         // End PDF
         doc.end();
