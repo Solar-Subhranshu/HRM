@@ -440,8 +440,7 @@ const joiningFormApproval = async(req,res)=> {
             "designation",
             "joiningHR",
             "joiningDate", 
-            // "officialContact",
-            // "officialEmail",
+           
             "ctc",
             "inHand",
             // "employeeESI",

@@ -6,7 +6,7 @@ const zkInstance = require("zkteco-js");
 const TCP_TIMEOUT = 10000;  //we want to always listen to data from device
 const UDP_INPORT = 5000;
 
-var lastLogSize;
+var lastLogSize=null;
 const device = new zkInstance(process.env.BIOMETRIC_DEVICE_IP,
     process.env.BIOMETRIC_DEVICE_PORT,
     TCP_TIMEOUT,
@@ -17,76 +17,84 @@ function handleSocketError(){
     console.log("We will handle socket error in this function.");
 }
 
-async function handleSocketClosure(){
+function handleSocketClosure(){
     console.log("We will handle socket closure in this function.");
-    console.log("Disposing older connection.");
-    // await device.disconnect();
 
-    console.log("Attempting to Re-Connect (Fresh-Connection)");
-    let attempts = 0;
-    const maxAttempts = 10;
+    // console.log("Attempting to Re-Connect (Fresh-Connection)");
+    // let attempts = 0;
+    // const maxAttempts = 10;
 
-    while(attempts < maxAttempts){
-        try{
-            console.log(`Reconnection attempt ${attempts + 1}/${maxAttempts}...`);
-            const connectionRestored = await device.createSocket();
+    // while(attempts < maxAttempts){
+    //     try{
+    //         console.log(`Reconnection attempt ${attempts + 1}/${maxAttempts}...`);
+    //         const connectionRestored = await device.createSocket();
 
-            if(connectionRestored){
-                console.log("Device Connected Successfully! (Fresh-Connection)");
+    //         if(connectionRestored){
+    //             console.log("Device Connected Successfully! (Fresh-Connection)");
 
-                await device.enableDevice();
-                await device.getRealTimeLogs(async (data)=>{
-                    const isSaved = await recordAttendanceFromMachine(data);
-                    console.log(isSaved);
-                });
+    //             await device.enableDevice();
+    //             await device.getRealTimeLogs(async (data)=>{
+    //                 const isSaved = await recordAttendanceFromMachine(data);
+    //                 console.log(isSaved);
+    //             });
 
-                monitorConnectionHealth();
-                return;
-            }
-        }
-        catch(error){
-            console.log(`Reconnection Failed: ${error.message}`);
-        }
+    //             monitorConnectionHealth();
+    //             return;
+    //         }
+    //     }
+    //     catch(error){
+    //         console.log(`Reconnection Failed: ${error.message}`);
+    //     }
 
-        attempts++;         
-        await new Promise(resolve => setTimeout(resolve, 5000)); // Wait 5 sec before retrying
+    //     attempts++;         
+    //     await new Promise(resolve => setTimeout(resolve, 5000)); // Wait 5 sec before retrying
+    // }
+    // console.log("Max reconnection attempts reached. Manual intervention required.");     // only 5 attempts when a fresh connection attemps fails. Check the server log after restarting.
+
+    if(!lastLogSize){
+        handleDeviceReconnection(10);
     }
-    console.log("Max reconnection attempts reached. Manual intervention required.");     // only 5 attempts when a fresh connection attemps fails. Check the server log after restarting.
+    else{
+        handleDeviceReconnection(50);
+    }
 }
 
 function monitorConnectionHealth(){
-    // this.device=device;
     // console.log("Device in monitoringConnectionHealth, ",device);
-    
     const intervalId = setInterval(
         async()=>{
             try {
             const currLogSize = await device.getAttendanceSize();
-            console.log(currLogSize);
+            console.log("currLogSize ",currLogSize);
             lastLogSize = currLogSize;
+            console.log("lastLogSize ",lastLogSize);
         } catch (error) {
             console.log(`Device connection lost. Attempting recovery...`);
             clearInterval(intervalId);
             await device.disconnect();
-            handleDeviceReconnection();
+            // handleDeviceReconnection(50);
         }
     }, 10000);
-
 }
 
-async function handleDeviceReconnection(){
+async function handleDeviceReconnection(maxAttempts=50){
 
     let attempts=0;
-    const maxAttempts=50;
+    // const maxAttempts=50;
 
-    console.log("Device in handleDeviceReconnection func ",device);
+    console.log("Device in handleDeviceReconnection func ",typeof(device));
 
     while(attempts < maxAttempts){
         try{
             console.log(`Reconnection attempt ${attempts + 1}/${maxAttempts}...`);
             const connectionRestored = await device.createSocket();
+            console.log("Connection Restored variable status ",connectionRestored);
 
-            if(connectionRestored){
+            if(connectionRestored){ //if the above socket connection is successful, then create dispose the 
+                console.log(await device.getUsers());
+
+                device.disconnect();
+                await device.createSocket(handleSocketError,handleSocketClosure);
                 console.log("Device Connected Successfully!");
 
                 await device.enableDevice();
@@ -100,7 +108,8 @@ async function handleDeviceReconnection(){
             }
         }
         catch(error){
-            console.log(`Reconnection Failed: ${error.message}`);
+            console.log(`Reconnection Failed: ${error}`);
+            // console.log(error);
         }
         attempts++;
         await new Promise(resolve => setTimeout(resolve, 60000)); // Wait 1 min before retrying
