@@ -129,6 +129,10 @@ function Navbars() {
   const handleApproveFormClick = ()=>{
     navigate('/layout/showJoiningData')
   }
+
+  const handleManthlyJoiningClick = ()=>{
+    navigate('/layout/monthlyJoiningReport')
+  }
   
   
   return (
@@ -252,7 +256,7 @@ function Navbars() {
                     <a href="" onClick={handleDailyUpdateClick}>Daily Update</a>
                   </li>
                   <li className="hover:bg-gray-200 py-1 px-2 rounded  text-sm ">
-                    <a href="#" >Daily Present</a>
+                    <a href="#" onClick={handleManthlyJoiningClick} >Monthly Joining Report</a>
                   </li>
                   <li className="hover:bg-gray-200 py-1 px-2 rounded  text-sm ">
                     <a href="#">Monthly Report</a>

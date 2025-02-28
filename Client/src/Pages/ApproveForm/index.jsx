@@ -195,8 +195,8 @@ function Index() {
                      <div className="flex flex-col">
                         <label>Joining Hr Name</label>
                         <select 
-                        name="companyId"
-                        value={formData.companyId || ""}
+                        name="joiningHR"
+                        value={formData.joiningHR || ""}
                         onChange={handleFormData}
                         className="border border-gray-500 rounded-md  py-2 px-4 "
                         >

@@ -20,6 +20,7 @@ import TestPage from '../../Pages/TestPage/index'
 import ApproveForm from '../../Pages/ApproveForm/index'
 import ShowJoiningData from '../../Pages/ShowJoiningData/index'
 import ShowSingleJoiningData from '../../Component/ShowSingleJoiningData/index'
+import MonthlyJoiningReport from '../../Pages/MonthlyJoiningReport/index'
 
 import Errorpage from '../../Pages/404ErrorPage/index'
 
@@ -53,6 +54,7 @@ const Router = () => {
             <Route path='approveForm' element={<ApproveForm/>} />
             <Route path='showJoiningData' element={<ShowJoiningData/>} />
             <Route path='showsinglejoiningData' element={<ShowSingleJoiningData/>} />
+            <Route path='monthlyJoiningReport' element={<MonthlyJoiningReport/>} />
 
             <Route path='*' element={<Errorpage/>} />
             
