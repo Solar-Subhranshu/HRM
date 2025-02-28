@@ -294,28 +294,8 @@ function Registration() {
     }
   };
 
-   // Function to fetch existing employee data by phone number
-  //  const fetchEmployeeData = async (phoneNumber) => {
-  //   try {
-  //     const response = await axios.post(
-  //       "http://localhost:8000/auth/show-joiningFormData",
-  //       { phoneNumber } // Sending phoneNumber as request body
-  //     );
-
-  //     if (response?.data?.data) {
-  //       const fetchedData = response.data.data;
-  //       setFormData((prev) => ({
-  //         ...prev,
-  //         ...fetchedData, // Set formData with fetched API data
-  //       }));
-  //     } else {
-  //       alert("No employee found with this phone number.");
-  //     }
-  //   } catch (error) {
-  //     console.error("Error fetching employee data:", error);
-  //     alert("Error fetching employee data.");
-  //   }
-  // };
+ 
+  
 
   const fetchEmployeeData = async (phoneNumber) => {
     try {
@@ -326,6 +306,8 @@ function Registration() {
   
       if (response?.data?.data) {
         const fetchedData = response?.data?.data;
+        
+        
   
         setFormData((prev) => ({
           ...prev,
@@ -348,7 +330,7 @@ function Registration() {
           bankAddress: fetchedData.bankAddress ?? prev.bankAddress,
           department: fetchedData.department ?? prev.department,
           designation: fetchedData.designation ?? prev.designation,
-          aadharCardAttachment: fetchedData.aadharCardAttachment ?? prev.aadharCardAttachment,
+          // aadharCardAttachment: fetchedData.aadharCardAttachment ?? prev.aadharCardAttachment,
           panCardAttachment: fetchedData.panCardAttachment ?? prev.panCardAttachment,
           bankAttachment: fetchedData.bankAttachment ?? prev.bankAttachment,
           // otherAttachment: fetchedData.photoAttachment ?? prev.photoAttachment,
@@ -356,6 +338,8 @@ function Registration() {
           signatureAttachment: fetchedData.signatureAttachment ?? prev.signatureAttachment,
           // status: fetchedData.status ?? prev.status,
           company: fetchedData.companyId ?? prev.company,
+          branch: fetchedData.branch ?? prev.branch,
+          
          // Salary-related fields (handling missing data safely)
           ctc: fetchedData?.salary?.ctc ?? "",
           inHand: fetchedData?.salary?.inHand ?? "",
@@ -364,6 +348,9 @@ function Registration() {
           employerESI: fetchedData?.salary?.employerESI ?? "",
           employerPF: fetchedData?.salary?.employerPF ?? "",
         }));
+
+        console.log("my actual form data ", formData);
+        
       } else {
         alert("No employee found with this phone number.");
       }
@@ -999,6 +986,7 @@ function Registration() {
               <div>
                 <label>
                   <span>Company Name</span>
+                  <span className='text-red-600'>*</span>
                 </label>
                 <select 
                   name="company"
@@ -1020,6 +1008,7 @@ function Registration() {
               <div>
                 <label>
                   <span>Company Branch</span>
+                  <span className='text-red-600'>*</span>
                 </label>
                 <select 
                   name="branch"
@@ -1138,6 +1127,13 @@ function Registration() {
                   className="w-full rounded-md border-2 py-1 px-4  border-gray-400"
                 />
                 {errors.aadharCardAttachment && <span className="text-red-600">{errors.aadharCardAttachment}</span>}
+                {formData.aadharCardAttachment && (
+                  <div className="mt-2">
+                    <a href={formData.aadharCardAttachment} target="_blank" rel="noopener noreferrer" className="text-blue-600 underline">
+                      View Uploaded Document
+                    </a>
+                  </div>
+                )}
               </div>
               
               {/* pan card attachments field  */}
@@ -1153,6 +1149,13 @@ function Registration() {
                   className="w-full rounded-md border-2 py-1 px-4  border-gray-400"
                 />
                 {errors.panCardAttachment && <span className="text-red-600">{errors.panCardAttachment}</span>}
+                {formData.panCardAttachment && (
+                  <div className="mt-2">
+                    <a href={formData.panCardAttachment} target="_blank" rel="noopener noreferrer" className="text-blue-600 underline">
+                      View Uploaded Document
+                    </a>
+                  </div>
+                )}
               </div>
               
               {/* bank passbook attachments field  */}
@@ -1168,6 +1171,13 @@ function Registration() {
                   className="w-full rounded-md border-2 py-1 px-4  border-gray-400"
                 />
                 {errors.bankAttachment && <span className="text-red-600">{errors.bankAttachment}</span>}
+                {formData.bankAttachment && (
+                  <div className="mt-2">
+                    <a href={formData.bankAttachment} target="_blank" rel="noopener noreferrer" className="text-blue-600 underline">
+                      View Uploaded Document
+                    </a>
+                  </div>
+                )}
               </div>
 
               {/* joining form attachments field   */}
@@ -1183,6 +1193,7 @@ function Registration() {
                   className="w-full rounded-md border-2 py-1 px-4  border-gray-400"
                 />
                 {errors.joiningFormAttachment && <span className="text-red-600">{errors.joiningFormAttachment}</span>}
+                
               </div>
               
               {/* other document field  */}
@@ -1198,12 +1209,12 @@ function Registration() {
                 />
                 {errors.otherAttachment && <span className="text-red-600">{errors.otherAttachment}</span>}
                 {formData.otherAttachment && (
-    <div className="mt-2">
-      <a href={formData.otherAttachment} target="_blank" rel="noopener noreferrer" className="text-blue-600 underline">
-        View Uploaded Document
-      </a>
-    </div>
-  )}
+                  <div className="mt-2">
+                    <a href={formData.otherAttachment} target="_blank" rel="noopener noreferrer" className="text-blue-600 underline">
+                      View Uploaded Document
+                    </a>
+                  </div>
+                )}
               </div>
 
             </div>
