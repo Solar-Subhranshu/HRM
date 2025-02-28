@@ -87,13 +87,18 @@ async function handleDeviceReconnection(maxAttempts=50){
     while(attempts < maxAttempts){
         try{
             console.log(`Reconnection attempt ${attempts + 1}/${maxAttempts}...`);
+            //this is the test connection
             const connectionRestored = await device.createSocket();
             console.log("Connection Restored variable status ",connectionRestored);
 
-            if(connectionRestored){ //if the above socket connection is successful, then create dispose the 
-                console.log(await device.getUsers());
+            if(connectionRestored){ //if the above socket connection is successful, then create dispose the test connection.
+                device.ztcp.socket.end(() => {
+                    console.log("Test Connection Socket Ended Successfully.");
+                });
+                device.ztcp.socket.destroy();
+                // Wait for the socket to be fully closed
+                await new Promise(resolve => setTimeout(resolve, 1000)); //this is a critical line of code, don't f#cking remove it.
 
-                device.disconnect();
                 await device.createSocket(handleSocketError,handleSocketClosure);
                 console.log("Device Connected Successfully!");
 

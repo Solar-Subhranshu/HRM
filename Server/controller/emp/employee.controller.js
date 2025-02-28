@@ -201,7 +201,7 @@ const registerEmployee = async(req,res)=>{
         // }
         // else{
         //     // hashedPassword = String(employeeCode + "-" + generateRandomNumbers());
-        //     hashedPassword = String(employeeCode);
+        //     hashedPassword = String(employeeCode);3
         //     // console.log(hashedPassword)
         // }
 
@@ -214,6 +214,14 @@ const registerEmployee = async(req,res)=>{
             employeePF,
             employerESI,
             employerPF
+        }
+
+        //check if the images are already stored in server
+        if(aadharCardAttachment){
+            let apath="'http://88.222.214.93:8002/uploads/photoAttachments/'"
+            if(apath===aadharCardAttachment.slice(0,51)){
+                
+            }
         }
 
         const aadharCardImage = aadharCardAttachment ? await handleBase64Images([aadharCardAttachment], "aadharCardAttachments") : [];
