@@ -111,6 +111,8 @@ const registerEmployee = async(req,res)=>{
             bankAttachment,
             otherAttachment
         }=req.body;
+
+        console.log(req.body);
         
         // //checking necessary input fields
         // if(!employeeCode || !name || !father_husbandName 
@@ -217,6 +219,8 @@ const registerEmployee = async(req,res)=>{
         }
 
         //check if the images are already stored in server
+        console.log("aadharCardAttachment ",aadharCardAttachment);
+
         let aadharCardUrl;
         if(aadharCardAttachment){
             const folderPath=`${req.protocol}://${req.get("host")}/uploads/aadharCardAttachments/`;
@@ -228,7 +232,9 @@ const registerEmployee = async(req,res)=>{
                 aadharCardUrl = `${req.protocol}://${req.get("host")}/uploads/aadharCardAttachments/${aadharCardImage[0].fileName}`;
             }
         }
+        console.log("aadharCardUrl ",aadharCardUrl);
 
+        console.log("panCardAttachment ",panCardAttachment);
         let panCardUrl;
         if(panCardAttachment){
             const folderPath=`${req.protocol}://${req.get("host")}/uploads/panCardAttachment/`;
@@ -241,7 +247,10 @@ const registerEmployee = async(req,res)=>{
 
             }
         }
+        console.log("panCardUrl ", panCardUrl);
 
+
+        console.log("bankAttachment ", bankAttachment);
         let bankAccountUrl;
         if(bankAttachment){
             const folderPath = `${req.protocol}://${req.get("host")}/uploads/bankAttachments/`;
@@ -253,7 +262,9 @@ const registerEmployee = async(req,res)=>{
                 bankAccountUrl = `${req.protocol}://${req.get("host")}/uploads/bankAttachments/${bankAccountImage[0].fileName}`;
             }
         }
+        console.log("bankAccountUrl ", bankAccountUrl);
 
+        console.log("otherAttachment ",otherAttachment);
         let otherAttachmentUrl;
         if(otherAttachment){
             const folderPath = `${req.protocol}://${req.get("host")}/uploads/otherAttachments/`;
@@ -265,6 +276,7 @@ const registerEmployee = async(req,res)=>{
                 otherAttachmentUrl = `${req.protocol}://${req.get("host")}/uploads/otherAttachments/${otherAttachmentImage[0].fileName}`;
             }
         }
+        console.log("otherAttachmentUrl ",otherAttachmentUrl);
 
         // const joiningFormImage = joiningFormAttachment ? await handleBase64Images([joiningFormAttachment], "joiningForms") : [];
         // const joiningFormUrl = `${req.protocol}://${req.get("host")}/uploads/joiningForms/${joiningFormImage[0].fileName}`;
