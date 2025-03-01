@@ -237,7 +237,7 @@ const registerEmployee = async(req,res)=>{
         console.log("panCardAttachment ",panCardAttachment);
         let panCardUrl;
         if(panCardAttachment){
-            const folderPath=`${req.protocol}://${req.get("host")}/uploads/panCardAttachment/`;
+            const folderPath=`${req.protocol}://${req.get("host")}/uploads/panCardAttachments/`;
             if(folderPath === panCardAttachment.slice(0,folderPath.length)){
                 panCardUrl = panCardAttachment;
             }
