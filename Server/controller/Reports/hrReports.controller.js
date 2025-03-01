@@ -25,6 +25,7 @@ const monthlyJoiningReport = async(req,res)=>{
             correctMonthDate = monthDate;
         }
 
+
         const firstDayOfMonth = moment(correctMonthDate).startOf("month").toDate();
         const lastDayOfMonth = moment(correctMonthDate).endOf("month").toDate();
 
