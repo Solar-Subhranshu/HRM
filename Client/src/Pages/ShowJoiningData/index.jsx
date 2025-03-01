@@ -18,6 +18,9 @@ function Index() {
             const response = await axios.get(`${process.env.REACT_APP_SERVER_ADDRESS}/auth/show-allJoiningForms?status=${status}`, {
                 withCredentials: true
             });
+
+            console.log("my reponse joining data", response?.data);
+            console.log("my reponse joining data 224", response?.data?.data)
             setData(response?.data?.data); // Set data from API response
         } catch (err) {
             console.error('Error fetching data:', err);
@@ -25,6 +28,8 @@ function Index() {
         }
         setLoading(false);
     };
+
+    console.log("mt joining data is ", data);
 
     // Fetch data when status changes
     useEffect(() => {
