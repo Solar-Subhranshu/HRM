@@ -57,8 +57,6 @@ connectDB()
     app.listen(PORT, () => {
         console.log(`⚙️  Server running at port ${PORT}`);
     });
-    // while(true){
-        biometricDevice.biometricDeviceHandler();
-    // }
+    // biometricDevice.biometricDeviceHandler();
 })
 .catch((err)=> console.log(`Connection Error ${err.message}`))

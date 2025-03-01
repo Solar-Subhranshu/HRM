@@ -124,6 +124,7 @@ async function handleDeviceReconnection(maxAttempts=50){
     //send message that all device connection attemps failed. some manual intervention is required.
 
 }
+
 const biometricDeviceHandler = async()=>{
     // console.log(`device ip ${process.env.BIOMETRIC_DEVICE_IP} \ndevice port ${process.env.BIOMETRIC_DEVICE_PORT}`);
     try {

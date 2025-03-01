@@ -217,24 +217,57 @@ const registerEmployee = async(req,res)=>{
         }
 
         //check if the images are already stored in server
+        let aadharCardUrl;
         if(aadharCardAttachment){
-            let apath="'http://88.222.214.93:8002/uploads/photoAttachments/'"
-            if(apath===aadharCardAttachment.slice(0,51)){
-                
+            const folderPath=`${req.protocol}://${req.get("host")}/uploads/aadharCardAttachments/`;
+            if(folderPath===aadharCardAttachment.slice(0,folderPath.length)){
+                aadharCardUrl=aadharCardAttachment;
+            }
+            else{
+                const aadharCardImage = aadharCardAttachment ? await handleBase64Images([aadharCardAttachment], "aadharCardAttachments") : [];
+                aadharCardUrl = `${req.protocol}://${req.get("host")}/uploads/aadharCardAttachments/${aadharCardImage[0].fileName}`;
             }
         }
 
-        const aadharCardImage = aadharCardAttachment ? await handleBase64Images([aadharCardAttachment], "aadharCardAttachments") : [];
-        const panCardImage = panCardAttachment ? await handleBase64Images([panCardAttachment], "panCardAttachments") : [];
-        const bankAccountImage = bankAttachment ? await handleBase64Images([bankAttachment], "bankAttachments") : [];
-        // const joiningFormImage = joiningFormAttachment ? await handleBase64Images([joiningFormAttachment], "joiningForms") : [];
-        const otherAttachmentImage = otherAttachment ? await handleBase64Images([otherAttachment], "otherAttachments") : [];
+        let panCardUrl;
+        if(panCardAttachment){
+            const folderPath=`${req.protocol}://${req.get("host")}/uploads/panCardAttachment/`;
+            if(folderPath === panCardAttachment.slice(0,folderPath.length)){
+                panCardUrl = panCardAttachment;
+            }
+            else{
+                const panCardImage = panCardAttachment ? await handleBase64Images([panCardAttachment], "panCardAttachments") : [];
+                panCardUrl = `${req.protocol}://${req.get("host")}/uploads/panCardAttachments/${panCardImage[0].fileName}`;
 
-        const aadharCardUrl = `${req.protocol}://${req.get("host")}/uploads/aadharCardAttachments/${aadharCardImage[0].fileName}`;
-        const panCardUrl = `${req.protocol}://${req.get("host")}/uploads/panCardAttachments/${panCardImage[0].fileName}`;
-        const bankAccountUrl = `${req.protocol}://${req.get("host")}/uploads/bankAttachments/${bankAccountImage[0].fileName}`;
+            }
+        }
+
+        let bankAccountUrl;
+        if(bankAttachment){
+            const folderPath = `${req.protocol}://${req.get("host")}/uploads/bankAttachments/`;
+            if(folderPath === bankAttachment.slice(0,folderPath.length)){
+                bankAccountUrl = bankAttachment
+            }
+            else{
+                const bankAccountImage = bankAttachment ? await handleBase64Images([bankAttachment], "bankAttachments") : [];
+                bankAccountUrl = `${req.protocol}://${req.get("host")}/uploads/bankAttachments/${bankAccountImage[0].fileName}`;
+            }
+        }
+
+        let otherAttachmentUrl;
+        if(otherAttachment){
+            const folderPath = `${req.protocol}://${req.get("host")}/uploads/otherAttachments/`;
+            if(folderPath === otherAttachment.slice(0,folderPath.length)){
+                otherAttachmentUrl = otherAttachment;
+            }
+            else{
+                const otherAttachmentImage = otherAttachment ? await handleBase64Images([otherAttachment], "otherAttachments") : [];
+                otherAttachmentUrl = `${req.protocol}://${req.get("host")}/uploads/otherAttachments/${otherAttachmentImage[0].fileName}`;
+            }
+        }
+
+        // const joiningFormImage = joiningFormAttachment ? await handleBase64Images([joiningFormAttachment], "joiningForms") : [];
         // const joiningFormUrl = `${req.protocol}://${req.get("host")}/uploads/joiningForms/${joiningFormImage[0].fileName}`;
-        const otherAttachmentUrl = `${req.protocol}://${req.get("host")}/uploads/otherAttachments/${otherAttachmentImage[0].fileName}`;
         
         const newEmployee = new Employee({
             employeeCode,
