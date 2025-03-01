@@ -25,7 +25,6 @@ const monthlyJoiningReport = async(req,res)=>{
             correctMonthDate = monthDate;
         }
 
-        // Get late days count in the current month
         const firstDayOfMonth = moment(correctMonthDate).startOf("month").toDate();
         const lastDayOfMonth = moment(correctMonthDate).endOf("month").toDate();
 
@@ -116,6 +115,13 @@ const monthlyJoiningReport = async(req,res)=>{
     }
 }
 
+// const monthlyDepartureReport = async(req,res)=>{
+//     try {
+//         const 
+//     } catch (error) {
+        
+//     }
+// }
 
 module.exports = {
     monthlyJoiningReport
