@@ -6,10 +6,10 @@ import { FaListUl } from "react-icons/fa6";
 
 export default function Index() {
     
- const [allEmployeeData, setAllEmployeeData] = useState([]);
-   const [searchTerm, setSearchTerm] = useState("");
-   const [isActiveFilter, setIsActiveFilter] = useState(null);
-   const [currentPage, setCurrentPage] = useState(1); // Current page number
+  const [allEmployeeData, setAllEmployeeData] = useState([]);
+  const [searchTerm, setSearchTerm] = useState("");
+  const [isActiveFilter, setIsActiveFilter] = useState(null);
+  const [currentPage, setCurrentPage] = useState(1); // Current page number
   const [itemsPerPage] = useState(10); // Items per page (fixed)
 
     const filteredEmployees = allEmployeeData.filter(employee => {
@@ -45,11 +45,11 @@ export default function Index() {
         return date.toLocaleDateString();
       };
 
-       // Pagination calculations
-  const totalPages = Math.ceil(filteredEmployees.length / itemsPerPage);
-  const startIndex = (currentPage - 1) * itemsPerPage;
-  const endIndex = startIndex + itemsPerPage;
-  const currentEmployees = filteredEmployees.slice(startIndex, endIndex);
+    // Pagination calculations
+    const totalPages = Math.ceil(filteredEmployees.length / itemsPerPage);
+    const startIndex = (currentPage - 1) * itemsPerPage;
+    const endIndex = startIndex + itemsPerPage;
+    const currentEmployees = filteredEmployees.slice(startIndex, endIndex);
 
   const handleNextPage = () => {
     if (currentPage < totalPages) {
@@ -221,7 +221,7 @@ export default function Index() {
                                   <td className="px-2 py-2 text-center">{reportingManager?.name || 'N/A'}</td>
                                   <td className="px-2 py-2 text-center">{companyPhoneNum || 'N/A'}</td>
                                   <td className="px-2 py-2 text-center">{companyEmail || 'N/A'}</td>
-                                  <td className="px-2 py-2 text-center">{joiningDate || 'N/A'}</td>
+                                  <td className="px-2 py-2 text-center">{joiningDate ? formatDate(joiningDate) : 'N/A'}</td>
                                   <td className="px-2 py-2 text-center">{lastAppraisalDate ? formatDate(lastAppraisalDate) : 'N/A'}</td>
 
                                   <td className="px-2 py-2 text-center">{joiningHR?.name || 'N/A'}</td>
@@ -242,10 +242,26 @@ export default function Index() {
                                       </a>
                                     ) : 'N/A'}
                                   </td>
-                                  <td className="px-2 py-2 text-center">{panCardAttachment || 'N/A'}</td>
-                                  <td className="px-2 py-2 text-center">{bankAttachment || 'N/A'}</td>
-                                  <td className="px-2 py-2 text-center">{joiningFormAttachment || 'N/A'}</td>
-                                  <td className="px-2 py-2 text-center">{otherAttachment || 'N/A'}</td>
+                                  <td className="px-2 py-2 text-center">
+                                    {panCardAttachment?(
+                                      <a href='#' className='text-blue-600 hover:text-blue-800'>Show Image</a>
+                                    ) : 'N/A'}
+                                  </td>
+                                  <td className="px-2 py-2 text-center">
+                                  {bankAttachment?(
+                                      <a href='#' className='text-blue-600 hover:text-blue-800'>Show Image</a>
+                                    ) : 'N/A'}
+                                  </td>
+                                  <td className="px-2 py-2 text-center">
+                                  {joiningFormAttachment?(
+                                      <a href='#' className='text-blue-600 hover:text-blue-800'>Show Image</a>
+                                    ) : 'N/A'}
+                                  </td>
+                                  <td className="px-2 py-2 text-center">
+                                  {otherAttachment?(
+                                      <a href='#' className='text-blue-600 hover:text-blue-800'>Show Image</a>
+                                    ) : 'N/A'}
+                                  </td>
                               </tr>
                           </>
                       ))

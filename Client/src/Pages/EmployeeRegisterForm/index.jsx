@@ -242,8 +242,8 @@ function Registration() {
     if (!formData.panCardAttachment) newErrors.panCardAttachment = 'Pancard is required';
     if (!formData.aadharCardAttachment) newErrors.aadharCardAttachment = 'Aadhar card is required';
     if (!formData.bankAttachment) newErrors.bankAttachment = 'Bank details are required';
-    if (!formData.joiningFormAttachment) newErrors.joiningFormAttachment = 'Joining form is required';
-    if (!formData.otherAttachment) newErrors.otherAttachment = 'Other documents are required';
+    
+    
     if (!formData.reportingManager) newErrors.reportingManager = 'Reporting Manager is required';
     if (!formData.joiningHR) newErrors.joiningHR = 'Joining Hr Name is required';
     if (!formData.biometricPunchId) newErrors.biometricPunchId = 'Biometric Punch Id is required';
@@ -312,29 +312,29 @@ function Registration() {
         setFormData((prev) => ({
           ...prev,
           name: fetchedData?.name ?? prev.name,
-          father_husbandName: fetchedData?.father_husbandName ?? prev.father_husbandName,
-          dateOfBirth: fetchedData.dateOfBirth ? fetchedData.dateOfBirth.split("T")[0] : prev.dateOfBirth,
+          father_husbandName: fetchedData?.father_husbandName ?? prev?.father_husbandName,
+          dateOfBirth: fetchedData?.dateOfBirth ? fetchedData.dateOfBirth.split("T")[0] : prev?.dateOfBirth,
           personalPhoneNum: fetchedData?.personalPhoneNum ?? prev.personalPhoneNum,
           personalEmail: fetchedData?.personalEmail ?? prev.personalEmail,
           panCard: fetchedData?.panCard ?? prev.panCard,
           aadharCard: fetchedData?.aadharCard ?? prev.aadharCard,
           permanentAddress: fetchedData?.permanentAddress ?? prev.permanentAddress,
           permanentPinCode: fetchedData?.permanentPinCode ?? prev.permanentPinCode,
-          currentAddress: fetchedData.currentAddress ?? prev.currentAddress,
-          currentPinCode: fetchedData.currentPinCode ?? prev.currentPinCode,
+          currentAddress: fetchedData?.currentAddress ?? prev.currentAddress,
+          currentPinCode: fetchedData?.currentPinCode ?? prev.currentPinCode,
           bankName: fetchedData.bankName ?? prev.bankName,
-          branchName: fetchedData.branchName ?? prev.branchName,
-          bankAccount: fetchedData.bankAccount ?? prev.bankAccount,
+          branchName: fetchedData?.branchName ?? prev.branchName,
+          bankAccount: fetchedData?.bankAccount ?? prev.bankAccount,
           bankIFSC: fetchedData.bankIFSC ?? prev.bankIFSC,
           bankAccountHolderName: fetchedData.bankAccountHolderName ?? prev.bankAccountHolderName,
           bankAddress: fetchedData.bankAddress ?? prev.bankAddress,
           department: fetchedData.department ?? prev.department,
           designation: fetchedData.designation ?? prev.designation,
-          // aadharCardAttachment: fetchedData.aadharCardAttachment ?? prev.aadharCardAttachment,
+          aadharCardAttachment: fetchedData.aadharCardAttachment ?? prev.aadharCardAttachment,
           panCardAttachment: fetchedData.panCardAttachment ?? prev.panCardAttachment,
           bankAttachment: fetchedData.bankAttachment ?? prev.bankAttachment,
           // otherAttachment: fetchedData.photoAttachment ?? prev.photoAttachment,
-          otherAttachment: fetchedData.photoAttachment ?? prev.otherAttachment ?? "",
+          // otherAttachment: fetchedData.photoAttachment ?? prev.otherAttachment ?? "",
           signatureAttachment: fetchedData.signatureAttachment ?? prev.signatureAttachment,
           // status: fetchedData.status ?? prev.status,
           company: fetchedData.companyId ?? prev.company,
@@ -367,8 +367,8 @@ function Registration() {
     const formErrors = validateForm();
     setErrors(formErrors);
     
-    console.log(formData.degree , " my degree data")
-    console.log("my branch is ", formData.branch);
+    console.log(formData?.degree , " my degree data")
+    console.log("my branch is ", formData?.branch);
 
     if (Object.keys(formErrors).length > 0) {
       alert('Please correct the highlighted fields.');
@@ -1184,7 +1184,6 @@ function Registration() {
               <div>
                 <label>
                   <span>Joining Form</span>
-                  <span className='text-red-600'>*</span>
                 </label>
                 <input type='file' 
                   // value={formData.joiningFormAttachment}
@@ -1192,7 +1191,8 @@ function Registration() {
                   onChange={(e) => handleFileChange(e, 'joiningFormAttachment')}
                   className="w-full rounded-md border-2 py-1 px-4  border-gray-400"
                 />
-                {errors.joiningFormAttachment && <span className="text-red-600">{errors.joiningFormAttachment}</span>}
+               
+               
                 
               </div>
               
@@ -1200,21 +1200,12 @@ function Registration() {
               <div>
                 <label>
                   <span>Other Document</span>
-                  <span className='text-red-600'>*</span>
                 </label>
                 <input type='file' 
                   onChange={(e) => handleFileChange(e, 'otherAttachment')}
                   name='otherAttachment'
                   className="w-full rounded-md border-2 py-1 px-4  border-gray-400"
                 />
-                {errors.otherAttachment && <span className="text-red-600">{errors.otherAttachment}</span>}
-                {formData.otherAttachment && (
-                  <div className="mt-2">
-                    <a href={formData.otherAttachment} target="_blank" rel="noopener noreferrer" className="text-blue-600 underline">
-                      View Uploaded Document
-                    </a>
-                  </div>
-                )}
               </div>
 
             </div>
