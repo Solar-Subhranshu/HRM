@@ -523,19 +523,22 @@ const deactivateEmp = async (req,res)=>{
         const employeeId = req.employeeId;
         // console.log(employeeId);
 
-        const {employeeCode} = req.body || req.query || req.params;
+        const {employeeCode,
+            regisnationDate,
+        } = req.body;
         // console.log(empId);
 
-        if(!employeeCode){
+        if(!employeeCode || !regisnationDate){
             return res.status(400).json({
                 success:false,
-                message : "Employee Code is required"
+                message : "Employee Code & Resignation Date is required!"
             });
         }
 
         const deactiveEmp = await Employee.findOneAndUpdate(
             {employeeCode : employeeCode},
-            {isActive : false,
+            {   isActive : false,
+                regisnationDate,
                 updated_By : employeeId},
             {new : true}  
         );
@@ -543,14 +546,18 @@ const deactivateEmp = async (req,res)=>{
         if(!deactiveEmp){
             return res.status(400).json({
                 success:false,
-                message : `Employee with employeeCode: ${employeeCode} Not Found.`
+                message : `Employee with employeeCode: ${employeeCode} doesn't exist in Database.`
             });
+        }else{
+            return res.status(200).json({
+                success:true,
+                message : "Employee Account deleted Successfuly!",
+                data:{
+                    employeeCode:deactiveEmp.employeeCode,
+                    employeeName:deactiveEmp.name
+                }
+            });    
         }
-        return res.status(200).json({
-            success:true,
-            message : "Employee Account deleted Successfuly!"
-        });
-
     } catch (error) {
         return res.status(500).json({
             success:false,
@@ -564,7 +571,12 @@ const deactivateEmp = async (req,res)=>{
 const showAllEmployee= async (req,res) =>{
 
     try{
-        const allEmp = await Employee.find({department :{$not : { $eq:"676274bfc79be89a2e977b28" }}}) //hide admin data
+        const allEmp = await Employee.find(
+            {$and : [
+                {department :{$not : { $eq:"676274bfc79be89a2e977b28" }}}, //hide admin data
+                {isActive : true}
+            ]} 
+            ) 
         .populate({
             path:"department",
             select:"-updatedAt -createdAt -__v -created_By -updated_By"
@@ -839,7 +851,7 @@ const updateEmployee= async(req,res)=>{
             companyEmail,
             joiningDate,
             lastAppraisalDate,
-            regisnationDate,
+            // regisnationDate,
             company,
             branch,
             department,
