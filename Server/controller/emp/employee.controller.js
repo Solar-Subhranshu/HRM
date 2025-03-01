@@ -62,7 +62,10 @@ const registerEmployee = async(req,res)=>{
     try {
         //employeeID is "admin ID" used to track who is registering employee
         const employeeId=req.employeeId;
-        const{employeeCode,
+
+        let {employeeCode}=req.body;
+        const{
+            // employeeCode,
             // password,
             name,
             father_husbandName,
@@ -112,28 +115,7 @@ const registerEmployee = async(req,res)=>{
             otherAttachment
         }=req.body;
 
-        console.log(req.body);
-        
-        // //checking necessary input fields
-        // if(!employeeCode || !name || !father_husbandName 
-        //     || !dateOfBirth || !personalPhoneNum || !personalEmail 
-        //     || !panCard || !aadharCard || !qualification || !degree
-        //     || !permanentAddress || !permanentPinCode ||!currentAddress 
-        //     || !currentPinCode || !reportingManager 
-        //     || !joiningHR 
-        //     || !joiningDate 
-        //     || !company || !branch || !department || !designation 
-        //     || !workType || !shift || !officeTimePolicy 
-        //     || !biometricPunchId
-        //     || !aadharCardAttachment || !panCardAttachment 
-        //     || !bankAttachment  
-        //     || !otherAttachment
-        // ){
-        //     return res.status(400).json({
-        //         success:false,
-        //         message : "All Fields Are Required!"
-        //     });
-        // }
+        // console.log(req.body);
 
         //required fields
         const requiredFields =[
@@ -158,6 +140,8 @@ const registerEmployee = async(req,res)=>{
                 message: `The following fields are missing: ${missingFields.join(", ")}`
             });
         }
+        //checking for the whitespaces 
+        employeeCode=String(employeeCode).trim();
 
         const isEmployeeExists = await Employee.findOne({employeeCode:employeeCode});
         
@@ -369,7 +353,7 @@ const registerEmployee = async(req,res)=>{
     }
 }
 
-// done
+
 const login = async(req,res) =>{
     try {
         //checking if both id and password are given
@@ -383,27 +367,24 @@ const login = async(req,res) =>{
             });
         }
 
-        //we call this data as admin data !
         //checking if valid id is given
-        const adminData = await Employee.findOne({employeeCode:employeeCode}).populate("department");
-        // console.log(adminData.department.department);
-        if(adminData?.department?.department !== 'Admin'){
-            return res.status(400).json({
-                success: false,
-                message: "You are not authorized to login."
-            });
-        }
-
-        if(!adminData){
+        const empData = await Employee.findOne({employeeCode:employeeCode}).populate("department");
+        if(!empData){
             return res.status(401).json({
                 success : false,
                 message : "Invalid credentials! Wrong ID."
             });
         }
+        // console.log(empData);
+        let isAdmin=false;
+        if(empData?.department?.department === 'Admin'){
+           isAdmin=true;
+        }
+
 
         //checking if valid password is given
-        // console.log("ADMINDATa", adminData)
-        const isMatch = await bcrypt.compare(password,adminData.password);
+        const isMatch = await bcrypt.compare(password,empData.password);
+        console.log(isMatch);
         if(!isMatch){
             return res.status(401).json({
                 success : false,
@@ -412,7 +393,7 @@ const login = async(req,res) =>{
         }
 
         //checking if given admin-id is active or not. 
-        if(!adminData.isActive){
+        if(!empData.isActive){
             return res.status(400).json({
                 success : false,
                 message : "Your account is no longer active, and login is not permitted."
@@ -427,13 +408,13 @@ const login = async(req,res) =>{
         };
 0
         const accessTokenData= {
-            id:adminData._id,
-            employeeCode:adminData.employeeCode
+            id:empData._id,
+            employeeCode:empData.employeeCode
         }
         const accessToken = createAccessToken(accessTokenData);
-        const refreshToken = createRefreshToken(adminData.employeeCode);
+        const refreshToken = createRefreshToken(empData.employeeCode);
 
-        const setRefreshToken = await Employee.findByIdAndUpdate(adminData._id,{refreshToken:refreshToken},{new:true});
+        const setRefreshToken = await Employee.findByIdAndUpdate(empData._id,{refreshToken:refreshToken},{new:true});
         if(!setRefreshToken){
             return res.status(401).json({
                 success:false,
@@ -448,8 +429,9 @@ const login = async(req,res) =>{
             success:true,
             message:"Login Successful",
             data : {
-                adminCode : adminData.employeeCode,
-                name : adminData.name
+                employeeCode : empData.employeeCode,
+                name : empData.name,
+                isAdmin
             }
         });
 
@@ -1068,6 +1050,38 @@ const deleteEmployee = async(req,res)=>{
     }
 }
 
+const backendUpdate = async(req,res)=>{
+    try{
+        const {id,employeeCode} = req.body;
+        if(!id || !employeeCode){
+            return res.status(400).json({
+                success:false,
+                message:"id and Employee-Code not provided."
+            })
+        }
+        
+        const hashedPassword = await bcrypt.hash(employeeCode,10);
+
+        const isUpdated = await Employee.findByIdAndUpdate({_id:id},{
+            employeeCode,
+            password:hashedPassword
+        },{new:true});
+
+        return res.status(200).json({
+            success:true,
+            message:"Employee updated Successfully.",
+            data:isUpdated
+        });
+    }
+    catch(error){
+        return res.status(500).json({
+            success:false,
+            message:"Internal Server Error",
+            error:error.message
+        });
+    }
+}
+
 module.exports = {
     addAdmin,
     registerEmployee,
@@ -1080,6 +1094,8 @@ module.exports = {
     updateEmployee,
     seeEmpBackend,
     deleteEmployee,
-    addHR
+    addHR,
+
+    backendUpdate
 };
 

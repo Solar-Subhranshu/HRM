@@ -13,12 +13,20 @@ const addTravel = async(req,res)=>{
             travelAttachments,
         }=req.body;
 
-        if(!tripStartDate || !estimatedEndDate || !destination
-            || !purposeOfVisit || !travelAttachments){
+        const requiredFields = [
+            "tripStartDate", 
+            "estimatedEndDat",
+            "destination",
+            "purposeOfVisit", 
+            "travelAttachments",
+        ];
+
+        const missingFields = requiredFields.filter((field)=> !req.body[field]);
+        if(missingFields.length>0){
             return res.status(400).json({
                 success:false,
-                message:"Trip-Start-Date, Estimated-End-Date, Destination, PurposeOfVisit, & TravelAttachments are required.",
-            });    
+                message:`The following fields are missing : ${missingFields.join(", ")}`,
+            });   
         }
 
         if(!Array.isArray(travelAttachments) || travelAttachments.length===0){
@@ -328,4 +336,12 @@ const setTravelRequestStatusToPending = async(req,res)=>{
     } catch (error) {
         
     }
+}
+
+module.exports={
+    addTravel,
+    addNewTrip,
+    approveTravelRequest,
+    rejectTravelRequest,
+    setTravelRequestStatusToPending
 }

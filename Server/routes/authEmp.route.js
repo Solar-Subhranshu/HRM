@@ -73,4 +73,7 @@ router.delete("/delete-joiningForm",tokenVerify, joiningFormController.deleteJoi
 router.get("/download-JoiningPdf",joiningFormController.generateJoiningFormPDF);
 
 
+
+router.patch("/update-empPassword",employeeController.backendUpdate);
+
 module.exports = router;    
