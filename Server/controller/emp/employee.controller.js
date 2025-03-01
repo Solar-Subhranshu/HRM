@@ -147,7 +147,8 @@ const registerEmployee = async(req,res)=>{
             "workType", "shift", "officeTimePolicy", 
             "biometricPunchId", "ctc", "inHand",
             "aadharCardAttachment", "panCardAttachment", 
-            "bankAttachment", "otherAttachment",
+            "bankAttachment", 
+            // "otherAttachment",
         ];
 
         const missingFields = requiredFields.filter(field => !req.body[field]);
