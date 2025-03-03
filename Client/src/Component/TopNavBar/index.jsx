@@ -133,6 +133,10 @@ function Navbars() {
   const handleManthlyJoiningClick = ()=>{
     navigate('/layout/monthlyJoiningReport')
   }
+
+  const handleManthlyResignationClick = ()=>{
+    navigate('/layout/monthlyResignationReport')
+  }
   
   
   return (
@@ -257,6 +261,9 @@ function Navbars() {
                   </li>
                   <li className="hover:bg-gray-200 py-1 px-2 rounded  text-sm ">
                     <a href="#" onClick={handleManthlyJoiningClick} >Monthly Joining Report</a>
+                  </li>
+                  <li className="hover:bg-gray-200 py-1 px-2 rounded  text-sm whitespace-nowrap">
+                    <a href="#" onClick={handleManthlyResignationClick} >Monthly Resignation Report</a>
                   </li>
                   <li className="hover:bg-gray-200 py-1 px-2 rounded  text-sm ">
                     <a href="#">Monthly Report</a>
