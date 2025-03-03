@@ -111,7 +111,7 @@ const addTravel = async(req,res)=>{
     }
 }
 
-const addNewTrip = async(req,res)=>{
+const addNewSuccessiveTrip = async(req,res)=>{
     try {
         const employeeId = req.employeeId;
         const {
@@ -225,7 +225,7 @@ const addNewTrip = async(req,res)=>{
 const approveTravelRequest = async(req,res)=>{
     try {
         const employeeId = req.employeeId;
-        const {travelId}=req.body;
+        const {travelId}=req.query;
         if(!travelId){
             return res.status(400).json({
                 success:false,
@@ -238,6 +238,12 @@ const approveTravelRequest = async(req,res)=>{
             return res.status(400).json({
                 success:false,
                 message:"The Travel request you are trying to Approve is already Rejected. You may not Approve it now."
+            })
+        }
+        if(isAlreadyRejected.approvalStatus==="Approved"){
+            return res.status(400).json({
+                success:false,
+                message:"The Travel request you are trying to Approve is already Approved. You may not Approve it now."
             })
         }
 
@@ -289,6 +295,12 @@ const rejectTravelRequest = async(req,res)=>{
                 message:"The Travel request you are trying to reject is already Approved. You may not reject it now."
             });
         } 
+        if(isAlreadyApproved.status==="Rejected"){
+            return res.status(400).json({
+                success:false,
+                message:"The Travel request you are trying to reject is already Rejected. You may not reject it now."
+            });
+        }
 
         const isRejected = await Travel.findByIdAndUpdate({_id:travelId},
             {
@@ -323,16 +335,82 @@ const rejectTravelRequest = async(req,res)=>{
 
 const startTrip = async(req,res)=>{
     try {
-        
+        const employeeId= req.employeeId;
+        const {travelId} = req.query;
+
+        if(!travelId){
+            return res.status(400).json({
+                success:false,
+                message:"Travel-Id is required."
+            });
+        }
+
+        const isApproved = await Travel.findById(travelId).lean();
+        if(isApproved.approvalStatus!="Approved"){
+            return res.status(400).json({
+                success:false,
+                message:"The Trip you are trying to start is not yet approved."
+            });
+        }
+
+        const isStarted = await Travel.findByIdAndUpdate({_id:travelId},{
+            isActive:true,
+        },{new:true});
+
+        if(isStarted){
+            return res.status(200).json({
+                success:true,
+                message:"You Trip Has Started, Wish You A Safe Journey!",
+                data:isStarted
+            });
+        }
+        else{
+            return res.status(400).json({
+                success:false,
+                message:"Your Trip Couldn't be Started. Try Again."
+            });
+        }
     } catch (error) {
-        
+        return res.status(500).json({
+            success:false,
+            message:"Internal Server Error! Couldn't Start Your Trip.",
+            error:error.message
+        });
+    }
+}
+
+const showTravelRecords = async(req,res)=>{
+    try {
+        const employeeId = req.employeeId;
+
+        const employeeTravelRecords = await Travel.find({employeeId}).lean();
+
+        if(employeeTravelRecords){
+            return res.status(200).json({
+                success:true,
+                message:`List of all Travel Records for this employee ${employeeId}`,
+                data:employeeTravelRecords || []
+            })
+        }
+        else{
+            return res.status(400).json({
+                success:false,
+                message:"Unable to fetch data for employee"
+            })
+        }
+    } catch (error) {
+        return res.status(500).json({
+            success:false,
+            message:"Internal Server Error, unable to fetch travel record.",
+            error:error.message
+        });
     }
 }
 
 //to be used only for testing purpose...
 const setTravelRequestStatusToPending = async(req,res)=>{
     try {
-        const {travelId}= req.body;
+        const {travelId}= req.query;
         if(!travelId){
             return res.status(400).json({
                 success:false,
@@ -353,19 +431,40 @@ const setTravelRequestStatusToPending = async(req,res)=>{
         const isSetPending = await Travel.findByIdAndUpdate({_id:travelId},
             {
                 approvalStatus:"Pending",
-                
-            }
-        )
+                approvedBy:null,
+                reasonForRejection:null
+            },
+            {new:true}
+        );
 
+        if(isSetPending){
+            return res.status(200).json({
+                success:true,
+                message:'Travel Request Set to Pending Successfully.',
+                data:isSetPending
+            });
+        }
+        else{
+            return res.status(400).json({
+                success:false,
+                message:"Travel Request Status Couldn't be set to Pending."
+            });
+        }
     } catch (error) {
-        
+        return res.status(500).json({
+            success:false,
+            message:"Internal Server Error! Couldn't Set Status to pending!",
+            error:error.message
+        });
     }
 }
 
 module.exports={
     addTravel,
-    addNewTrip,
+    addNewSuccessiveTrip,
     approveTravelRequest,
     rejectTravelRequest,
+    showTravelRecords,
+    startTrip,
     setTravelRequestStatusToPending
 }
