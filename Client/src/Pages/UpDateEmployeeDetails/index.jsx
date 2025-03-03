@@ -312,7 +312,7 @@ function Registration() {
     return newErrors;
   };
  
- 
+  const [changedFields, setChangedFields] = useState([]); // Tracks changed fields
   // Handling form data input
   const handleFormData = (e) => {
     const { name, value } = e.target;
@@ -320,6 +320,15 @@ function Registration() {
       ...formData,
       [name]: value,
     });
+
+    // Track changed fields
+  setChangedFields((prev) => {
+    if (!prev.includes(name)) {
+      return [...prev, name];
+    }
+    return prev;
+  });
+
   };
 
 
@@ -375,6 +384,9 @@ function Registration() {
       fileData: formData[field],
     }));
   };
+  
+  
+  
 
   // Handle form submit for updating employee data
   const handleUpdateSubmit = async (e) => {
@@ -389,18 +401,27 @@ function Registration() {
       alert("Please correct the highlighted fields.");
       return;
     }
-
+//  // Prepare payload with only changed fields + updated attachments
+//  const updatedData = {};
+//  changedFields.forEach((field) => {
+//    updatedData[field] = formData[field];
+//  });
+// Prepare payload with only changed fields + updated attachments
+const updatedData = { employeeCode: formData.employeeCode };  // Ensure employeeCode is always included
+changedFields.forEach((field) => {
+  updatedData[field] = formData[field];
+});
     const attachments = prepareAttachments();
 
 
     try {
        
       const payload = {
-        ...formData,
+        ...updatedData,  // Only changed form data
         attachments, // Include only updated attachments
       };
 
-      console.log(payload);
+      console.log("my payloda data is ", payload);
 
         const response = await axios.patch(`${process.env.REACT_APP_SERVER_ADDRESS}/auth/empUpdate`,payload,{
           headers: {

@@ -1,4 +1,5 @@
- import React, { useEffect, useState } from 'react';
+import React, { useEffect, useState } from 'react';
+import { FiSearch } from "react-icons/fi";
 import axios from 'axios';
 
 function Registration() {
@@ -89,7 +90,7 @@ function Registration() {
     companyEmail: "",
     joiningDate: "",
     lastAppraisalDate: "",
-    regisnationDate: "",
+    // regisnationDate: "",
     company: "",
     branch: "",
     department: "",
@@ -237,7 +238,12 @@ function Registration() {
     if (!formData.currentPinCode) newErrors.currentPinCode = 'Current Pin Code is required';
     if (!formData.qualification) newErrors.qualification = 'Qualification is required';
     if (!formData.panCard) newErrors.panCard = 'Pancard Number is required';
-    if (!formData.employeeCode) newErrors.employeeCode = 'Employee Code is required';
+    // if (!formData.employeeCode) newErrors.employeeCode = 'Employee Code is required';
+    if (!formData.employeeCode) {
+      newErrors.employeeCode = "Employee Code is required ";
+    } else if (formData.employeeCode.length < 6 || formData.employeeCode.length > 9) {
+      newErrors.employeeCode = "Employee Code must be between 6 and 9 characters";
+    }
     if (!formData.joiningDate) newErrors.joiningDate = 'Joining Date is required';
     if (!formData.panCardAttachment) newErrors.panCardAttachment = 'Pancard is required';
     if (!formData.aadharCardAttachment) newErrors.aadharCardAttachment = 'Aadhar card is required';
@@ -301,14 +307,12 @@ function Registration() {
     try {
       const response = await axios.post(
         `${process.env.REACT_APP_SERVER_ADDRESS}/auth/show-joiningFormData`,
-        { phoneNumber }
+        {phoneNumber}
       );
   
       if (response?.data?.data) {
         const fetchedData = response?.data?.data;
         
-        
-  
         setFormData((prev) => ({
           ...prev,
           name: fetchedData?.name ?? prev.name,
@@ -409,7 +413,7 @@ function Registration() {
           companyEmail: "",
           joiningDate: "",
           lastAppraisalDate: "",
-          regisnationDate: "",
+          // regisnationDate: "",
           company: "",
           branch: "",
           department: "",
@@ -473,7 +477,7 @@ function Registration() {
               {/* father husband input field  */}
               <div>
                 <label>
-                  <span>Father/Husband Name</span>
+                  <span>Father Name</span>
                   <span className='text-red-600'>*</span>
                 </label>
                 <input type='text' 
@@ -501,7 +505,7 @@ function Registration() {
               </div>
               
               {/* personal phone number field  */}
-              <div>
+              {/* <div>
                 <label>
                   <span>Contact Number</span>
                   <span className='text-red-600'>*</span>
@@ -510,9 +514,48 @@ function Registration() {
                   value={formData.personalPhoneNum}
                   name='personalPhoneNum'
                   onChange={handleFormData}
-                  onBlur={(e) => fetchEmployeeData(e.target.value)}
+                  // onBlur={(e) => fetchEmployeeData(e.target.value)}
+                  onBlur={(e) => {
+                    const phoneNumber = e.target.value.trim();
+                    if (/^\d{10}$/.test(phoneNumber)) {
+                      fetchEmployeeData(phoneNumber);
+                    }
+                  }}
                   className="w-full rounded-md border-2 py-1 px-4  border-gray-400"
                 />
+                <FiSearch />
+                {errors.personalPhoneNum && <span className="text-red-600">{errors.personalPhoneNum}</span>}
+              </div> */}
+
+              <div className="relative">
+                <label>
+                  <span>Contact Number</span>
+                  <span className="text-red-600">*</span>
+                </label>
+
+                {/* Input with Search Icon */}
+                <div className="relative">
+                  <input
+                    type="text"
+                    value={formData.personalPhoneNum}
+                    name="personalPhoneNum"
+                    onChange={handleFormData}
+                    onBlur={(e) => {
+                      const phoneNumber = e.target.value.trim();
+                      if (/^\d{10}$/.test(phoneNumber)) {
+                        fetchEmployeeData(phoneNumber);
+                      }
+                    }}
+                    className="w-full rounded-md border-2 py-1 px-4 border-gray-400 pr-10" // pr-10 for space for the icon
+                  />
+                  
+                  {/* Search Icon */}
+                  <FiSearch 
+                    className="absolute right-3 top-1/2 transform -translate-y-1/2 text-gray-500 cursor-pointer" 
+                    size={20} 
+                  />
+                </div>
+
                 {errors.personalPhoneNum && <span className="text-red-600">{errors.personalPhoneNum}</span>}
               </div>
               
@@ -931,7 +974,7 @@ function Registration() {
               </div>
               
               {/* resign date field  */}
-              <div>
+              {/* <div>
                 <label>
                   <span>Resign Date</span>
                 </label>
@@ -941,9 +984,8 @@ function Registration() {
                   onChange={handleFormData}
                   className="w-full rounded-md border-2 py-1 px-4  border-gray-400"
                 />
-                {/* {errors.regisnationDate && <span className="text-red-600">{errors.regisnationDate}</span>} */}
               </div>
-              
+               */}
               {/* office time policy field  */}
               <div>
                 <label>

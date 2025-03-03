@@ -428,31 +428,22 @@ function FrontPage() {
     setInputData({ ...inputData, [name]: value });
   };
 
-  const validateForm = () => {
-    let formIsValid = true;
-    const newErrors = { employeeCode: "", password: "" };
-
-    if (inputData.employeeCode.length < 6) {
-      newErrors.employeeCode = "User Name must be at least 6 characters long.";
-      formIsValid = false;
-    }
-    if (inputData.password.length < 8) {
-      newErrors.password = "Password is wrong";
-      formIsValid = false;
-    }
-    setErrors(newErrors);
-    return formIsValid;
-  };
+  
+  
 
   const handleSubmit = async (e) => {
     e.preventDefault();
-    if (!validateForm()) return;
+   
+    
 
     try {
       const response = await axios.post(
         `${process.env.REACT_APP_SERVER_ADDRESS}/auth/login`,
         { employeeCode: inputData.employeeCode, password: inputData.password }
       );
+
+      console.log("my login response is ", response);
+
 
       if (response.data.success) {
         toast.success("Login successfully!", { position: "top-right", autoClose: 2000 });
@@ -502,7 +493,6 @@ function FrontPage() {
                   className="w-full py-2 pl-10 pr-4 border-none focus:outline-none"
                 />
               </div>
-              {errors.employeeCode && <span className="text-red-500 text-sm">{errors.employeeCode}</span>}
             </div>
 
             <div className="mb-4">
@@ -521,7 +511,6 @@ function FrontPage() {
                   {isPasswordVisible ? <FaRegEye /> : <FaRegEyeSlash />}
                 </div>
               </div>
-              {errors.password && <span className="text-red-500 text-sm">{errors.password}</span>}
             </div>
 
             <button
