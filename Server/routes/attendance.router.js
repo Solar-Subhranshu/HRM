@@ -19,6 +19,7 @@ router.delete("/delete-manualEntry",tokenVerify(["Admin"]),manualPunchController
 //travel request and attendance
 router.post("/add-travel",tokenVerify(),travelController.addTravel);
 router.post("/add-newSuccessiveTrip",tokenVerify(),travelController.addNewSuccessiveTrip);
+router.get("/start-trip",tokenVerify(),travelController.startTrip);
 router.get("/show-travelRecords",tokenVerify(),travelController.showTravelRecords);
 router.get("/approve-travelRequest",tokenVerify(["Admin"]),travelController.approveTravelRequest);
 router.get("/reject-travelRequest",tokenVerify(["Admin"]),travelController.rejectTravelRequest);

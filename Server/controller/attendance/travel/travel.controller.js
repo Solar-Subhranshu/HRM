@@ -345,11 +345,17 @@ const startTrip = async(req,res)=>{
             });
         }
 
-        const isApproved = await Travel.findById(travelId).lean();
-        if(isApproved.approvalStatus!="Approved"){
+        const tripApprovalStatus = await Travel.findById(travelId).lean();
+        if(tripApprovalStatus.approvalStatus!="Approved"){
             return res.status(400).json({
                 success:false,
                 message:"The Trip you are trying to start is not yet approved."
+            });
+        }
+        if(tripApprovalStatus._id!=employeeId){
+            return res.status(400).json({
+                success:false,
+                message:`You ${req.employeeCode} are not the right person to start this trip!`
             });
         }
 
