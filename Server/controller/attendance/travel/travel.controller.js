@@ -13,9 +13,10 @@ const addTravel = async(req,res)=>{
             travelAttachments,
         }=req.body;
 
+
         const requiredFields = [
             "tripStartDate", 
-            "estimatedEndDat",
+            "estimatedEndDate",
             "destination",
             "purposeOfVisit", 
             "travelAttachments",
@@ -52,6 +53,21 @@ const addTravel = async(req,res)=>{
 
         const correctStartDate = (tripStartDate instanceof Date) ? tripStartDate : new Date(tripStartDate);
         const correctEstimatedEndDate = (estimatedEndDate instanceof Date) ? estimatedEndDate : new Date(estimatedEndDate);
+
+        const currDate = new Date();
+        if(correctStartDate < currDate){
+            return res.status(400).json({
+                success:false,
+                message:"You Can't create Travel Request where Start-Date is lesser than Today."
+            });
+        }
+
+        if(correctEstimatedEndDate < correctStartDate){
+            return res.status(400).json({
+                success:false,
+                message:"You can't create Travel request where Estimated End-Date is Lesser than Start Date."
+            });
+        }
 
         let travelFileUrlArr=[];
         for(let i=0;i<travelAttachments.length;i++){
@@ -120,15 +136,7 @@ const addNewTrip = async(req,res)=>{
             // "previousTripEndDate"
         ];
         
-        // if(!tripStartDate || !estimatedEndDate || !destination || !purposeOfVisit || !modeOfTransport
-        //     || !travelAttachments || !previousTrip || !previousTripEndDate
-        // ){
-        //     return res.status(400).json({
-        //         success:false,
-        //         message:"All fields are required."
-        //     })
-        // }
-
+        
         const missingFields = requiredFields.filter(field => !req.body[field]);
         if (missingFields.length > 0) {
             return res.status(400).json({
@@ -138,7 +146,7 @@ const addNewTrip = async(req,res)=>{
         }
 
         const prevTrip = await Travel.findById(previousTripId).lean();
-        if(!prevTrip.isActive){
+        if(!prevTrip.isActive){ //prevent from adding trip to an already ended travel.
             return res.status(400).json({
                 success:false,
                 message:"New Trip Request can not be added to Travel as it is Not Currently Active"
@@ -154,6 +162,21 @@ const addNewTrip = async(req,res)=>{
         
         const correctStartDate = (tripStartDate instanceof Date) ? tripStartDate : new Date(tripStartDate);
         const correctEstimatedEndDate = (estimatedEndDate instanceof Date) ? estimatedEndDate : new Date(estimatedEndDate);
+        
+        const currDate = new Date();
+        if(correctStartDate < currDate){
+            return res.status(400).json({
+                success:false,
+                message:"You Can't create Travel Request where Start-Date is lesser than Today."
+            });
+        }
+
+        if(correctEstimatedEndDate < correctStartDate){
+            return res.status(400).json({
+                success:false,
+                message:"You can't create Travel request where Estimated End-Date is Lesser than Start Date."
+            });
+        }
         // const correctedPreviousTripEndDate = (previousTripEndDate instanceof Date) ? previousTripEndDate : new Date(previousTripEndDate);
 
         let travelFileUrlArr=[];
@@ -175,13 +198,6 @@ const addNewTrip = async(req,res)=>{
         });
 
         const isSaved = await newTravelTrip.save();
-        // .then((resolve,reject)=>{
-        //     const temp = Travel.findByIdAndUpdate({_id:previousTrip},
-        //         {nextTrip:resolve._id},
-        //         {new:true}        
-        //     )
-        // })
-
 
         if(isSaved){
             return res.status(200).json({
@@ -302,6 +318,14 @@ const rejectTravelRequest = async(req,res)=>{
             message:"Internal Server Error, Travel Form Couldn't be Rejected!",
             error:error.message
         });
+    }
+}
+
+const startTrip = async(req,res)=>{
+    try {
+        
+    } catch (error) {
+        
     }
 }
 

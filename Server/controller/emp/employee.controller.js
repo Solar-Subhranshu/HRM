@@ -384,7 +384,7 @@ const login = async(req,res) =>{
 
         //checking if valid password is given
         const isMatch = await bcrypt.compare(password,empData.password);
-        console.log(isMatch);
+        // console.log(isMatch);
         if(!isMatch){
             return res.status(401).json({
                 success : false,
@@ -409,7 +409,8 @@ const login = async(req,res) =>{
 0
         const accessTokenData= {
             id:empData._id,
-            employeeCode:empData.employeeCode
+            employeeCode:empData.employeeCode,
+            role: empData.department.department
         }
         const accessToken = createAccessToken(accessTokenData);
         const refreshToken = createRefreshToken(empData.employeeCode);
