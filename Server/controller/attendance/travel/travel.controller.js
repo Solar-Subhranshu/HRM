@@ -394,7 +394,7 @@ const showTravelRecords = async(req,res)=>{
         if(employeeTravelRecords){
             return res.status(200).json({
                 success:true,
-                message:`List of all Travel Records for this employee ${employeeId}`,
+                message:`List of all Travel Records for this employee ${req.employeeCode}`,
                 data:employeeTravelRecords || []
             })
         }
@@ -410,6 +410,73 @@ const showTravelRecords = async(req,res)=>{
             message:"Internal Server Error, unable to fetch travel record.",
             error:error.message
         });
+    }
+}
+
+const deleteTrip = async(req,res)=>{
+    try {
+        const employeeId = req.employeeId;
+        const {travelId} = req.query;
+
+        if(!travelId){
+            return res.status(400).json({
+                success:false,
+                message:"Travel-Id is required."
+            });
+        }
+
+        const isExist = await Travel.findById(travelId).lean();
+
+        if(!isExist){
+            return res.status(400).json({
+                success:false,
+                message:"The Trip You are trying to delete doesn't exist in databse."
+            });
+        }
+
+        if(isExist.employeeId != employeeId){
+            return res.status(400).json({
+                success:false,
+                message:`You ${req.employeeCode} are not the right person to delete the Travel.`
+            });
+        }
+
+        if(isExist.approvalStatus!="Pending"){
+            return res.status(400).json({
+                success:false,
+                message:`You can't delete the trip now as it already reviewed by the Admin.`
+            });
+        }
+
+        const isDeleted = await Travel.findByIdAndDelete(travelId);
+
+        if(isDeleted){
+            return res.status(200).json({
+                success:true,
+                message:"Travel Request Deleted Successfully.",
+                data:isDeleted
+            });
+        }
+        else{
+            return res.status(400).json({
+                success:false,
+                message:"Couldn't delete travel request. Try again later."
+            })
+        }
+    } catch (error) {
+        return res.status(500).json({
+            success:false,
+            message:"Internal Server Error! Couldn't Delete Travel Request.",
+            error:error.message
+        })
+    }
+}
+
+const endTrip = async(req,res)=>{  //take end-Date from employee
+    try {
+        
+    } catch (error) {
+        
     }
 }
 
@@ -472,5 +539,6 @@ module.exports={
     rejectTravelRequest,
     showTravelRecords,
     startTrip,
+    deleteTrip,
     setTravelRequestStatusToPending
 }
