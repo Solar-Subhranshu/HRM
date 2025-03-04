@@ -474,9 +474,56 @@ const deleteTrip = async(req,res)=>{
 
 const endTrip = async(req,res)=>{  //take end-Date from employee
     try {
-        
+        const employeeId = req.employeeId;
+        const {travelId}=req.query;
+
+
+
     } catch (error) {
         
+    }
+}
+
+const showTravelRequestToAdmin = async(req,res)=>{
+    try {
+        // const employeeId = req.employeeId;
+        const {requestStatus} = req.query;
+
+        if(!requestStatus){
+            return res.status(400).json({
+                success:false,
+                message:"Request Status is required."
+            })
+        }
+
+        const allowedRequestStatus = ['Pending','Approved','Rejected'];
+        if(!allowedRequestStatus.includes(requestStatus)){
+            return res.status(400).json({
+                success:false,
+                message:"Value of request status is wrong. Send only 'Pending','Approved','Rejected' as status."
+            })
+        }
+        const allTravelRequests = await Travel.find({approvalStatus:requestStatus}).lean();
+
+        if(allTravelRequests){
+            return res.status(200).json({
+                success:true,
+                message:`List of ${requestStatus} Travel Requests`,
+                data:allTravelRequests || []
+            })
+        }
+        else{
+            return res.status(400).json({
+                success:false,
+                message:"Couldn't fetch data from db, due to some network issue."
+            })
+        }
+    } catch (error) {
+        return res.status(500).json({
+            success:false,
+            message:"Internal Server Error! Couldn't fetch data from db",
+            error:error.message
+        });
     }
 }
 
@@ -540,5 +587,6 @@ module.exports={
     showTravelRecords,
     startTrip,
     deleteTrip,
+    showTravelRequestToAdmin,
     setTravelRequestStatusToPending
 }

@@ -23,8 +23,9 @@ router.get("/start-trip",tokenVerify(),travelController.startTrip);
 router.delete("/delete-trip",tokenVerify(),travelController.deleteTrip);
 router.get("/show-travelRecords",tokenVerify(),travelController.showTravelRecords);
 router.get("/approve-travelRequest",tokenVerify(["Admin"]),travelController.approveTravelRequest);
-router.get("/reject-travelRequest",tokenVerify(["Admin"]),travelController.rejectTravelRequest);
+router.put("/reject-travelRequest",tokenVerify(["Admin"]),travelController.rejectTravelRequest);
 router.get("/setStatus-Pending",tokenVerify(["Admin"]),travelController.setTravelRequestStatusToPending);
+router.get("/show-travelRecordToAdmin",tokenVerify(["Admin"]),travelController.showTravelRequestToAdmin);
 
 //reports
 router.post("/daily-report-download",tokenVerify(["Admin"]),reportController.downloadDailyReport);
