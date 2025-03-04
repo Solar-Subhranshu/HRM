@@ -26,6 +26,8 @@ router.get("/approve-travelRequest",tokenVerify(["Admin"]),travelController.appr
 router.put("/reject-travelRequest",tokenVerify(["Admin"]),travelController.rejectTravelRequest);
 router.get("/setStatus-Pending",tokenVerify(["Admin"]),travelController.setTravelRequestStatusToPending);
 router.get("/show-travelRecordToAdmin",tokenVerify(["Admin"]),travelController.showTravelRequestToAdmin);
+router.get("/end-trip",tokenVerify(),travelController.endTrip);
+
 
 //reports
 router.post("/daily-report-download",tokenVerify(["Admin"]),reportController.downloadDailyReport);

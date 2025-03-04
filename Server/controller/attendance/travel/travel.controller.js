@@ -1,5 +1,7 @@
 const Travel = require("../../../models/travel/travel.model");
+const Employee = require("../../../models/auth/employee.model");
 const handleBase64Images = require("../../../middlewares/base64ImageHandler");
+
 
 const addTravel = async(req,res)=>{
     try {
@@ -28,6 +30,14 @@ const addTravel = async(req,res)=>{
                 success:false,
                 message:`The following fields are missing : ${missingFields.join(", ")}`,
             });   
+        }
+
+        const isEmployee = await Employee.findById(employeeId).populate("workType").lean();
+        if(isEmployee.workType.workType==="Office-Only"){
+            return res.status(400).json({
+                success:false,
+                message:"Your Work-type does not allow you to Travel, as it is says Office-Only."
+            });
         }
 
         if(!Array.isArray(travelAttachments) || travelAttachments.length===0){
@@ -476,11 +486,60 @@ const endTrip = async(req,res)=>{  //take end-Date from employee
     try {
         const employeeId = req.employeeId;
         const {travelId}=req.query;
-
-
-
-    } catch (error) {
         
+        const currTime = new Date();
+        
+        if(!travelId){
+            return res.status(400).json({
+                success:false,
+                message:"Travel-Id is required."
+            });
+        }
+
+        const isExists = await Travel.findById(travelId).lean();
+        if(!isExists){
+            return res.status(400).json({
+                success:false,
+                message:"Travel request with travel-id Not Found in Database."
+            });
+        }
+        if(!isExists.isActive){
+            return res.status(400).json({
+                success:false,
+                message:"You can not end a Travel which is not active !"
+            });
+        }
+
+        if(isExists.employeeId!=employeeId){
+            return res.status(400).json({
+                success:false,
+                message:`You ${req.employeeCode} are not the right person to end this trip. Person only who started the trip can end the trip.`
+            });
+        }
+
+        const isEnded = await Travel.findByIdAndUpdate({_id:travelId},{
+            tripEndDate:currTime,
+        },{new:true});
+
+        if(isEnded){
+            return res.status(200).json({
+                success:true,
+                message:"Travel Ended Successfully!",
+                data:isEnded
+            });
+        }
+        else{
+            return res.status(400).json({
+                success:false,
+                message:"Travel request couldn't be Ended. Try Again Later."
+            });
+        }
+    } catch (error) {
+        return res.status(500).json({
+            success:false,
+            message:"Internal Server Error, Couldn't End the Travel",
+            error:error.message
+        });
     }
 }
 
@@ -503,7 +562,11 @@ const showTravelRequestToAdmin = async(req,res)=>{
                 message:"Value of request status is wrong. Send only 'Pending','Approved','Rejected' as status."
             })
         }
-        const allTravelRequests = await Travel.find({approvalStatus:requestStatus}).lean();
+        const allTravelRequests = await Travel.find({approvalStatus:requestStatus})
+                                    .populate({
+                                        path:"employeeId",
+                                        select:"name personalPhoneNum companyPhoneNum"
+                                    }).lean();
 
         if(allTravelRequests){
             return res.status(200).json({
@@ -586,6 +649,7 @@ module.exports={
     rejectTravelRequest,
     showTravelRecords,
     startTrip,
+    endTrip,
     deleteTrip,
     showTravelRequestToAdmin,
     setTravelRequestStatusToPending
