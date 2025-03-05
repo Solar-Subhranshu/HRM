@@ -362,7 +362,7 @@ const startTrip = async(req,res)=>{
                 message:"The Trip you are trying to start is not yet approved."
             });
         }
-        if(tripApprovalStatus._id!=employeeId){
+        if(tripApprovalStatus.employeeId!=employeeId){
             return res.status(400).json({
                 success:false,
                 message:`You ${req.employeeCode} are not the right person to start this trip!`
@@ -482,7 +482,7 @@ const deleteTrip = async(req,res)=>{
     }
 }
 
-const endTrip = async(req,res)=>{  //take end-Date from employee
+const endTrip = async(req,res)=>{
     try {
         const employeeId = req.employeeId;
         const {travelId}=req.query;
@@ -543,6 +543,76 @@ const endTrip = async(req,res)=>{  //take end-Date from employee
     }
 }
 
+const requestEstimatedEndDateUpdation = async(req,res)=>{
+    try {
+        const employeeId = req.employeeId;
+        const {travelId,requestedEndDateEstimate} = req.body;
+
+        if(!travelId || !requestedEndDateEstimate){
+            return res.status(400).json({
+                success:false,
+                message:"Travel-Id and Requested-end-date-estimate is required."
+            });
+        }
+
+        const travelRecord = await Travel.findById(travelId).lean();
+        if(!travelRecord){
+            return res.status(400).json({
+                success:false,
+                message:"Travel Record couldn't be fetched using the provided Travel-id"
+            })
+        }
+
+        if(travelRecord.approvalStatus!=="Approved"){
+            return res.status(400).json({
+                success:false,
+                message:"Your Travel is not Approved."
+            });
+        }
+        if(!travelRecord.isActive){
+            return res.status(400).json({
+                success:false,
+                message:"This Trip is not Active."
+            });
+        }
+        if(travelRecord.employeeId!==employeeId){
+            return res.status(400).json({
+                success:false,
+                message:"You are not the right person to request for this new estimate."
+            });
+        }
+
+        const newExtension = {
+            requestedEndDateEstimate,
+            requestedOn:new Date(),
+        }
+
+        const isSaved = await Travel.findByIdAndUpdate({_id:travelId},{
+            $push:{extensions:newExtension},
+        },{new:true});
+
+        if(isSaved){
+            return res.status(200).json({
+                success:true,
+                message:"Your Extension Request has been Submitted Successfully!",
+
+            })
+        }
+        else{
+            return res.status(400).json({
+                success:false,
+                message:"We faced some issue while saving your request, try again."
+            })
+        }
+    } catch (error) {
+        return res.status(500).json({
+                success:false,
+                message:"Internal Server Error! Couldn't Request for new estimate.",
+                error:error.message
+            });
+    }
+}
+
 const showTravelRequestToAdmin = async(req,res)=>{
     try {
         // const employeeId = req.employeeId;
@@ -589,7 +659,6 @@ const showTravelRequestToAdmin = async(req,res)=>{
         });
     }
 }
-
 //to be used only for testing purpose...
 const setTravelRequestStatusToPending = async(req,res)=>{
     try {
@@ -651,6 +720,7 @@ module.exports={
     startTrip,
     endTrip,
     deleteTrip,
+    requestEstimatedEndDateUpdation,
     showTravelRequestToAdmin,
     setTravelRequestStatusToPending
 }

@@ -27,6 +27,7 @@ router.put("/reject-travelRequest",tokenVerify(["Admin"]),travelController.rejec
 router.get("/setStatus-Pending",tokenVerify(["Admin"]),travelController.setTravelRequestStatusToPending);
 router.get("/show-travelRecordToAdmin",tokenVerify(["Admin"]),travelController.showTravelRequestToAdmin);
 router.get("/end-trip",tokenVerify(),travelController.endTrip);
+router.post("/add-endDateExtension",tokenVerify(),travelController.requestEstimatedEndDateUpdation);
 
 
 //reports

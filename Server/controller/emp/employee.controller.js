@@ -977,7 +977,7 @@ const updateEmployee= async(req,res)=>{
             companyEmail,
             joiningDate,
             lastAppraisalDate,
-            regisnationDate,
+            // regisnationDate,
             company,
             branch,
             department,
