@@ -518,7 +518,9 @@ const endTrip = async(req,res)=>{
         }
 
         const isEnded = await Travel.findByIdAndUpdate({_id:travelId},{
+            isActive:false,
             tripEndDate:currTime,
+
         },{new:true});
 
         if(isEnded){
