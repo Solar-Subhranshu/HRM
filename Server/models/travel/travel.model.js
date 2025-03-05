@@ -92,7 +92,7 @@ const travelSchema = new mongoose.Schema({
             extensionRejectionReason :{
                 type:String,
                 trim:true,
-                // default:null
+                default:null
             }
         }
     ]

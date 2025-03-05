@@ -235,7 +235,7 @@ const addNewSuccessiveTrip = async(req,res)=>{
 const approveTravelRequest = async(req,res)=>{
     try {
         const employeeId = req.employeeId;
-        const {travelId}=req.query;
+        const {travelId,extensionId}=req.query;
         if(!travelId){
             return res.status(400).json({
                 success:false,
@@ -243,14 +243,56 @@ const approveTravelRequest = async(req,res)=>{
             });
         }
 
-        const isAlreadyRejected = await Travel.findById(travelId).lean();
-        if(isAlreadyRejected.approvalStatus==="Rejected"){
+        const travelRecord = await Travel.findById(travelId).lean();
+
+        if(extensionId){
+            const extnRecord = travelRecord.extensions.filter((extItems)=>{ return extItems._id.toString()===extensionId });
+            if(extnRecord[0].extensionStatus!=="Pending"){
+                // console.log(extnRecord[0].extensionStatus);
+                // console.log(extnRecord[0].extensionStatus==="Pending")
+                return res.status(400).json({
+                    success:false,
+                    message:`The Extension-Request you're trying to approve, already has status : ${extnRecord[0].extensionStatus}.`,
+                    data:travelRecord.extensions
+                });
+            }
+            else{
+                const isExtApproved = await Travel.findOneAndUpdate(
+                    {_id:travelId,"extensions._id":extensionId},
+                    {
+                        $set:{
+                            "extensions.$.extensionStatus":"Approved",
+                            "extensions.$.reviewedBy":employeeId,
+                            "extensions.$.reviewDate":new Date(),
+                        }
+                    },
+                    {new:true}
+                );
+                if(isExtApproved){
+                    return res.status(200).json({
+                        success:true,
+                        message:"The Extension-Request has been approved successfully.",
+                        data: isExtApproved 
+                    });
+                }
+                else{
+                    return res.status(400).json({
+                        success:false,
+                        message:"The Extension-Request was not approved. Try Again"
+                    })
+                }
+            }
+            
+        }
+
+
+        if(travelRecord.approvalStatus==="Rejected"){
             return res.status(400).json({
                 success:false,
                 message:"The Travel request you are trying to Approve is already Rejected. You may not Approve it now."
             })
         }
-        if(isAlreadyRejected.approvalStatus==="Approved"){
+        if(travelRecord.approvalStatus==="Approved"){
             return res.status(400).json({
                 success:false,
                 message:"The Travel request you are trying to Approve is already Approved. You may not Approve it now."
@@ -289,7 +331,7 @@ const approveTravelRequest = async(req,res)=>{
 const rejectTravelRequest = async(req,res)=>{
     try {
         const employeeId = req.employeeId;
-        const {travelId,reasonForRejection}=req.body;
+        const {travelId,reasonForRejection,extensionId}=req.body;
 
         if(!travelId || !reasonForRejection){
             return res.status(400).json({
@@ -298,14 +340,58 @@ const rejectTravelRequest = async(req,res)=>{
             });
         }
 
-        const isAlreadyApproved = await Travel.findById(travelId).lean();
-        if(isAlreadyApproved.status==="Approved"){
+        const travelRecord = await Travel.findById(travelId).lean();
+        // console.log("record ", travelRecord.extensions);
+
+        if(extensionId){
+            const extnRecord = travelRecord.extensions.filter((extItem)=>(extItem._id.toString()===extensionId));
+            // console.log("record ", extnRecord);
+            if(extnRecord[0].extensionStatus!=="Pending"){
+
+                console.log(extnRecord[0].extensionStatus==="Pending")
+                return res.status(400).json({
+                    success:false,
+                    message:`The Extension-Request you're trying to reject, already has status : ${extnRecord[0].extensionStatus}.`,
+                    data:extnRecord
+                });
+            }
+            else{
+                const isExtRejected = await Travel.findOneAndUpdate(
+                    {_id:travelId,"extensions._id":extensionId},
+                    {
+                        $set:{
+                            "extensions.$.extensionStatus":"Rejected",
+                            "extensions.$.reviewedBy":employeeId,
+                            "extensions.$.reviewDate":new Date(),
+                            "extensions.$.extensionRejectionReason":reasonForRejection
+                        }
+                    },
+                    {new:true}
+                );
+
+                if(isExtRejected){
+                    return res.status(200).json({
+                        success:false,
+                        message:"The Extension-Request has been rejected successfully.",
+                        data: isExtRejected
+                    })
+                }
+                else{
+                    return res.status(400).json({
+                        success:false,
+                        message:"The Extension-Request was not rejected. Try Again"
+                    });
+                }
+            }
+        }
+
+        if(travelRecord.status==="Approved"){
             return res.status(400).json({
                 success:false,
                 message:"The Travel request you are trying to reject is already Approved. You may not reject it now."
             });
         } 
-        if(isAlreadyApproved.status==="Rejected"){
+        if(travelRecord.status==="Rejected"){
             return res.status(400).json({
                 success:false,
                 message:"The Travel request you are trying to reject is already Rejected. You may not reject it now."
@@ -496,21 +582,28 @@ const endTrip = async(req,res)=>{
             });
         }
 
-        const isExists = await Travel.findById(travelId).lean();
-        if(!isExists){
+        const isTravelRecord = await Travel.findById(travelId).lean();
+        if(!isTravelRecord){
             return res.status(400).json({
                 success:false,
                 message:"Travel request with travel-id Not Found in Database."
             });
         }
-        if(!isExists.isActive){
+        if(isTravelRecord.approvalStatus!=="Approved"){
+            return res.status(400).json({
+                success:false,
+                message:"You can not end a Travel which is not yet Approved !"
+            });
+        }
+
+        if(!isTravelRecord.isActive){
             return res.status(400).json({
                 success:false,
                 message:"You can not end a Travel which is not active !"
             });
         }
 
-        if(isExists.employeeId!=employeeId){
+        if(isTravelRecord.employeeId!=employeeId){
             return res.status(400).json({
                 success:false,
                 message:`You ${req.employeeCode} are not the right person to end this trip. Person only who started the trip can end the trip.`
@@ -577,11 +670,21 @@ const requestEstimatedEndDateUpdation = async(req,res)=>{
                 message:"This Trip is not Active."
             });
         }
-        if(travelRecord.employeeId!==employeeId){
+        if(travelRecord.employeeId!=employeeId){
             return res.status(400).json({
                 success:false,
                 message:"You are not the right person to request for this new estimate."
             });
+        }
+
+        if(travelRecord.extensions){
+            const isPending = travelRecord.extensions.filter((item)=>(item.extensionStatus==="Pending"));
+            if(isPending.length!==0){
+                return res.status(400).json({
+                    success:false,
+                    message:"You already have one extension request which is in pending. So you can't add more requests until it is Approved or Rejected."
+                });
+            }
         }
 
         const newExtension = {
@@ -634,11 +737,16 @@ const showTravelRequestToAdmin = async(req,res)=>{
                 message:"Value of request status is wrong. Send only 'Pending','Approved','Rejected' as status."
             })
         }
-        const allTravelRequests = await Travel.find({approvalStatus:requestStatus})
-                                    .populate({
-                                        path:"employeeId",
-                                        select:"name personalPhoneNum companyPhoneNum"
-                                    }).lean();
+        const allTravelRequests = await Travel.find({
+            $or :[
+                    {approvalStatus:requestStatus},
+                    {approvalStatus:"Approved","extensions.extensionStatus":requestStatus}
+                ]
+            })
+            .populate({
+                path:"employeeId",
+                select:"name personalPhoneNum companyPhoneNum"
+            }).lean();
 
         if(allTravelRequests){
             return res.status(200).json({
