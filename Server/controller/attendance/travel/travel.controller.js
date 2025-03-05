@@ -685,6 +685,8 @@ const setTravelRequestStatusToPending = async(req,res)=>{
         const isSetPending = await Travel.findByIdAndUpdate({_id:travelId},
             {
                 approvalStatus:"Pending",
+                isActive:false,
+                tripEndDate:null,
                 approvedBy:null,
                 reasonForRejection:null
             },
