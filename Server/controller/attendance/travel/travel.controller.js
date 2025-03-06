@@ -281,10 +281,8 @@ const approveTravelRequest = async(req,res)=>{
                         message:"The Extension-Request was not approved. Try Again"
                     })
                 }
-            }
-            
+            }   
         }
-
 
         if(travelRecord.approvalStatus==="Rejected"){
             return res.status(400).json({
@@ -297,6 +295,24 @@ const approveTravelRequest = async(req,res)=>{
                 success:false,
                 message:"The Travel request you are trying to Approve is already Approved. You may not Approve it now."
             })
+        }
+
+        //logic for setting new successive travel request
+        /*
+            if approved, then change the next-head-> of the previous-travel.
+            do-not change the isActive status, as it should get changed when the new travel is started.
+         */
+        if(travelRecord.previousTrip!==null){
+            const updatedPreviousHead = await Travel.findByIdAndUpdate(travelRecord.previousTrip,{
+                nextTrip:travelRecord.previousTrip
+            },{new:true});
+
+            if(!updatedPreviousHead){
+                return res.status(400).json({
+                    success:false,
+                    message:"We faced an issue while updating the approval for this request. Try Again",
+                });
+            }
         }
 
         const isSaved = await Travel.findByIdAndUpdate({_id:travelId},
@@ -452,6 +468,15 @@ const startTrip = async(req,res)=>{
             return res.status(400).json({
                 success:false,
                 message:`You ${req.employeeCode} are not the right person to start this trip!`
+            });
+        }
+
+        const previouslyActiveTrip = await Travel.findOne({employeeId,isActive:true}).lean();
+        if(previouslyActiveTrip){
+            return res.status(400).json({
+                success:false,
+                message:"You already have an active trip. Please end that to start this trip.",
+                data:previouslyActiveTrip
             });
         }
 
