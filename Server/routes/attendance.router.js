@@ -19,10 +19,16 @@ router.delete("/delete-manualEntry",tokenVerify(["Admin"]),manualPunchController
 //travel request and attendance
 router.post("/add-travel",tokenVerify(),travelController.addTravel);
 router.post("/add-newSuccessiveTrip",tokenVerify(),travelController.addNewSuccessiveTrip);
+router.get("/start-trip",tokenVerify(),travelController.startTrip);
+router.delete("/delete-trip",tokenVerify(),travelController.deleteTrip);
 router.get("/show-travelRecords",tokenVerify(),travelController.showTravelRecords);
 router.get("/approve-travelRequest",tokenVerify(["Admin"]),travelController.approveTravelRequest);
-router.get("/reject-travelRequest",tokenVerify(["Admin"]),travelController.rejectTravelRequest);
+router.put("/reject-travelRequest",tokenVerify(["Admin"]),travelController.rejectTravelRequest);
 router.get("/setStatus-Pending",tokenVerify(["Admin"]),travelController.setTravelRequestStatusToPending);
+router.get("/show-travelRecordToAdmin",tokenVerify(["Admin"]),travelController.showTravelRequestToAdmin);
+router.get("/end-trip",tokenVerify(),travelController.endTrip);
+router.post("/add-endDateExtension",tokenVerify(),travelController.requestEstimatedEndDateUpdation);
+
 
 //reports
 router.post("/daily-report-download",tokenVerify(["Admin"]),reportController.downloadDailyReport);

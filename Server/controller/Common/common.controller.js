@@ -1309,7 +1309,7 @@ const addOfficeTimePolicy = async (req,res)=>{
         }=req.body;
 
 
-        if(!policyName || !permittedLateArrival ||!pByTwo || !absent || !multiPunch){
+        if(!policyName || !permittedLateArrival ||!pByTwo || !absent){
             return res.status(400).json({
                 success:false,
                 message: "Required Fields Can't be Empty"

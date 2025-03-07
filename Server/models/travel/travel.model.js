@@ -50,6 +50,9 @@ const travelSchema = new mongoose.Schema({
         type:mongoose.Schema.Types.ObjectId,
         ref:"Employee"
     },
+    approvalDate:{
+        type:Date,
+    },
     approvalStatus:{
         type:String,
         enum:["Pending","Approved","Rejected"],
@@ -63,7 +66,36 @@ const travelSchema = new mongoose.Schema({
     isActive:{  // will check if a particular trip has started or not.
         type:Boolean,
         default:false
-    }
+    },
+    extensions : [
+        {
+            requestedEndDateEstimate :{  //new requested estimate
+                type:Date,
+                // required:true
+            },
+            requestedOn:{ // when this extension was requested
+                type:Date,
+                default:Date.now
+            },
+            extensionStatus:{
+                type:String,
+                enum : ['Pending', 'Approved', 'Rejected'],
+                default: 'Pending'
+            },
+            reviewedBy:{
+                type:mongoose.Schema.Types.ObjectId,
+                ref:"Employee"
+            },
+            reviewDate:{  // date on which the extension was reviewed
+                type:Date
+            },
+            extensionRejectionReason :{
+                type:String,
+                trim:true,
+                default:null
+            }
+        }
+    ]
 },{timestamps:true});
 
 const Travel = mongoose.model("Travel",travelSchema);

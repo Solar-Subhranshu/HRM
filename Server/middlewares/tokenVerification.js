@@ -16,6 +16,7 @@ const tokenVerify = (roles=[]) =>{
             const securityKey = process.env.SECRET_KEY;
             const decodedData = jwt.verify(token, securityKey);
             req.employeeId = decodedData?.data?.id;
+            req.employeeCode = decodedData?.data?.employeeCode;
             req.employeeRole = decodedData?.data?.role;
 
             const userRole= decodedData?.data?.role;
