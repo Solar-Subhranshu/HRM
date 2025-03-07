@@ -44,10 +44,10 @@ const Index = () => {
     
 
     return(
-        <div className='flex flex-col gap-4 mx-2 pt-3' style={{ height: '90vh', overflow: 'auto'}}>
+        <div className='flex flex-col gap-4 mx-2 pt-3 ' style={{ height: '90vh', overflow: 'auto'}}>
             <div className='flex justify-between' style={{ height: '40vh'}} >
                 <AttendenceChart />
-                <div className='flex flex-col justify-between items-end' style={{ height: '40vh',  marginTop: -24  }}>
+                <div className='flex flex-col justify-between items-end' style={{ height: '40vh', marginTop: -24 }}>
                     <div className='md:flex'>
                         <Card
                             iconName={Icon4}

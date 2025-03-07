@@ -1,0 +1,39 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+
+.bgMainColor{
+    background-color: #8B5DFF;
+}
+.irish-grover-regular {
+    font-family: "Irish Grover", serif;
+    font-weight: 400;
+    font-style: normal;
+}
+
+
+.table-cell {
+    max-width: 150px;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+    font-weight: normal; /* Ensure normal font weight */
+    color: inherit; /* Ensure default color */
+  }
+
+  .table-cell-multiline {
+    max-height: 50px;
+    overflow: hidden;
+    display: -webkit-box;
+    -webkit-box-orient: vertical;
+    -webkit-line-clamp: 2;
+    text-overflow: ellipsis;
+    word-wrap: break-word;
+    font-weight: normal; /* Ensure normal font weight */
+    color: inherit; /* Ensure default color */
+    border-bottom : none;
+    border-left: none;
+    border-right: none;
+  }
+  

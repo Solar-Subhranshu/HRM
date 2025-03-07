@@ -456,7 +456,7 @@ function Registration() {
         <form method='post' onSubmit={handleFormSubmit}>
           <fieldset className='border-2  rounded-md mb-4' style={{ borderColor: '#740FD6'}}>
             <legend className='font-semibold text-lg ml-8 ' style={{color : '#740FD6'}}> &nbsp;&nbsp; Personal Details &nbsp;&nbsp;</legend>
-            <div className='grid gap-3 m-6 md:grid-cols-4'>
+            <div className='grid gap-3 m-6 grid-cols-1 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4'>
 
 
               {/* name input field   */}
@@ -537,7 +537,7 @@ function Registration() {
                 <div className="relative">
                   <input
                     type="text"
-                    defaultValue={formData.personalPhoneNum}
+                    value={formData.personalPhoneNum}
                     name="personalPhoneNum"
                     onChange={handleFormData}
                     // onBlur={(e) => {
@@ -717,7 +717,7 @@ function Registration() {
           
           <fieldset className='border-2  rounded-md mb-4' style={{ borderColor: '#740FD6'}}>
             <legend className='font-semibold text-lg ml-8' style={{color : '#740FD6'}}>&nbsp;&nbsp; Bank Details &nbsp;&nbsp;</legend>
-            <div className='grid gap-3 m-6 md:grid-cols-4'>
+            <div className='grid gap-3 m-6 grid-cols-1 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4'>
               
               {/* bank name field  */}
               <div>
@@ -817,7 +817,7 @@ function Registration() {
           
           <fieldset className='border-2  rounded-md mb-4' style={{ borderColor: '#740FD6'}}>
             <legend className='font-semibold text-lg ml-8' style={{color : '#740FD6'}}> &nbsp;&nbsp; Company Details &nbsp;&nbsp;</legend>
-            <div className='grid gap-3 m-6 md:grid-cols-4'>
+            <div className='grid gap-3 m-6 grid-cols-1 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4'>
 
               {/* Hr Name field    */}
               <div>
@@ -1154,7 +1154,7 @@ function Registration() {
 
           <fieldset className='border-2  rounded-md' style={{ borderColor: '#740FD6'}}>
             <legend className='font-semibold text-lg ml-8' style={{color : '#740FD6'}}> &nbsp;&nbsp; Attachments &nbsp;&nbsp;</legend>
-            <div className='grid gap-3 m-6 md:grid-cols-4'>
+            <div className='grid gap-3 m-6 grid-cols-1 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4'>
               
               {/* aadhar card attachments field  */}
               <div>
@@ -1257,7 +1257,7 @@ function Registration() {
           
           <fieldset className='border-2  rounded-md mb-4' style={{ borderColor: '#740FD6'}}>
             <legend className='font-semibold text-lg ml-8 ' style={{color : '#740FD6'}}> &nbsp;&nbsp; Salary Details &nbsp;&nbsp;</legend>
-            <div className='grid gap-3 m-6 md:grid-cols-4'>
+            <div className='grid gap-3 m-6 grid-cols-1 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4'>
 
 
               {/* ctc input field   */}

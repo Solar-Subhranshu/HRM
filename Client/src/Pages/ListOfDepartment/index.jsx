@@ -581,7 +581,7 @@ function TableListofCompany2() {
 
       <div className="md:flex justify-between gap-20 pt-2  w-full">
         {/* Department Table */}
-        <div className='w-full max-h-[380px] overflow-y-auto'>
+        <div className='w-full max-h-[360px] overflow-y-auto'>
           <table className="table-auto  border border-gray-300 w-full">
             <thead className="border border-gray-300 sticky top-0 z-10 shadow">
               <tr>
@@ -609,7 +609,7 @@ function TableListofCompany2() {
         
 
         {/* Designation Table */}
-        <div className='w-full pr-2 max-h-[380px] overflow-y-auto'>
+        <div className='w-full pr-2 max-h-[360px] overflow-y-auto'>
           <table className="table-auto  border border-gray-300 w-full">
             <thead className="border border-gray-300 sticky top-0 z-10 shadow">
               <tr>

@@ -1,36 +1,49 @@
 import React, { useEffect, useState } from 'react';
-import { FiSearch } from "react-icons/fi";
 import axios from 'axios';
+import Cookies from "js-cookie";
+import { useNavigate } from 'react-router-dom';
 
 function Registration() {
+
+  const navigate = useNavigate();
+
+  const [isImageOpen, setIsImageOpen] = useState(false);
+    const [imageSize, setImageSize] = useState(100); // Initial image size in percentage
+
   const [errors, setErrors] = useState({});
   const [departmentName, setDepartmentName] = useState([]);
   const [DesginationData, setDeginationData] = useState([]);
   const [companynamedata, setCompanyName] = useState([]);
   const [branchnamedata, setBranchNameData] = useState([]);
   const [qulificationdata, setQulificationData] = useState([]);
+  const [workTypeData, setWorkTypeData]=useState([]);
+  
+  const [qualificationId, setQualificationId] = useState("");
+  const [companyId, setCompanyId]=useState("");
+  const [departmentId, setDepartmentId]=useState('');
+
   const [degreeData, setDegreeData] = useState([]);
   const [shiftName, setShiftName] = useState([]);
-  const [workTypeData, setWorkTypeData]=useState([]);
-
   const [officeTimePolicy, setOfficeTimePolicy] = useState([]);
-  
-  const [joiningHrNameData, setJoiningHrNameData]=useState([]);
-
+  const [reportingManager, setReportingManager] = useState([]);
   const [selectedDepartmentId, setSelectedDepartmentId] = useState('');
   const [selectedCompanyNameId, setSelectedCompanyNameId] = useState('');
-  const [selectedQualificationId, setSelectedQualificationId] = useState('');
+  const [selectedQualificationId, setSelectedQualificationId] = useState();
+
+  const [updatedAttachments, setUpdatedAttachments] = useState([]); // Tracks updated attachments
 
   const [isOpen, setIsOpen] = useState(false);
   const [searchTerm, setSearchTerm] = useState('');
   const [reportingManagers, setReportingManagers] = useState([]);
   const [selectedManager, setSelectedManager] = useState(null);
 
+   const [joiningHrNameData, setJoiningHrNameData]=useState([]);
+
   useEffect(() => {
     // Fetch the reporting managers data from the backend
-    axios.get(`${process.env.REACT_APP_SERVER_ADDRESS}/auth/show-reportingManager`)
+    axios.get(`${process.env.REACT_APP_SERVER_ADDRESS}/auth/showAllEmployee`)
       .then((response) => {
-        setReportingManagers(response?.data?.data);
+        setReportingManagers(response.data.data);
       })
       .catch((error) => {
         console.error('Error fetching reporting managers:', error);
@@ -52,7 +65,7 @@ function Registration() {
     setSelectedManager(manager);
     setFormData((prev) => ({
       ...prev,
-      reportingManager: manager._id, // Send only the ID to the backend
+      reportingManager: manager?._id, // Send only the ID to the backend
     }));
     setIsOpen(false);  // Close dropdown after selection
   };
@@ -61,8 +74,6 @@ function Registration() {
   const filteredManagers = reportingManagers.filter((manager) =>
     manager.name.toLowerCase().includes(searchTerm.toLowerCase())
   );
-
-
 
   const [formData, setFormData] = useState({
     employeeCode: "",
@@ -73,8 +84,8 @@ function Registration() {
     personalEmail: "",
     panCard: "",
     aadharCard: "",
-    degree : "",
     qualification: "",
+    degree: "",
     permanentAddress: "",
     permanentPinCode: "",
     currentAddress: "",
@@ -90,7 +101,7 @@ function Registration() {
     companyEmail: "",
     joiningDate: "",
     lastAppraisalDate: "",
-    // regisnationDate: "",
+    regisnationDate: "",
     company: "",
     branch: "",
     department: "",
@@ -103,107 +114,159 @@ function Registration() {
     confirmAccountNumber: "",
     officeTimePolicy: "",
     shift: "",
-    department: "",
-    designation: "",
-    workType:'',
-    joiningHR : " ",
-    biometricPunchId: " ",
-    ctc: "",
-    inHand: "",
-    employeeESI: "",
-    employeePF: "",
-    employerESI: "",
-    employerPF: "",
+    workType : "",
+    joiningHR : ''
   });
+  
+  // Fetch data from cookies and set to formData state
+  useEffect(() => {
+    const employeeData = Cookies.get("EmployeeFormData");
+    console.log('My data', JSON.parse(employeeData));
+    
+    if (employeeData) {
+      try {
+        const parsedData = JSON.parse(employeeData);
+        console.log("parseData",parsedData.joiningFormAttachment)
+       
+      // Fetch attachments from cookies (assuming they're stored in Base64 format)
+      const attachments = {
+        aadharCardAttachment: parsedData.aadharCardAttachment || "",
+        panCardAttachment: parsedData.panCardAttachment|| "",
+        bankAttachment: parsedData.bankAttachment || "",
+        joiningFormAttachment: parsedData.joiningFormAttachment || "",
+        otherAttachment: parsedData.otherAttachment || "",
+      };
+
+       console.log('my attachment ', attachments)
+        setQualificationId(parsedData?.qualification?._id)
+        setCompanyId(parsedData?.company?._id);
+        setDepartmentId(parsedData?.department?._id);
+        setFormData((prev) => ({
+          ...prev,
+          ...parsedData,
+          qualification: parsedData?.qualification?._id,
+          company:parsedData?.company?._id,
+          department:parsedData?.department?._id,
+          officeTimePolicy:parsedData?.officeTimePolicy?._id,
+          shift:parsedData?.shift?._id,
+          workType:parsedData?.workType?._id,
+          reportingManager:parsedData?.reportingManager?._id,
+          joiningHR:parsedData?.joiningHR?._id,
+          dateOfBirth: parsedData?.dateOfBirth ? parsedData?.dateOfBirth.split('T')[0] : '',
+          joiningDate:parsedData?.joiningDate?parsedData?.joiningDate.split('T')[0]: "",
+          lastAppraisalDate:parsedData.lastAppraisalDate?parsedData.lastAppraisalDate.split('T')[0] : '',
+          regisnationDate:parsedData.regisnationDate?parsedData.regisnationDate.split('T')[0] : '',
+          ...attachments,
+        }));
+      } catch (error) {
+        console.error("Error parsing employee data from cookies:", error);
+      }
+    }
+  }, []);
+  
+  // image are expend logic 
+    const handleImageClick = () => {
+      setIsImageOpen(true);  // Open the image and increase its size
+      setImageSize(300);     // Increase size to 300% when clicked
+    };
+  
+    const handleClose = () => {
+      setIsImageOpen(false); // Close the image and revert to normal size
+      setImageSize(100);     // Revert size to 100%
+    };
+
 
   // Fetching functions
   const fetchDepartmentName = async () => {
     try {
       const response = await axios.get(`${process.env.REACT_APP_SERVER_ADDRESS}/common/show-department`);
-      setDepartmentName(response?.data?.data);
+      setDepartmentName(response.data.data);
     } catch (error) {
-      alert('Error: Unable to fetch Department data');
+      alert('Error: Unable to fetch department Name data');
     }
   };
 
   const fetchDeginationData = async (_id) => {
     try {
       const response = await axios.get(`${process.env.REACT_APP_SERVER_ADDRESS}/common/show-designation?departmentId=${_id}`);
-      setDeginationData(response?.data?.data);
+      setDeginationData(response.data.data);
     } catch (error) {
-      alert('Error: Unable to fetch Degination Name data');
+      alert('Error: Unable to fetch  degination data');
     }
   };
 
   const fetchCompanyNameData = async () => {
     try {
       const response = await axios.get(`${process.env.REACT_APP_SERVER_ADDRESS}/common/show-company`);
-      setCompanyName(response?.data?.data);
+      setCompanyName(response.data.data);
     } catch (error) {
-      alert('Error: Unable to fetch Company Name data');
+      alert('Error: Unable to fetch company name data');
     }
   };
 
   const fetchBranchNameData = async (_id) => {
     try {
       const response = await axios.get(`${process.env.REACT_APP_SERVER_ADDRESS}/common/show-branch?companyID=${_id}`);
-      setBranchNameData(response?.data?.data);
+      setBranchNameData(response.data.data);
     } catch (error) {
-      alert('Error: Unable to fetch Branch Name data');
+      alert('Error: Unable to fetch branch name data');
     }
   };
 
   const fetchQulificationData = async () => {
     try {
       const response = await axios.get(`${process.env.REACT_APP_SERVER_ADDRESS}/common/show-qualification`);
-      setQulificationData(response?.data?.data);
+      setQulificationData(response.data.data);
     } catch (error) {
-      alert('Error: Unable to fetch  Qualification data');
+      alert('Error: Unable to fetch qualification name data');
     }
   };
 
   const fetchDegreeData = async (_id) => {
+    console.log("QID",_id)
     try {
       const response = await axios.get(`${process.env.REACT_APP_SERVER_ADDRESS}/common/show-degree?qualificationId=${_id}`);
-      setDegreeData(response?.data?.data);
+      setDegreeData(response.data.data);
     } catch (error) {
-      alert('Error: Unable to fetch Degree data');
+      alert('Error: Unable to fetch degree data');
     }
   };
 
   const fetchShiftNameData = async () => {
     try {
       const response = await axios.get(`${process.env.REACT_APP_SERVER_ADDRESS}/common/show-shift`);
-      setShiftName(response?.data?.data);
+      setShiftName(response.data.data);
     } catch (error) {
-      alert('Error: Unable to fetch  Shift Name data');
+      alert('Error: Unable to fetch show shift data');
     }
   };
 
-  const fetchJoiningHrNameData = async () => {
-    try {
-      const response = await axios.get(`${process.env.REACT_APP_SERVER_ADDRESS}/auth/show-joining-HR`);
-      setJoiningHrNameData(response?.data?.data);
-    } catch (error) {
-      alert('Error: Unable to fetch Hr Name data ');
-    }
-  };
+  
 
   const fetchOfficeTimePolicyData = async () => {
     try {
       const response = await axios.get(`${process.env.REACT_APP_SERVER_ADDRESS}/common/show-officeTimePolicy`);
-      setOfficeTimePolicy(response?.data?.data);
+      setOfficeTimePolicy(response.data.data);
     } catch (error) {
-      alert('Unable to Fetch office time policy Data');
+      alert('Unable to Fetch Data');
     }
   };
 
   const fetchWorkTypeData = async () => {
     try {
       const response = await axios.get(`${process.env.REACT_APP_SERVER_ADDRESS}/common/show-workType`);
-      setWorkTypeData(response?.data?.data);
+      setWorkTypeData(response.data.data);
     } catch (error) {
       alert('Unable to Fetch Data work type data');
+    }
+  };
+  
+  const fetchJoiningHrNameData = async () => {
+    try {
+      const response = await axios.get(`${process.env.REACT_APP_SERVER_ADDRESS}/auth/show-joining-HR`);
+      setJoiningHrNameData(response.data.data);
+    } catch (error) {
+      alert('Error: Unable to fetch Hr Name data ');
     }
   };
 
@@ -213,15 +276,16 @@ function Registration() {
     fetchQulificationData();
     fetchShiftNameData();
     fetchJoiningHrNameData();
+
     fetchOfficeTimePolicyData();
     fetchWorkTypeData();
   }, []);
 
   useEffect(() => {
-    if (selectedDepartmentId) fetchDeginationData(selectedDepartmentId);
-    if (selectedCompanyNameId) fetchBranchNameData(selectedCompanyNameId);
-    if (selectedQualificationId) fetchDegreeData(selectedQualificationId);
-  }, [selectedDepartmentId, selectedCompanyNameId, selectedQualificationId]);
+    if (departmentId) fetchDeginationData(departmentId);
+    if (companyId) fetchBranchNameData(companyId);
+    if (qualificationId) fetchDegreeData(qualificationId);
+  }, [departmentId, companyId, qualificationId]);
 
   // Form Validation
   const validateForm = () => {
@@ -238,24 +302,17 @@ function Registration() {
     if (!formData.currentPinCode) newErrors.currentPinCode = 'Current Pin Code is required';
     if (!formData.qualification) newErrors.qualification = 'Qualification is required';
     if (!formData.panCard) newErrors.panCard = 'Pancard Number is required';
-    // if (!formData.employeeCode) newErrors.employeeCode = 'Employee Code is required';
-    if (!formData.employeeCode) {
-      newErrors.employeeCode = "Employee Code is required ";
-    } else if (formData.employeeCode.length < 6 || formData.employeeCode.length > 9) {
-      newErrors.employeeCode = "Employee Code must be between 6 and 9 characters";
-    }
+    if (!formData.employeeCode) newErrors.employeeCode = 'Employee Code is required';
     if (!formData.joiningDate) newErrors.joiningDate = 'Joining Date is required';
     if (!formData.panCardAttachment) newErrors.panCardAttachment = 'Pancard is required';
     if (!formData.aadharCardAttachment) newErrors.aadharCardAttachment = 'Aadhar card is required';
     if (!formData.bankAttachment) newErrors.bankAttachment = 'Bank details are required';
-    
-    
-    if (!formData.reportingManager) newErrors.reportingManager = 'Reporting Manager is required';
-    if (!formData.joiningHR) newErrors.joiningHR = 'Joining Hr Name is required';
-    if (!formData.biometricPunchId) newErrors.biometricPunchId = 'Biometric Punch Id is required';
+    if (!formData.joiningFormAttachment) newErrors.joiningFormAttachment = 'Joining form is required';
+    if (!formData.otherAttachment) newErrors.otherAttachment = 'Other documents are required';
     return newErrors;
   };
-
+ 
+  const [changedFields, setChangedFields] = useState([]); // Tracks changed fields
   // Handling form data input
   const handleFormData = (e) => {
     const { name, value } = e.target;
@@ -263,10 +320,21 @@ function Registration() {
       ...formData,
       [name]: value,
     });
+
+    // Track changed fields
+  setChangedFields((prev) => {
+    if (!prev.includes(name)) {
+      return [...prev, name];
+    }
+    return prev;
+  });
+
   };
-  
+
+
   // file related change 
   const convertToBase64 = (file) => {
+    console.log(convertToBase64)
     return new Promise((resolve, reject) => {
       const reader = new FileReader();
       reader.readAsDataURL(file);
@@ -297,167 +365,94 @@ function Registration() {
     if (file && validateFile(file)) {
       const base64 = await convertToBase64(file);
       setFormData({ ...formData, [fieldName]: base64 });
+
+
+      // Track updated attachments
+      setUpdatedAttachments((prev) => {
+        if (!prev.includes(fieldName)) {
+          return [...prev, fieldName];
+        }
+        return prev;
+      });
+
+    }
+  };
+ 
+  const prepareAttachments = () => {
+    return updatedAttachments.map((field) => ({
+      fieldName: field,
+      fileData: formData[field],
+    }));
+  };
+  
+  
+  
+
+  // Handle form submit for updating employee data
+  const handleUpdateSubmit = async (e) => {
+    e.preventDefault();
+    const formErrors = validateForm();
+    setErrors(formErrors);
+     
+
+
+    // If there are errors, stop the form submission
+    if (Object.keys(formErrors).length > 0) {
+      alert("Please correct the highlighted fields.");
+      return;
+    }
+//  // Prepare payload with only changed fields + updated attachments
+//  const updatedData = {};
+//  changedFields.forEach((field) => {
+//    updatedData[field] = formData[field];
+//  });
+// Prepare payload with only changed fields + updated attachments
+const updatedData = { employeeCode: formData.employeeCode };  // Ensure employeeCode is always included
+changedFields.forEach((field) => {
+  updatedData[field] = formData[field];
+});
+    const attachments = prepareAttachments();
+
+
+    try {
+       
+      const payload = {
+        ...updatedData,  // Only changed form data
+        attachments, // Include only updated attachments
+      };
+
+      console.log("my payloda data is ", payload);
+
+        const response = await axios.patch(`${process.env.REACT_APP_SERVER_ADDRESS}/auth/empUpdate`,payload,{
+          headers: {
+            "Content-Type": "application/json",
+          },
+        });
+
+      if (response.status === 200 || response.status === 201) {
+        alert("Employee updated successfully!");
+        navigate('/layout/listofallemployee')
+      } else {
+        alert("Something went wrong during the update.");
+      }
+    } catch (error) {
+      console.error("Update error:", error);
+      alert("Error: Unable to update employee.");
     }
   };
 
  
   
-
-  const fetchEmployeeData = async (phoneNumber) => {
-    try {
-      const response = await axios.post(
-        `${process.env.REACT_APP_SERVER_ADDRESS}/auth/show-joiningFormData`,
-        {phoneNumber}
-      );
-  
-      if (response?.data?.data) {
-        const fetchedData = response?.data?.data;
-        
-        setFormData((prev) => ({
-          ...prev,
-          name: fetchedData?.name ?? prev.name,
-          father_husbandName: fetchedData?.father_husbandName ?? prev?.father_husbandName,
-          dateOfBirth: fetchedData?.dateOfBirth ? fetchedData.dateOfBirth.split("T")[0] : prev?.dateOfBirth,
-          personalPhoneNum: fetchedData?.personalPhoneNum ?? prev.personalPhoneNum,
-          personalEmail: fetchedData?.personalEmail ?? prev.personalEmail,
-          panCard: fetchedData?.panCard ?? prev.panCard,
-          aadharCard: fetchedData?.aadharCard ?? prev.aadharCard,
-          permanentAddress: fetchedData?.permanentAddress ?? prev.permanentAddress,
-          permanentPinCode: fetchedData?.permanentPinCode ?? prev.permanentPinCode,
-          currentAddress: fetchedData?.currentAddress ?? prev.currentAddress,
-          currentPinCode: fetchedData?.currentPinCode ?? prev.currentPinCode,
-          bankName: fetchedData.bankName ?? prev.bankName,
-          branchName: fetchedData?.branchName ?? prev.branchName,
-          bankAccount: fetchedData?.bankAccount ?? prev.bankAccount,
-          bankIFSC: fetchedData.bankIFSC ?? prev.bankIFSC,
-          bankAccountHolderName: fetchedData.bankAccountHolderName ?? prev.bankAccountHolderName,
-          bankAddress: fetchedData.bankAddress ?? prev.bankAddress,
-          department: fetchedData.department ?? prev.department,
-          designation: fetchedData.designation ?? prev.designation,
-          aadharCardAttachment: fetchedData.aadharCardAttachment ?? prev.aadharCardAttachment,
-          panCardAttachment: fetchedData.panCardAttachment ?? prev.panCardAttachment,
-          bankAttachment: fetchedData.bankAttachment ?? prev.bankAttachment,
-          // otherAttachment: fetchedData.photoAttachment ?? prev.photoAttachment,
-          // otherAttachment: fetchedData.photoAttachment ?? prev.otherAttachment ?? "",
-          signatureAttachment: fetchedData.signatureAttachment ?? prev.signatureAttachment,
-          // status: fetchedData.status ?? prev.status,
-          company: fetchedData.companyId ?? prev.company,
-          branch: fetchedData.branch ?? prev.branch,
-          
-         // Salary-related fields (handling missing data safely)
-          ctc: fetchedData?.salary?.ctc ?? "",
-          inHand: fetchedData?.salary?.inHand ?? "",
-          employeeESI: fetchedData?.salary?.employeeESI ?? "",
-          employeePF: fetchedData?.salary?.employeePF ?? "",
-          employerESI: fetchedData?.salary?.employerESI ?? "",
-          employerPF: fetchedData?.salary?.employerPF ?? "",
-        }));
-
-        console.log("my actual form data ", formData);
-        
-      } else {
-        alert("No employee found with this phone number.");
-      }
-    } catch (error) {
-      console.error("Error fetching employee data:", error);
-      alert("Error fetching employee data.");
-    }
-  };
-  
-
-  // Handling form submission
-  const handleFormSubmit = async (e) => {
-    e.preventDefault();
-    const formErrors = validateForm();
-    setErrors(formErrors);
-    
-    console.log(formData?.degree , " my degree data")
-    console.log("my branch is ", formData?.branch);
-
-    if (Object.keys(formErrors).length > 0) {
-      alert('Please correct the highlighted fields.');
-      return;
-    }
-
-    try {
-      console.log(" employee formData is ", formData);
-      const response = await axios.post(`${process.env.REACT_APP_SERVER_ADDRESS}/auth/empRegister`, formData, {
-        headers: { 'Content-Type': 'application/json' },
-      });
-
-      if (response.status === 200 || response.status === 201) {
-        alert('Employee registered successfully!');
-        setFormData({
-          employeeCode: "",
-          name: "",
-          father_husbandName: "",
-          dateOfBirth: "",
-          personalPhoneNum: "",
-          personalEmail: "",
-          panCard: "",
-          aadharCard: "",
-          qualification: "",
-          degree: "",
-          permanentAddress: "",
-          permanentPinCode: "",
-          currentAddress: "",
-          currentPinCode: "",
-          bankName: "",
-          branchName: "",
-          bankAccount: "",
-          bankIFSC: "",
-          bankAccountHolderName: "",
-          bankAddress: "",
-          reportingManager: "",
-          companyPhoneNum: "",
-          companyEmail: "",
-          joiningDate: "",
-          lastAppraisalDate: "",
-          // regisnationDate: "",
-          company: "",
-          branch: "",
-          department: "",
-          designation: "",
-          aadharCardAttachment: "",
-          panCardAttachment: "",
-          bankAttachment: "",
-          joiningFormAttachment: "",
-          otherAttachment: "",
-          confirmAccountNumber: "",
-          officeTimePolicy: "",
-          shift: "",
-          department: "",
-          designation: "",
-          workType:" ",
-          joiningHR: " ",
-          biometricPunchId: " ",
-          ctc: "",
-          inHand: "",
-          employeeESI: "",
-          employeePF: "",
-          employerESI: "",
-          employerPF: "",
-
-        });
-      } else {
-        alert('Something went wrong during registration.');
-      }
-    } catch (error) {
-      console.error('Registration error:', error);
-      // alert('Error: Employee registration failed.');
-    }
-  };
   return (
     <div>
-      <div className=' py-3 text-center font-semibold text-xl mt-4 ml-10 mr-10 rounded-md' style={{backgroundColor : '#740FD6'}}>
-        <h2 className='text-white'>Employee Registration</h2>
+      <div className=' py-4 text-center font-semibold text-2xl mt-4 ml-2 mr-2' style={{backgroundColor : '#740FD6'}}>
+        <h2 className='text-white'>Update Employee Registration</h2>
       </div>
       <div className='mx-10 pt-6'>
-        <form method='post' onSubmit={handleFormSubmit}>
+        <form method='post' onSubmit={handleUpdateSubmit}>
           <fieldset className='border-2  rounded-md mb-4' style={{ borderColor: '#740FD6'}}>
-            <legend className='font-semibold text-lg ml-8 ' style={{color : '#740FD6'}}> &nbsp;&nbsp; Personal Details &nbsp;&nbsp;</legend>
+            <legend className='font-semibold text-lg ml-8 ' style={{color : '#740FD6'}}> &nbsp;&nbsp; Employee Details &nbsp;&nbsp;</legend>
             <div className='grid gap-3 m-6 md:grid-cols-4'>
-
 
               {/* name input field   */}
               <div>
@@ -469,7 +464,7 @@ function Registration() {
                   value={formData.name}
                   name='name'
                   onChange={handleFormData}
-                  className="w-full rounded-md border-2 py-1 px-4 border-gray-400"
+                  className="w-full rounded-md border-2 py-1 px-4 focus:outline-none focus:ring-2 focus:ring-black"
                 />
                 {errors.name && <span className="text-red-600">{errors.name}</span>}
               </div>
@@ -477,14 +472,14 @@ function Registration() {
               {/* father husband input field  */}
               <div>
                 <label>
-                  <span>Father Name</span>
+                  <span>Father/Husband Name</span>
                   <span className='text-red-600'>*</span>
                 </label>
                 <input type='text' 
                   value={formData.father_husbandName}
                   name='father_husbandName'
                   onChange={handleFormData}
-                  className="w-full rounded-md border-2 py-1 px-4  border-gray-400"
+                  className="w-full rounded-md border-2 py-1 px-4 focus:outline-none focus:ring-2 focus:ring-black"
                 />
                 {errors.father_husbandName && <span className="text-red-600">{errors.father_husbandName}</span>}
               </div>
@@ -499,13 +494,13 @@ function Registration() {
                   value={formData.dateOfBirth}
                   name='dateOfBirth'
                   onChange={handleFormData}
-                  className="w-full rounded-md border-2 py-1 px-4  border-gray-400"
+                  className="w-full rounded-md border-2 py-1 px-4 focus:outline-none focus:ring-2 focus:ring-black"
                 />
                 {errors.dateOfBirth && <span className="text-red-600">{errors.dateOfBirth}</span>}
               </div>
               
               {/* personal phone number field  */}
-              {/* <div>
+              <div>
                 <label>
                   <span>Contact Number</span>
                   <span className='text-red-600'>*</span>
@@ -514,49 +509,8 @@ function Registration() {
                   value={formData.personalPhoneNum}
                   name='personalPhoneNum'
                   onChange={handleFormData}
-                  // onBlur={(e) => fetchEmployeeData(e.target.value)}
-                  onBlur={(e) => {
-                    const phoneNumber = e.target.value.trim();
-                    if (/^\d{10}$/.test(phoneNumber)) {
-                      fetchEmployeeData(phoneNumber);
-                    }
-                  }}
-                  className="w-full rounded-md border-2 py-1 px-4  border-gray-400"
+                  className="w-full rounded-md border-2 py-1 px-4 focus:outline-none focus:ring-2 focus:ring-black"
                 />
-                <FiSearch />
-                {errors.personalPhoneNum && <span className="text-red-600">{errors.personalPhoneNum}</span>}
-              </div> */}
-
-              <div className="relative">
-                <label>
-                  <span>Contact Number</span>
-                  <span className="text-red-600">*</span>
-                </label>
-
-                {/* Input with Search Icon */}
-                <div className="relative">
-                  <input
-                    type="text"
-                    defaultValue={formData.personalPhoneNum}
-                    name="personalPhoneNum"
-                    onChange={handleFormData}
-                    // onBlur={(e) => {
-                    //   const phoneNumber = e.target.value.trim();
-                    //   if (/^\d{10}$/.test(phoneNumber)) {
-                    //     fetchEmployeeData(phoneNumber);
-                    //   }
-                    // }}
-                    className="w-full rounded-md border-2 py-1 px-4 border-gray-400 pr-10" // pr-10 for space for the icon
-                  />
-                  
-                  {/* Search Icon */}
-                  <FiSearch 
-                  onClick={() => fetchEmployeeData(formData.personalPhoneNum)}
-                    className="absolute right-3 top-1/2 transform -translate-y-1/2 text-gray-500 cursor-pointer" 
-                    size={20} 
-                  />
-                </div>
-
                 {errors.personalPhoneNum && <span className="text-red-600">{errors.personalPhoneNum}</span>}
               </div>
               
@@ -570,7 +524,7 @@ function Registration() {
                   value={formData.personalEmail}
                   name='personalEmail'
                   onChange={handleFormData}
-                  className="w-full rounded-md border-2 py-1 px-4  border-gray-400"
+                  className="w-full rounded-md border-2 py-1 px-4 focus:outline-none focus:ring-2 focus:ring-black"
                 />
                 {errors.personalEmail && <span className="text-red-600">{errors.personalEmail}</span>}
               </div>
@@ -585,7 +539,7 @@ function Registration() {
                   value={formData.aadharCard}
                   name='aadharCard'
                   onChange={handleFormData}
-                  className="w-full rounded-md border-2 py-1 px-4  border-gray-400"
+                  className="w-full rounded-md border-2 py-1 px-4 focus:outline-none focus:ring-2 focus:ring-black"
                 />
                 {errors.aadharCard && <span className="text-red-600">{errors.aadharCard}</span>}
               </div>
@@ -600,7 +554,7 @@ function Registration() {
                   value={formData.permanentAddress}
                   name='permanentAddress'
                   onChange={handleFormData}
-                  className="w-full rounded-md border-2 py-1 px-4  border-gray-400"
+                  className="w-full rounded-md border-2 py-1 px-4 focus:outline-none focus:ring-2 focus:ring-black"
                 />
                 {errors.permanentAddress && <span className="text-red-600">{errors.permanentAddress}</span>}
               </div>
@@ -615,7 +569,7 @@ function Registration() {
                   value={formData.permanentPinCode}
                   name='permanentPinCode'
                   onChange={handleFormData}
-                  className="w-full rounded-md border-2 py-1 px-4  border-gray-400"
+                  className="w-full rounded-md border-2 py-1 px-4 focus:outline-none focus:ring-2 focus:ring-black"
                 />
                 {errors.permanentPinCode && <span className="text-red-600">{errors.permanentPinCode}</span>}
               </div>
@@ -630,7 +584,7 @@ function Registration() {
                   value={formData.currentAddress}
                   name='currentAddress'
                   onChange={handleFormData}
-                  className="w-full rounded-md border-2 py-1 px-4  border-gray-400"
+                  className="w-full rounded-md border-2 py-1 px-4 focus:outline-none focus:ring-2 focus:ring-black"
                 />
                 {errors.currentAddress && <span className="text-red-600">{errors.currentAddress}</span>}
               </div>
@@ -645,7 +599,7 @@ function Registration() {
                   value={formData.currentPinCode}
                   name='currentPinCode'
                   onChange={handleFormData}
-                  className="w-full rounded-md border-2 py-1 px-4  border-gray-400"
+                  className="w-full rounded-md border-2 py-1 px-4 focus:outline-none focus:ring-2 focus:ring-black"
                 />
                 {errors.currentPinCode && <span className="text-red-600">{errors.currentPinCode}</span>}
               </div>
@@ -657,8 +611,9 @@ function Registration() {
                   <span className='text-red-600'>*</span>
                 </label>
                 <select 
-                  className="w-full rounded-md border-2 py-1 px-4  border-gray-400"
+                  className="w-full rounded-md border-2 py-1 px-4 focus:outline-none focus:ring-2 focus:ring-black"
                   onChange={(e) => {
+                    
                     setFormData(prevState => ({
                       ...prevState,
                       [e.target.name]: e.target.value
@@ -669,7 +624,7 @@ function Registration() {
                 >
                   <option>--Select Qualification--</option>
                   {qulificationdata?.map(({names, id})=>(
-                    <option key={id} value={id}>{names}</option>
+                    <option key={id} value={id}  selected={formData.qualification === id} >{names}</option>
                   ))}
                 </select>
                 {errors.qualification && <span className="text-red-600">{errors.qualification}</span>}
@@ -680,21 +635,20 @@ function Registration() {
                 <label>
                   <span>Degree</span>
                 </label>
-                <select
-                  name='degree'
-                  // value={formData.degree}
-                  className="w-full rounded-md border-2 py-1 px-4  border-gray-400"
+                <select 
+                name='degree'
+                  className="w-full rounded-md border-2 py-1 px-4 focus:outline-none focus:ring-2 focus:ring-black"
                   onChange={(event) => {
                     const { name, value} = event.target;
-                    // console.log("name", name, "value", value);
                     setFormData((prev) => ({ ...prev, [name] : value}))
                   }}
                 >
-                  {degreeData?.map(({_id, name})=>(
-                    <option key={_id} value={_id} name={name}>{name}</option>
+                  {degreeData?.map(({_id,name})=>(
+                    <option key={_id} value={_id} selected={formData.degree === _id} name={name}>{name}</option>
                   ))}
                 </select>
                 {errors.degree && <span className="text-red-600">{errors.degree}</span>}
+                {/* <span>{formData.degree}</span> */}
               </div>
               
               {/* pan card number field  */}
@@ -707,9 +661,31 @@ function Registration() {
                   value={formData.panCard}
                   name='panCard'
                   onChange={handleFormData}
-                  className="w-full rounded-md border-2 py-1 px-4  border-gray-400"
+                  className="w-full rounded-md border-2 py-1 px-4 focus:outline-none focus:ring-2 focus:ring-black"
                 />
                 {errors.panCard && <span className="text-red-600">{errors.panCard}</span>}
+              </div>
+              
+               {/* Work Type Field   */}
+               <div>
+                <label>
+                  <span>Work Type</span>
+                </label>
+                <select
+                  name='workType'
+                  // value={formData.degree}
+                  className="w-full rounded-md border-2 py-1 px-4 focus:outline-none focus:ring-2 focus:ring-black"
+                  onChange={(event) => {
+                    const { name, value} = event.target;
+                    // console.log("name", name, "value", value);
+                    setFormData((prev) => ({ ...prev, [name] : value}))
+                  }}
+                >
+                  <option>--Select Work Type--</option>
+                  {workTypeData?.map(({_id, workType})=>(
+                    <option key={_id} value={_id} name={workType} selected={formData.workType === _id} >{workType}</option>
+                  ))}
+                </select>
               </div>
 
             </div>
@@ -728,7 +704,7 @@ function Registration() {
                   value={formData.bankName || " "}
                   name='bankName'
                   onChange={handleFormData}
-                  className="w-full rounded-md border-2 py-1 px-4  border-gray-400"
+                  className="w-full rounded-md border-2 py-1 px-4 focus:outline-none focus:ring-2 focus:ring-black"
                 />
               </div>
               
@@ -736,12 +712,12 @@ function Registration() {
               <div>
                 <label>
                   <span>Branch Name</span>
-                </label>  
+                </label>
                 <input type='text' 
                   value={formData.branchName || " "}
                   name='branchName'
                   onChange={(event) => setFormData((prev) => ({ ...prev, branchName: event.target.value}))}
-                  className="w-full rounded-md border-2 py-1 px-4  border-gray-400"
+                  className="w-full rounded-md border-2 py-1 px-4 focus:outline-none focus:ring-2 focus:ring-black"
                 />
               </div>
               
@@ -754,7 +730,7 @@ function Registration() {
                   value={formData.bankAccount || " "}
                   name='bankAccount'
                   onChange={handleFormData}
-                  className="w-full rounded-md border-2 py-1 px-4  border-gray-400"
+                  className="w-full rounded-md border-2 py-1 px-4 focus:outline-none focus:ring-2 focus:ring-black"
                 />
               </div>
               
@@ -767,7 +743,7 @@ function Registration() {
                   value={formData.confirmAccountNumber || " "}
                   name='confirmAccountNumber'
                   onChange={handleFormData}
-                  className="w-full rounded-md border-2 py-1 px-4  border-gray-400"
+                  className="w-full rounded-md border-2 py-1 px-4 focus:outline-none focus:ring-2 focus:ring-black"
                 />
               </div>
               
@@ -780,7 +756,7 @@ function Registration() {
                   value={formData.bankIFSC || " "}
                   name='bankIFSC'
                   onChange={handleFormData}
-                  className="w-full rounded-md border-2 py-1 px-4  border-gray-400"
+                  className="w-full rounded-md border-2 py-1 px-4 focus:outline-none focus:ring-2 focus:ring-black"
                 />
               </div>
               
@@ -793,7 +769,7 @@ function Registration() {
                   value={formData.bankAccountHolderName || " "}
                   name='bankAccountHolderName'
                   onChange={handleFormData}
-                  className="w-full rounded-md border-2 py-1 px-4  border-gray-400"
+                  className="w-full rounded-md border-2 py-1 px-4 focus:outline-none focus:ring-2 focus:ring-black"
                 />
               </div>
               
@@ -806,20 +782,18 @@ function Registration() {
                   value={formData.bankAddress || " "}
                   name='bankAddress'
                   onChange={handleFormData}
-                  className="w-full rounded-md border-2 py-1 px-4  border-gray-400"
+                  className="w-full rounded-md border-2 py-1 px-4 focus:outline-none focus:ring-2 focus:ring-black"
                 />
               </div>
-
-              
 
             </div>
           </fieldset>
           
           <fieldset className='border-2  rounded-md mb-4' style={{ borderColor: '#740FD6'}}>
-            <legend className='font-semibold text-lg ml-8' style={{color : '#740FD6'}}> &nbsp;&nbsp; Company Details &nbsp;&nbsp;</legend>
+            <legend className='font-semibold text-lg ml-8' style={{color : '#740FD6'}}> &nbsp;&nbsp; Other Details &nbsp;&nbsp;</legend>
             <div className='grid gap-3 m-6 md:grid-cols-4'>
-
-              {/* Hr Name field    */}
+               
+               {/* Hr Name field    */}
               <div>
                 <label>
                   <span>Joining Hr Name</span>
@@ -834,10 +808,10 @@ function Registration() {
                       }));
                   
                     }}
-                  className="w-full rounded-md border-2 py-1 px-4  border-gray-400">
+                  className="w-full rounded-md border-2 py-1 px-4 focus:outline-none focus:ring-2 focus:ring-black">
                   <option>--Select Joining Hr--</option>
                   {joiningHrNameData?.map(({name, _id})=>(
-                    <option key={_id} value={_id}>{name}</option>
+                    <option key={_id} value={_id} selected={formData.joiningHR === _id}>{name}</option>
                   ))}
                 </select>
                 {errors.joiningHR && (
@@ -845,7 +819,7 @@ function Registration() {
                   )}
               </div>
 
-              {/* Reporting Manager field    */}
+               {/* Reporting Manager field    */}
               <div className="relative">
                 <label >
                   <span>Reporting Manager</span>
@@ -857,7 +831,7 @@ function Registration() {
                   type="button"
                 >
                   <span>
-                    {selectedManager ? selectedManager.name : 'Select Reporting Manager'}
+                    {selectedManager ? selectedManager?.name : 'Select Reporting Manager'}
                   </span>
                   <svg
                     xmlns="http://www.w3.org/2000/svg"
@@ -886,11 +860,11 @@ function Registration() {
                     {filteredManagers.length > 0 ? (
                       filteredManagers.map((manager) => (
                         <button
-                          key={manager._id}
+                          key={manager?._id}
                           className="w-full text-left px-4 py-2 text-gray-700 hover:bg-gray-100 focus:bg-gray-100"
                           onClick={() => handleManagerSelect(manager)}
                         >
-                          {manager.name}
+                          {manager?.name}
                         </button>
                       ))
                     ) : (
@@ -903,7 +877,6 @@ function Registration() {
                   )}
               </div>
 
-       
               {/* employee code field  */}
               <div>
                 <label>
@@ -914,7 +887,7 @@ function Registration() {
                   value={formData.employeeCode || " "}
                   name='employeeCode'
                   onChange={handleFormData}
-                  className="w-full rounded-md border-2 py-1 px-4  border-gray-400"
+                  className="w-full rounded-md border-2 py-1 px-4 focus:outline-none focus:ring-2 focus:ring-black"
                 />
                 {errors.employeeCode && <span className="text-red-600">{errors.employeeCode}</span>}
               </div>
@@ -928,7 +901,7 @@ function Registration() {
                   value={formData.companyEmail || " "}
                   name='companyEmail'
                   onChange={handleFormData}
-                  className="w-full rounded-md border-2 py-1 px-4  border-gray-400"
+                  className="w-full rounded-md border-2 py-1 px-4 focus:outline-none focus:ring-2 focus:ring-black"
                 />
               </div>
               
@@ -941,7 +914,7 @@ function Registration() {
                   value={formData.companyPhoneNum || " "}
                   name='companyPhoneNum'
                   onChange={handleFormData}
-                  className="w-full rounded-md border-2 py-1 px-4  border-gray-400"
+                  className="w-full rounded-md border-2 py-1 px-4 focus:outline-none focus:ring-2 focus:ring-black"
                 />
               </div>
               
@@ -955,7 +928,7 @@ function Registration() {
                   value={formData.joiningDate || " "}
                   name='joiningDate'
                   onChange={handleFormData}
-                  className="w-full rounded-md border-2 py-1 px-4  border-gray-400"
+                  className="w-full rounded-md border-2 py-1 px-4 focus:outline-none focus:ring-2 focus:ring-black"
                 />
                 {errors.joiningDate && <span className="text-red-600">{errors.joiningDate}</span>}
               </div>
@@ -969,13 +942,13 @@ function Registration() {
                   value={formData.lastAppraisalDate}
                   name='lastAppraisalDate'
                   onChange={handleFormData}
-                  className="w-full rounded-md border-2 py-1 px-4  border-gray-400"
+                  className="w-full rounded-md border-2 py-1 px-4 focus:outline-none focus:ring-2 focus:ring-black"
                 />
                 {/* {errors.lastAppraisalDate && <span className="text-red-600">{errors.lastAppraisalDate}</span>} */}
               </div>
               
               {/* resign date field  */}
-              {/* <div>
+              <div>
                 <label>
                   <span>Resign Date</span>
                 </label>
@@ -983,10 +956,11 @@ function Registration() {
                   value={formData.regisnationDate}
                   name='regisnationDate'
                   onChange={handleFormData}
-                  className="w-full rounded-md border-2 py-1 px-4  border-gray-400"
+                  className="w-full rounded-md border-2 py-1 px-4 focus:outline-none focus:ring-2 focus:ring-black"
                 />
+                {/* {errors.regisnationDate && <span className="text-red-600">{errors.regisnationDate}</span>} */}
               </div>
-               */}
+              
               {/* office time policy field  */}
               <div>
                 <label>
@@ -999,11 +973,11 @@ function Registration() {
                     // console.log("name", name, "value", value);
                     setFormData((prev) => ({ ...prev, [name] : value}))
                   }}
-                  className="w-full rounded-md border-2 py-1 px-4  border-gray-400"
+                  className="w-full rounded-md border-2 py-1 px-4 focus:outline-none focus:ring-2 focus:ring-black"
                 >
                   <option>--Select Office Time--</option>
                   {officeTimePolicy?.map(({policyName, _id})=>(
-                    <option key={_id} value={_id}>{policyName}</option>
+                    <option key={_id} selected={formData.officeTimePolicy === _id}>{policyName}</option>
                   ))}
                 </select>
               </div>
@@ -1017,7 +991,7 @@ function Registration() {
                   name="shift"
                   value={formData.shift || ""}
                   onChange={handleFormData}
-                  className="w-full rounded-md border-2 py-1 px-4  border-gray-400">
+                  className="w-full rounded-md border-2 py-1 px-4 focus:outline-none focus:ring-2 focus:ring-black">
                 <option>--Select Shift--</option>
                   {shiftName?.map(({name, _id})=>(
                     <option key={_id} value={_id}>{name}</option>
@@ -1029,20 +1003,18 @@ function Registration() {
               <div>
                 <label>
                   <span>Company Name</span>
-                  <span className='text-red-600'>*</span>
                 </label>
                 <select 
                   name="company"
-                  value={formData.company || ""}
                   onChange={(e) => {
                     handleFormData(e);
                     setSelectedCompanyNameId(e.target.value);
                   }}
-                  className="w-full rounded-md border-2 py-1 px-4  border-gray-400"
+                  className="w-full rounded-md border-2 py-1 px-4 focus:outline-none focus:ring-2 focus:ring-black"
                 >
                   <option>---Select Company Name--- </option>
                   {companynamedata?.map(({name, _id})=>(
-                    <option key={_id} value={_id}>{name}</option>
+                    <option key={_id} value={_id} selected={formData.company=== _id} >{name}</option>
                   ))}
                 </select>
               </div>
@@ -1051,23 +1023,13 @@ function Registration() {
               <div>
                 <label>
                   <span>Company Branch</span>
-                  <span className='text-red-600'>*</span>
                 </label>
                 <select 
                   name="branch"
-                  defaultValue={formData.branch || ""}
-                  onChange={(event) => {
-                    const { name, value } = event.target;
-                    console.log(event.target.value);
-                    console.log("name", name, "value", value);
-                    setFormData((prev) => ({ ...prev, [name] : value}));
-                  }}
-
-                  className="w-full rounded-md border-2 py-1 px-4  border-gray-400"
-                >
-                  <option >--Select the Branch--</option>
+                  onChange={(event) => setFormData((prev) => ({ ...prev, branch: event.target.value}))}
+                  className="w-full rounded-md border-2 py-1 px-4 focus:outline-none focus:ring-2 focus:ring-black">
                   {branchnamedata?.map(({name, _id})=>(
-                    <option key={_id} value={_id}>{name}</option>
+                    <option key={_id} value={_id} selected={formData.branch=== _id}>{name}</option>
                   ))}
                 </select>
               </div>
@@ -1079,16 +1041,17 @@ function Registration() {
                 </label>
                 <select 
                    name="department"
+                   value={formData.department || ""}
                    onChange={(e) => {
                      handleFormData(e);
                      setSelectedDepartmentId(e.target.value);
                    }}
-                  className="w-full rounded-md border-2 py-1 px-4  border-gray-400"
+                  className="w-full rounded-md border-2 py-1 px-4 focus:outline-none focus:ring-2 focus:ring-black"
                   // onChange={(e) => {setSelectedDepartmentId(e.target.value)}}
                 >
                   <option value=''>--Select Department --</option>
                   {departmentName?.map(({ empdept, id }) => (
-                   <option key={id} value={id}>{empdept}</option>
+                   <option key={id} value={id}  selected={formData.department === id}>{empdept}</option>
                   ))}
                 </select>
               </div>
@@ -1105,46 +1068,9 @@ function Registration() {
                     console.log("name", name, "value", value);
                     setFormData((prev) => ({ ...prev, [name] : value}))
                   }}
-                  className="w-full rounded-md border-2 py-1 px-4  border-gray-400">
+                  className="w-full rounded-md border-2 py-1 px-4 focus:outline-none focus:ring-2 focus:ring-black">
                   {DesginationData.map(({designation, _id})=>(
-                   <option key={_id} value={_id}>{designation}</option>
-                  ))}
-                </select>
-              </div>
-
-               {/* punch input field   */}
-               <div>
-                <label>
-                  <span>Biometric Punch Id</span>
-                  <span className='text-red-600'>*</span>
-                </label>
-                <input type='text' 
-                  value={formData.biometricPunchId}
-                  name='biometricPunchId'
-                  onChange={handleFormData}
-                  className="w-full rounded-md border-2 py-1 px-4   border-gray-400 "
-                />
-                {errors.name && <span className="text-red-600">{errors.name}</span>}
-              </div>
-
-              {/* Work Type Field   */}
-              <div>
-                <label>
-                  <span>Work Type</span>
-                </label>
-                <select
-                  name='workType'
-                  // value={formData.degree}
-                  className="w-full rounded-md border-2 py-1 px-4  border-gray-400"
-                  onChange={(event) => {
-                    const { name, value} = event.target;
-                    // console.log("name", name, "value", value);
-                    setFormData((prev) => ({ ...prev, [name] : value}))
-                  }}
-                >
-                  <option>--Select Work Type--</option>
-                  {workTypeData?.map(({_id, workType})=>(
-                    <option key={_id} value={_id} name={workType}>{workType}</option>
+                   <option key={_id} value={_id} selected={formData.designation === _id}>{designation}</option>
                   ))}
                 </select>
               </div>
@@ -1167,16 +1093,31 @@ function Registration() {
                   name='aadharCardAttachment'
                   // onChange={handleFormData}
                   onChange={(e) => handleFileChange(e, 'aadharCardAttachment')}
-                  className="w-full rounded-md border-2 py-1 px-4  border-gray-400"
+                  className="w-full rounded-md border-2 py-1 px-4 focus:outline-none focus:ring-2 focus:ring-black"
                 />
                 {errors.aadharCardAttachment && <span className="text-red-600">{errors.aadharCardAttachment}</span>}
-                {formData.aadharCardAttachment && (
-                  <div className="mt-2">
-                    <a href={formData.aadharCardAttachment} target="_blank" rel="noopener noreferrer" className="text-blue-600 underline">
-                      View Uploaded Document
-                    </a>
+                {/* <span>njfgjfg{parsedData?.joiningFormAttachment}</span> */}
+                {formData?.aadharCardAttachment && (
+                  <div>
+                    <img
+                      src={formData.aadharCardAttachment} // Replace with your image URL
+                      alt="Image"
+                      onClick={handleImageClick}
+                      className={`cursor-pointer transition-all duration-300 ease-in-out w-[${imageSize}%]`} 
+                    />
                   </div>
                 )}
+                 {isImageOpen && (
+                  <div className="mt-4">
+                    <button
+                      onClick={handleClose}
+                      className="px-4 py-2 bg-red-600 text-white font-semibold rounded-md hover:bg-red-700 focus:outline-none focus:ring-2 focus:ring-red-500"
+                    >
+                      Close
+                    </button>
+                  </div>
+                )}
+
               </div>
               
               {/* pan card attachments field  */}
@@ -1189,16 +1130,31 @@ function Registration() {
                   // value={formData.panCardAttachment}
                   name='panCardAttachment'
                   onChange={(e) => handleFileChange(e, 'panCardAttachment')}
-                  className="w-full rounded-md border-2 py-1 px-4  border-gray-400"
+                  className="w-full rounded-md border-2 py-1 px-4 focus:outline-none focus:ring-2 focus:ring-black"
                 />
                 {errors.panCardAttachment && <span className="text-red-600">{errors.panCardAttachment}</span>}
-                {formData.panCardAttachment && (
-                  <div className="mt-2">
-                    <a href={formData.panCardAttachment} target="_blank" rel="noopener noreferrer" className="text-blue-600 underline">
-                      View Uploaded Document
-                    </a>
+               
+                {formData?.panCardAttachment && (
+                  <div>
+                    <img
+                      src={formData.panCardAttachment} // Replace with your image URL
+                      alt="Image"
+                      onClick={handleImageClick}
+                      className={`cursor-pointer transition-all duration-300 ease-in-out w-[${imageSize}%]`} 
+                    />
                   </div>
                 )}
+                 {isImageOpen && (
+                  <div className="mt-4">
+                    <button
+                      onClick={handleClose}
+                      className="px-4 py-2 bg-red-600 text-white font-semibold rounded-md hover:bg-red-700 focus:outline-none focus:ring-2 focus:ring-red-500"
+                    >
+                      Close
+                    </button>
+                  </div>
+                )}
+
               </div>
               
               {/* bank passbook attachments field  */}
@@ -1211,14 +1167,28 @@ function Registration() {
                   // value={formData.bankAttachment}
                   name='bankAttachment'
                   onChange={(e) => handleFileChange(e, 'bankAttachment')}
-                  className="w-full rounded-md border-2 py-1 px-4  border-gray-400"
+                  className="w-full rounded-md border-2 py-1 px-4 focus:outline-none focus:ring-2 focus:ring-black"
                 />
                 {errors.bankAttachment && <span className="text-red-600">{errors.bankAttachment}</span>}
-                {formData.bankAttachment && (
-                  <div className="mt-2">
-                    <a href={formData.bankAttachment} target="_blank" rel="noopener noreferrer" className="text-blue-600 underline">
-                      View Uploaded Document
-                    </a>
+                
+                {formData?.bankAttachment && (
+                  <div>
+                    <img
+                      src={formData.bankAttachment} // Replace with your image URL
+                      alt="Image"
+                      onClick={handleImageClick}
+                      className={`cursor-pointer transition-all duration-300 ease-in-out w-[${imageSize}%]`} 
+                    />
+                  </div>
+                )}
+                 {isImageOpen && (
+                  <div className="mt-4">
+                    <button
+                      onClick={handleClose}
+                      className="px-4 py-2 bg-red-600 text-white font-semibold rounded-md hover:bg-red-700 focus:outline-none focus:ring-2 focus:ring-red-500"
+                    >
+                      Close
+                    </button>
                   </div>
                 )}
               </div>
@@ -1227,133 +1197,81 @@ function Registration() {
               <div>
                 <label>
                   <span>Joining Form</span>
+                  <span className='text-red-600'>*</span>
                 </label>
                 <input type='file' 
                   // value={formData.joiningFormAttachment}
                   name='joiningFormAttachment'
                   onChange={(e) => handleFileChange(e, 'joiningFormAttachment')}
-                  className="w-full rounded-md border-2 py-1 px-4  border-gray-400"
+                  className="w-full rounded-md border-2 py-1 px-4 focus:outline-none focus:ring-2 focus:ring-black"
                 />
+                {errors.joiningFormAttachment && <span className="text-red-600">{errors.joiningFormAttachment}</span>}
                
-               
-                
+                {formData?.joiningFormAttachment && (
+                  <div>
+                    <img
+                      src={formData.joiningFormAttachment} // Replace with your image URL
+                      alt="Image"
+                      onClick={handleImageClick}
+                      className={`cursor-pointer transition-all duration-300 ease-in-out w-[${imageSize}%]`} 
+                    />
+                  </div>
+                )}
+                 {isImageOpen && (
+                  <div className="mt-4">
+                    <button
+                      onClick={handleClose}
+                      className="px-4 py-2 bg-red-600 text-white font-semibold rounded-md hover:bg-red-700 focus:outline-none focus:ring-2 focus:ring-red-500"
+                    >
+                      Close
+                    </button>
+                  </div>
+                )}
+
               </div>
               
               {/* other document field  */}
               <div>
                 <label>
                   <span>Other Document</span>
+                  <span className='text-red-600'>*</span>
                 </label>
                 <input type='file' 
                   onChange={(e) => handleFileChange(e, 'otherAttachment')}
                   name='otherAttachment'
-                  className="w-full rounded-md border-2 py-1 px-4  border-gray-400"
+                  className="w-full rounded-md border-2 py-1 px-4 focus:outline-none focus:ring-2 focus:ring-black"
                 />
-              </div>
-
-            </div>
-          </fieldset>
-
-          
-          <fieldset className='border-2  rounded-md mb-4' style={{ borderColor: '#740FD6'}}>
-            <legend className='font-semibold text-lg ml-8 ' style={{color : '#740FD6'}}> &nbsp;&nbsp; Salary Details &nbsp;&nbsp;</legend>
-            <div className='grid gap-3 m-6 md:grid-cols-4'>
-
-
-              {/* ctc input field   */}
-              <div>
-                <label>
-                  <span>CTC</span>
-                  <span className='text-red-600'>*</span>
-                </label>
-                <input type='text' 
-                  value={formData.ctc}
-                  name='ctc'
-                  onChange={handleFormData}
-                  className="w-full rounded-md border-2 py-1 px-4 border-gray-400"
-                />
+                {errors.otherAttachment && <span className="text-red-600">{errors.otherAttachment}</span>}
                 
-                
+                {formData?.otherAttachment && (
+                  <div>
+                    <img
+                      src={formData.otherAttachment} // Replace with your image URL
+                      alt="Image"
+                      onClick={handleImageClick}
+                      className={`cursor-pointer transition-all duration-300 ease-in-out w-[${imageSize}%]`} 
+                    />
+                  </div>
+                )}
+                 {isImageOpen && (
+                  <div className="mt-4">
+                    <button
+                      onClick={handleClose}
+                      className="px-4 py-2 bg-red-600 text-white font-semibold rounded-md hover:bg-red-700 focus:outline-none focus:ring-2 focus:ring-red-500"
+                    >
+                      Close
+                    </button>
+                  </div>
+                )}
+
               </div>
-              
-              {/* inhand salary input field  */}
-              <div>
-                <label>
-                  <span>Inhand Salary</span>
-                  <span className='text-red-600'>*</span>
-                </label>
-                <input type='text' 
-                  value={formData.inHand}
-                  name='inHand'
-                  onChange={handleFormData}
-                  className="w-full rounded-md border-2 py-1 px-4  border-gray-400"
-                />
-                
-                
-              </div>
-              
-              {/* employee pf  input field  */}
-              <div>
-                <label><span>Employee PF</span></label>
-                <input type='text' 
-                  value={formData.employeePF}
-                  name='employeePF'
-                  onChange={handleFormData}
-                  className="w-full rounded-md border-2 py-1 px-4  border-gray-400"
-                />
-               
-               
-              </div>
-              
-              {/* employee esi input field  */}
-              <div>
-                <label><span>Employee ESI</span></label>
-                <input 
-                  type='text' 
-                  value={formData.employeeESI}
-                  name='employeeESI'
-                  onChange={handleFormData}
-                  className="w-full rounded-md border-2 py-1 px-4  border-gray-400"
-                />
-              </div>
-              
-              {/* employer pf input field  */}
-              <div>
-                <label><span>Employer PF</span></label>
-                <input 
-                  type='text' 
-                  value={formData.employerPF}
-                  name='employerPF'
-                  onChange={handleFormData}
-                  className="w-full rounded-md border-2 py-1 px-4  border-gray-400"
-                />
-              </div>
-              
-              {/* employer esi input field  */}
-              <div>
-                <label><span>Employer ESI</span></label>
-                <input type='text' 
-                  value={formData.employerESI}
-                  name='employerESI'
-                  onChange={handleFormData}
-                  className="w-full rounded-md border-2 py-1 px-4  border-gray-400"
-                />
-              </div>
-             
-             
-             
-             
-             
-              
-              
-             
 
             </div>
           </fieldset>
 
           <div className='text-right mt-4 pb-4'>
             <button  type='submit' className="  px-6 py-2 text-white font-semibold rounded-md shadow-md hover:bg-blue-800 transition-all" style={{backgroundColor : '#740FD6'}}>
-              Register
+              Update
             </button>
           </div>
 
