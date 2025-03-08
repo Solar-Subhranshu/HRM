@@ -582,24 +582,24 @@ function TableListofCompany2() {
       <div className="md:flex justify-between gap-20 pt-2  w-full">
         {/* Department Table */}
         <div className='w-full max-h-[360px] overflow-y-auto'>
-          <table className="table-auto  border border-gray-300 w-full">
-            <thead className="border border-gray-300 sticky top-0 z-10 shadow">
+          <table className="table-auto  border border-gray-500 w-full">
+            <thead className="border border-gray-500 sticky top-0 z-10 shadow">
               <tr>
-                <th className="text-blue-600/100 border border-gray-300 w-20">Select</th>
-                <th className="text-blue-600/100 border border-gray-300">Department</th>
+                <th className="text-blue-600/100 border border-gray-500 w-20">Select</th>
+                <th className="text-blue-600/100 border border-gray-500">Department</th>
               </tr>
             </thead>
             <tbody>
               {departmentNameData?.map(({ empdept, id }) => (
                 <tr key={id}>
-                  <td className="border-t border-gray-300 flex justify-center items-center align-middle h-8">
+                  <td className="border-t border-gray-500 flex justify-center items-center align-middle h-8">
                     <input
                       type="checkbox"
                       checked={selectedDepartmentId === id}
                       onChange={() => handleDepartmentSelect(id)} // Select or deselect the department
                     />
                   </td>
-                  <td className="border border-gray-300 text-center">{empdept}</td>
+                  <td className="border border-gray-500 text-center">{empdept}</td>
                 </tr>
               ))}
             </tbody>        
@@ -610,18 +610,18 @@ function TableListofCompany2() {
 
         {/* Designation Table */}
         <div className='w-full pr-2 max-h-[360px] overflow-y-auto'>
-          <table className="table-auto  border border-gray-300 w-full">
+          <table className="table-auto  border border-gray-500 w-full">
             <thead className="border border-gray-300 sticky top-0 z-10 shadow">
               <tr>
-                <th className="text-blue-600/100 border border-gray-300 w-20">Select</th>
-                <th className="text-blue-600/100 border border-gray-300">Designation</th>
+                <th className="text-blue-600/100 border border-gray-500 w-20">Select</th>
+                <th className="text-blue-600/100 border border-gray-500">Designation</th>
               </tr>
             </thead>
             <tbody>
               {selectedDepartmentId && designationNameData.length > 0 ? (
                 designationNameData?.map(({ designation, _id }) => (
                   <tr key={_id}>
-                    <td className="border-t border-gray-300 flex justify-center items-center align-middle">
+                    <td className="border-t border-gray-500 flex justify-center items-center align-middle">
                       <input
                         type="radio"
                         name="designation"
@@ -629,7 +629,7 @@ function TableListofCompany2() {
                         className='mt-1'
                       />
                     </td>
-                    <td className="border border-gray-300 text-center">{designation}</td>
+                    <td className="border border-gray-500 text-center">{designation}</td>
                   </tr>
                 ))
               ) : (
@@ -689,10 +689,10 @@ function TableListofCompany2() {
             </h2>
             <input
               type="text"
-              value={dept}
+              defaultValue={dept}
               onChange={(e) => setDept(e.target.value)}
               placeholder="Enter Department Name"
-              className="w-full p-2 border border-gray-300 rounded-md mb-4"
+              className="w-full p-2 border border-gray-500 rounded-md mb-4"
             />
             <div className="flex justify-end gap-4">
               <button
@@ -721,10 +721,10 @@ function TableListofCompany2() {
             </h2>
             <input
               type="text"
-              value={designation}
+              defaultValue={designation}
               onChange={(e) => setDesignation(e.target.value)}
               placeholder="Enter Designation Name"
-              className="w-full p-2 border border-gray-300 rounded-md mb-4"
+              className="w-full p-2 border border-gray-500 rounded-md mb-4"
             />
             <div className="flex justify-end gap-4">
               <button
@@ -750,137 +750,4 @@ function TableListofCompany2() {
 export default TableListofCompany2;
 
 
-
-// import React, { useState, useEffect } from 'react';
-// import axios from 'axios';
-
-// function TableListofCompany2() {
-//   const [departmentNameData, setDepartmentName] = useState([]);
-//   const [designationNameData, setDesignationName] = useState([]);
-//   const [selectedDepartmentId, setSelectedDepartmentId] = useState(null);
-//   const [selectedDesignationId, setSelectedDesignationId] = useState(null);
-//   const [isModalOpen, setIsModalOpen] = useState(false);
-//   const [dept, setDept] = useState('');
-//   const [designation, setDesignation] = useState('');
-//   const [isUpdateMode, setIsUpdateMode] = useState(false);
-//   const [isDesignationModalOpen, setIsDesignationModalOpen] = useState(false);
-//   const [isDesignationUpdateMode, setIsDesignationUpdateMode] = useState(false);
-
-//   useEffect(() => {
-//     fetchDepartmentNameData();
-//   }, []);
-
-//   useEffect(() => {
-//     if (selectedDepartmentId) {
-//       fetchDesignationData(selectedDepartmentId);
-//       setSelectedDesignationId(null);
-//     } else {
-//       setDesignationName([]);
-//       setSelectedDesignationId(null);
-//     }
-//   }, [selectedDepartmentId]);
-
-//   const fetchDepartmentNameData = async () => {
-//     try {
-//       const response = await axios.get(`${process.env.REACT_APP_SERVER_ADDRESS}/common/show-department`);
-//       setDepartmentName(response?.data?.data);
-//     } catch (error) {
-//       alert('Error: Unable to fetch department data');
-//     }
-//   };
-
-//   const fetchDesignationData = async (departmentId) => {
-//     try {
-//       const response = await axios.get(`${process.env.REACT_APP_SERVER_ADDRESS}/common/show-designation?departmentId=${departmentId}`);
-//       setDesignationName(response?.data?.data);
-//     } catch (error) {
-//       alert('Error: Unable to fetch designation data');
-//     }
-//   };
-
-//   const handleDepartmentSelect = (id) => {
-//     setSelectedDepartmentId((prev) => (prev === id ? null : id));
-//   };
-
-//   const handleDesignationSelect = (id) => {
-//     setSelectedDesignationId((prev) => (prev === id ? null : id));
-//   };
-
-//   const handleAddDepartment = () => {
-//     setDept('');
-//     setIsUpdateMode(false);
-//     setIsModalOpen(true);
-//   };
-
-//   return (
-//     <div className="p-4 w-full">
-//       <div className="bg-blue-600 text-white p-2 rounded-md mb-4 text-center md:text-left">
-//         <h4>List of Departments</h4>
-//       </div>
-//       <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-//         <div className='max-h-[380px] overflow-y-auto border rounded-md shadow-md'>
-//           <table className="table-auto w-full border-collapse">
-//             <thead className="bg-gray-200 sticky top-0">
-//               <tr>
-//                 <th className="border p-2">Select</th>
-//                 <th className="border p-2">Department</th>
-//               </tr>
-//             </thead>
-//             <tbody>
-//               {departmentNameData?.map(({ empdept, id }) => (
-//                 <tr key={id} className="border">
-//                   <td className="p-2 text-center">
-//                     <input
-//                       type="checkbox"
-//                       checked={selectedDepartmentId === id}
-//                       onChange={() => handleDepartmentSelect(id)}
-//                     />
-//                   </td>
-//                   <td className="p-2 text-center">{empdept}</td>
-//                 </tr>
-//               ))}
-//             </tbody>
-//           </table>
-//         </div>
-//         <div className='max-h-[380px] overflow-y-auto border rounded-md shadow-md'>
-//           <table className="table-auto w-full border-collapse">
-//             <thead className="bg-gray-200 sticky top-0">
-//               <tr>
-//                 <th className="border p-2">Select</th>
-//                 <th className="border p-2">Designation</th>
-//               </tr>
-//             </thead>
-//             <tbody>
-//               {selectedDepartmentId && designationNameData.length > 0 ? (
-//                 designationNameData.map(({ designation, _id }) => (
-//                   <tr key={_id} className="border">
-//                     <td className="p-2 text-center">
-//                       <input
-//                         type="radio"
-//                         name="designation"
-//                         onChange={() => handleDesignationSelect(_id)}
-//                       />
-//                     </td>
-//                     <td className="p-2 text-center">{designation}</td>
-//                   </tr>
-//                 ))
-//               ) : (
-//                 <tr>
-//                   <td colSpan="2" className="p-2 text-center text-gray-500">
-//                     No designations available
-//                   </td>
-//                 </tr>
-//               )}
-//             </tbody>
-//           </table>
-//         </div>
-//       </div>
-//       <div className="flex flex-col md:flex-row justify-between mt-6 gap-4">
-//         <button className="bg-green-600 text-white px-4 py-2 rounded-md" onClick={handleAddDepartment}>Add Department</button>
-//       </div>
-//     </div>
-//   );
-// }
-
-// export default TableListofCompany2;
 

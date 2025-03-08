@@ -137,6 +137,10 @@ function Navbars() {
   const handleManthlyResignationClick = ()=>{
     navigate('/layout/monthlyResignationReport')
   }
+
+  const handleJoiningPdfClick = ()=>{
+    navigate('/layout/JoiningPdf')
+  }
   
   
   return (
@@ -343,6 +347,9 @@ function Navbars() {
                  </li>
                  <li className="hover:bg-gray-200 py-1 px-2 rounded  text-sm ">
                    <a href="#" onClick={handleApproveFormClick} className="whitespace-nowrap">Approve Form</a>
+                 </li>
+                 <li className="hover:bg-gray-200 py-1 px-2 rounded  text-sm ">
+                   <a href="#" onClick={handleJoiningPdfClick} className="whitespace-nowrap">Joining Pdf</a>
                  </li>
                </ul>
              </div>

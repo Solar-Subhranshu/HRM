@@ -14,6 +14,7 @@ function Index() {
  
     const location = useLocation();
     const { formId } = location.state || {}; // Retrieve formId
+    const [loading, setLoading] = useState(false); // Loader state
     const [joiningHrNameData, setJoiningHrNameData]=useState([]);
     
 
@@ -43,22 +44,33 @@ function Index() {
         employerPF :"",
     })
 
-    
-
     const handleSubmit = async (e) => {
         e.preventDefault();
+        setLoading(true); // Start loading
         try {
             console.log('my approve form data is ', formData)
+
+            // Remove commas from the CTC field
+            const sanitizedFormData = {
+                ...formData,
+                ctc: formData.ctc.replace(/,/g, ''),  // Remove commas
+                inHand: formData.inHand.replace(/,/g, ''), 
+                employeeESI: formData.employeeESI.replace(/,/g, ''), 
+                employeePF: formData.employeePF.replace(/,/g, ''), 
+                employerESI: formData.employerESI.replace(/,/g, ''), 
+                employerPF: formData.employerPF.replace(/,/g, '') 
+            };
+
+            console.log('my approve form data is ', sanitizedFormData);
+
             const response = await axios.patch(
                 `${process.env.REACT_APP_SERVER_ADDRESS}/auth/approve-joiningForm`,
-                { ...formData, formId },
+                { ...sanitizedFormData, formId },
                 { withCredentials: true }
             );
 
-            console.log("my approve formdata is ", formData)
-          
             // Show success toast
-            toast.success("Form submitted successfully!", {
+            toast.success("Approve successfully!", {
                 position: "top-right",
                 autoClose: 3000, // Closes after 3 seconds
                 hideProgressBar: false,
@@ -91,48 +103,19 @@ function Index() {
                 joiningHR: "",
             });
 
-            await downloadJoiningPDF();
-
         } catch (error) {
             console.error("Error submitting approval  form", error);
-            console.error("Error submitting approval  2222 form", response);
-            toast.error("Form submission failed!", {
-                position: "top-right",
-                autoClose: 3000,
-            });
-        }
-    };
-
-    // Function to download the PDF
-    const downloadJoiningPDF = async () => {
-        try {
-            const response = await axios.get(
-                `${process.env.REACT_APP_SERVER_ADDRESS}/auth/download-JoiningPdf?formId=${formId}`,
-                { responseType: 'blob' } // Ensure the response is a Blob
-            );
+           
             
-            // Create a blob URL for the response data
-            const blob = new Blob([response.data], { type: 'application/pdf' });
-            const link = document.createElement('a');
-            link.href = window.URL.createObjectURL(blob);
-            link.setAttribute('download', 'JoiningForm.pdf');
-            document.body.appendChild(link);
-            link.click();
-            link.remove();
-
-            toast.success("PDF downloaded successfully!", {
-                position: "top-right",
-                autoClose: 3000,
-            });
-
-        } catch (error) {
-            toast.error("Failed to download PDF!", {
+            toast.error("Approvel failed!", {
                 position: "top-right",
                 autoClose: 3000,
             });
         }
+        setLoading(false); // Stop loading
     };
-  
+
+    
     const fetchJoiningHrNameData = async () => {
         try {
           const response = await axios.get(`${process.env.REACT_APP_SERVER_ADDRESS}/auth/show-joining-HR`);
@@ -184,7 +167,7 @@ function Index() {
                         </label>
                         <select 
                         name="companyId"
-                        value={formData.companyId || ""}
+                        defaultValue={formData.companyId || ""}
                         onChange={handleFormData}
                         className="border border-gray-500 rounded-md  py-2 px-4 "
                         >
@@ -200,7 +183,7 @@ function Index() {
                         <label>Joining Hr Name <span className='text-red-600'>*</span></label>
                         <select 
                         name="joiningHR"
-                        value={formData.joiningHR || ""}
+                        defaultValue={formData.joiningHR || ""}
                         onChange={handleFormData}
                         className="border border-gray-500 rounded-md  py-2 px-4 "
                         >
@@ -215,7 +198,7 @@ function Index() {
                         <label>Interview Date<span className='text-red-600'>*</span></label>
                         <input type='date' 
                             name='interviewDate'
-                            value={formData.interviewDate}
+                            defaultValue={formData.interviewDate}
                             onChange={handleFormData}
                             className='border border-gray-500 px-4 py-2 rounded-md' />
                     </div>
@@ -225,7 +208,7 @@ function Index() {
                         <input 
                             type='date' 
                             name='joiningDate'
-                            value={formData.joiningDate}
+                            defaultValue={formData.joiningDate}
                             onChange={handleFormData}
                             className='border border-gray-500 px-4 py-2 rounded-md' />
                     </div>
@@ -235,8 +218,7 @@ function Index() {
                         <input 
                             type='text' 
                             name='officialContact'
-                            
-                            value={formData.officialContact}
+                            defaultValue={formData.officialContact}
                             onChange={handleFormData}
                             className='border border-gray-500 px-4 py-2 rounded-md' />
                     </div>
@@ -245,7 +227,7 @@ function Index() {
                         <input 
                             type='email' 
                             name='officialEmail' 
-                            value={formData.officialEmail}
+                            defaultValue={formData.officialEmail}
                             onChange={handleFormData}
                             className='border border-gray-500 px-4 py-2 rounded-md' />
                     </div>
@@ -275,7 +257,7 @@ function Index() {
                         name="designation"
                         onChange={(event) => {
                             const { name, value} = event.target;
-                            console.log("name", name, "value", value);
+                            // console.log("name", name, "value", value);
                             setFormData((prev) => ({ ...prev, [name] : value}))
                         }}
                         value={formData.designation}
@@ -294,7 +276,7 @@ function Index() {
                         <input 
                             type='text' 
                             name='employeeType' 
-                            value={formData.employeeType}
+                            defaultValue={formData.employeeType}
                             onChange={handleFormData}
                             className='border border-gray-500 px-4 py-2 rounded-md' />
                     </div>
@@ -305,7 +287,7 @@ function Index() {
                         <input 
                             type='text' 
                             name='modeOfRecruitment' 
-                            value={formData.modeOfRecruitment}
+                            defaultValue={formData.modeOfRecruitment}
                             onChange={handleFormData}
                             className='border border-gray-500 px-4 py-2 rounded-md' />
                     </div>
@@ -316,7 +298,7 @@ function Index() {
                         <input 
                             type='text' 
                             name='reference' 
-                            value={formData.reference}
+                            defaultValue={formData.reference}
                             onChange={handleFormData}
                             className='border border-gray-500 px-4 py-2 rounded-md' />
                     </div> 
@@ -332,7 +314,7 @@ function Index() {
                         <input 
                             type='text' 
                             name='ctc' 
-                            value={formData.ctc}
+                            defaultValue={formData.ctc}
                             onChange={handleFormData}
                             className='border border-gray-500 px-4 py-2 rounded-md' />
                     </div>
@@ -341,7 +323,7 @@ function Index() {
                         <input 
                             type='text' 
                             name='inHand' 
-                            value={formData.inHand}
+                            defaultValue={formData.inHand}
                             onChange={handleFormData}
                             className='border border-gray-500 px-4 py-2 rounded-md' />
                     </div>
@@ -350,7 +332,7 @@ function Index() {
                         <input 
                             type='text' 
                             name='employeePF' 
-                            value={formData.employeePF}
+                            defaultValue={formData.employeePF}
                             onChange={handleFormData}
                             className='border border-gray-500 px-4 py-2 rounded-md' />
                     </div>
@@ -358,7 +340,7 @@ function Index() {
                         <label>Employee ESI</label>
                         <input type='text'
                          name='employeeESI'
-                         value={formData.employeeESI}
+                         defaultValue={formData.employeeESI}
                          onChange={handleFormData}
                          className='border border-gray-500 px-4 py-2 rounded-md' />
                     </div>
@@ -367,7 +349,7 @@ function Index() {
                         <input 
                            type='text' 
                            name='employerPF' 
-                           value={formData.employerPF}
+                           defaultValue={formData.employerPF}
                            onChange={handleFormData}
                            className='border border-gray-500 px-4 py-2 rounded-md' />
                     </div>
@@ -376,14 +358,46 @@ function Index() {
                         <input 
                             type='text' 
                             name='employerESI' 
-                            value={formData.employerESI}
+                            defaultValue={formData.employerESI}
                             onChange={handleFormData}
                             className='border border-gray-500 px-4 py-2 rounded-md' />
                     </div>
                 </div>
 
-                <div className='mt-4'>
+                {/* <div className='mt-4'>
                     <button type='submit' className='py-2 px-4 bg-red-500 rounded-md text-white font-semibold'>Submit</button>
+                </div> */}
+
+                <div className="mt-4">
+                    <button
+                        type="submit"
+                        className="py-2 px-4 bg-red-500 rounded-md text-white font-semibold flex items-center justify-center"
+                        disabled={loading}
+                    >
+                        {loading ? (
+                            <>
+                                <svg className="animate-spin h-5 w-5 mr-2" viewBox="0 0 24 24">
+                                    <circle
+                                        className="opacity-25"
+                                        cx="12"
+                                        cy="12"
+                                        r="10"
+                                        stroke="white"
+                                        strokeWidth="4"
+                                        fill="none"
+                                    ></circle>
+                                    <path
+                                        className="opacity-75"
+                                        fill="white"
+                                        d="M4 12a8 8 0 018-8v4l3-3-3-3v4a8 8 0 108 8h-4l3 3 3-3h-4a8 8 0 01-8 8z"
+                                    ></path>
+                                </svg>
+                                Submitting...
+                            </>
+                        ) : (
+                            "Submit"
+                        )}
+                    </button>
                 </div>
             </form>
         </div>

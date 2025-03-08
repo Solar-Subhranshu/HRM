@@ -22,6 +22,7 @@ import ShowJoiningData from '../../Pages/ShowJoiningData/index'
 import ShowSingleJoiningData from '../../Component/ShowSingleJoiningData/index'
 import MonthlyJoiningReport from '../../Pages/MonthlyJoiningReport/index'
 import MonthlyResignationReport from '../../Pages/MonthlyResignationReport/index'
+import JoiningPdf from '../../Pages/JoiningPdf/index'
 
 import Errorpage from '../../Pages/404ErrorPage/index'
 
@@ -57,6 +58,7 @@ const Router = () => {
             <Route path='showsinglejoiningData' element={<ShowSingleJoiningData/>} />
             <Route path='monthlyJoiningReport' element={<MonthlyJoiningReport/>} />
             <Route path='monthlyResignationReport' element={<MonthlyResignationReport/>} />
+            <Route path='JoiningPdf' element={<JoiningPdf/>} />
 
             <Route path='*' element={<Errorpage/>} />
             
