@@ -52,9 +52,9 @@ function Index() {
        <div>
            <div className='py-2 bgMainColor mt-4 shadow-xl flex justify-between'>
                 <div>
-                    <h1 className=' text-white font-bold text-xl'>data</h1>
+                    <h1 className=' text-white font-bold text-xl ml-2'>Joining Form data</h1>
                 </div>
-                <div className='flex gap-2'>
+                <div className='flex gap-2 mr-2'>
                         {['Approved', 'Pending'].map((item) => (
                             <button
                                 key={item}

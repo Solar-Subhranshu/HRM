@@ -690,6 +690,7 @@ function Registration() {
                     setFormData((prev) => ({ ...prev, [name] : value}))
                   }}
                 >
+                  <option>--Select Degree--</option>
                   {degreeData?.map(({_id, name})=>(
                     <option key={_id} value={_id} name={name}>{name}</option>
                   ))}

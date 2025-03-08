@@ -124,6 +124,8 @@ function DailyReport() {
     fetchAllEmployeeNameWithId();
   }, []);
 
+  
+  
   return (
     <div className="pr-4">
       <div className="flex flex-col items-center justify-center border-4 mt-5 h-full w-full ml-2 rounded-md" style={{ borderColor: "#740FD6" }} >
@@ -132,22 +134,22 @@ function DailyReport() {
         </div>
 
         {/* Top Section */}
-        <div className="w-full mt-6 flex flex-row justify-end ">
+        <div className="w-full mt-6 flex flex-col md:flex-row justify-end ">
           {/* Report Date */}
-          <div className="w-1/2">
-            <div className="flex flex-col ml-8 mt-4 mr-96">
+          <div className="w-[calc(100%-50%)] md:w-[calc(100%-30%)] lg::w-1/2">
+            <div className="flex flex-col ml-3 md:ml-8 mt-1 md:mt-4 md:mr-96">
               <label>Report Date</label>
               <input
                 type="date"
-                value={selectedDate} // Bind the input value to the state
+                defaultValue={selectedDate} // Bind the input value to the state
                 onChange={(e) => setSelectedDate(e.target.value)}
-                className="w-full rounded-md border py-2 px-6 focus:outline-none focus:ring-2 focus:ring-purple-500"
+                className="w-full rounded-md border border-gray-500 py-2 px-6 focus:outline-none focus:ring-2 focus:ring-purple-500"
               />
             </div>
           </div>
 
           {/* Selection Section */}
-          <div className="w-1/2">
+          <div className="w-full md:w-1/2">
             <h3 className="font-semibold text-lg ml-4">Selection By</h3>
             <div className="flex flex-col">
               <div className="flex items-center ml-4 gap-1">
@@ -165,7 +167,7 @@ function DailyReport() {
                 <input
                   type="text"
                   placeholder="Search..."
-                  className="w-full rounded-md border py-2 px-10 focus:outline-none focus:ring-2 focus:ring-purple-500"
+                  className="w-full rounded-md border border-gray-500 py-2 px-10 focus:outline-none focus:ring-2 focus:ring-purple-500"
                   onChange={(e) => handleSearch(e.target.value)}
                 />
 
@@ -185,7 +187,7 @@ function DailyReport() {
                       <tbody>
                         {filteredEmployees.map(({ _id, name, employeeCode }) => (
                           <tr key={_id}>
-                            <td className="border border-gray-300 w-20 text-center items-center align-middle h-8" style={{ width: "max-width" }} >
+                            <td className="border border-gray-500 w-20 text-center items-center align-middle h-8" style={{ width: "max-width" }} >
                               <input
                                 type="checkbox"
                                 checked={selectedEmployees.includes(_id)}
@@ -193,7 +195,7 @@ function DailyReport() {
                                 disabled={!fewSelect && !selectAll}
                               />
                             </td>
-                            <td className="border border-gray pl-4">{name}({employeeCode})</td>
+                            <td className="border border-gray-500 pl-4">{name}({employeeCode})</td>
                           </tr>
                         ))}
                       </tbody>
@@ -235,5 +237,6 @@ function DailyReport() {
     </div>
   );
 }
+
 
 export default DailyReport;

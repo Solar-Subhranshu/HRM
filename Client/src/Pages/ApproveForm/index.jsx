@@ -69,44 +69,48 @@ function Index() {
                 { withCredentials: true }
             );
 
-            // Show success toast
-            toast.success("Approve successfully!", {
-                position: "top-right",
-                autoClose: 3000, // Closes after 3 seconds
-                hideProgressBar: false,
-                closeOnClick: true,
-                pauseOnHover: true,
-                draggable: true,
-                progress: undefined,
-            });
+            if (response.status === 200 || response.status === 201) {
+                // Show success toast
+                 toast.success("Approve successfully!", {
+                     position: "top-right",
+                     autoClose: 3000, // Closes after 3 seconds
+                     hideProgressBar: false,
+                     closeOnClick: true,
+                     pauseOnHover: true,
+                     draggable: true,
+                     progress: undefined,
+                 });
+               
+                // Reset form data after submission
+                 setFormData((prev) => ({
+                     formId: prev.formId, // Keep formId unchanged
+                     companyId: "",
+                     officialEmail: "",
+                     officialContact: "",
+                     department: "",
+                     designation: "",
+                     joiningDate: "",
+                     employeeType: "",
+                     interviewDate: "",
+                     modeOfRecruitment: "",
+                     reference: "",
+                     ctc: "",
+                     inHand: "",
+                     employeeESI: "",
+                     employeePF: "",
+                     employerESI: "",
+                     employerPF: "",
+                     joiningHR: "",
+                 }));
+           
+               } else {
+                alert('Something went wrong during approval.');
+             }
             
-
-            // Reset form data after submission
-            setFormData({
-                formId: formId || "",
-                companyId: "",
-                officialEmail:"",
-                officialContact: "",
-                department: "",
-                designation: "",
-                joiningDate: "",
-                employeeType: "",
-                interviewDate: "",
-                modeOfRecruitment: "",
-                reference: "",
-                ctc: "",
-                inHand: "",
-                employeeESI: "",
-                employeePF: "",
-                employerESI: "",
-                employerPF: "",
-                joiningHR: "",
-            });
+             
 
         } catch (error) {
             console.error("Error submitting approval  form", error);
-           
-            
             toast.error("Approvel failed!", {
                 position: "top-right",
                 autoClose: 3000,
