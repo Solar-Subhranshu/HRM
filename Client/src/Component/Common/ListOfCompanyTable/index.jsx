@@ -32,7 +32,7 @@ function AddNewCompany() {
       {/* Table Section */}
       <div className="max-h-[250px] overflow-y-auto border border-gray-500">
         <table className="table-auto w-full border-collapse border border-gray-500">
-          <thead className="bg-gray-100 sticky top-0 z-6">
+          <thead className="bg-gray-300 sticky top-0 z-6">
             <tr>
               <th className="text-blue-600 border border-gray-500">Company</th>
               <th className="text-blue-600 border border-gray-500">Branch</th>

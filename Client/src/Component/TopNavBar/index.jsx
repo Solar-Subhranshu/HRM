@@ -141,6 +141,10 @@ function Navbars() {
   const handleJoiningPdfClick = ()=>{
     navigate('/layout/JoiningPdf')
   }
+
+  const handleDegreeClick = ()=>{
+    navigate('/layout/degree')
+  }
   
   
   return (
@@ -218,7 +222,7 @@ function Navbars() {
                     <a href="#" onClick={handleCompanybranchClick}  >Company</a>
                   </li>
                   <li className="hover:bg-gray-200 py-1 px-2 rounded  text-sm ">
-                    <a href="#" >Branch</a>
+                    <a href="#" onClick={handleDegreeClick} >Degree</a>
                   </li>
                   <li className="hover:bg-gray-200 py-1 px-2 rounded  text-sm ">
                     <a href="#" onClick={handleDepartmentClick}>Department</a>
