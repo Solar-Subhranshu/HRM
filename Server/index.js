@@ -19,10 +19,26 @@ console.log(PORT);
 
 app.use(cookieParser());
 app.use(express.json({limit: '100mb'}));
-app.use(cors({
-    origin: true,
-    credentials:true
-}));
+// app.use(cors({
+//     origin: true,
+//     credentials:true
+// }));
+const allowedOrigins = [
+  'http://88.222.214.93:3002',
+  'http://localhost:3000', // Optional for local testing
+];
+const corsOptions = {
+  origin: function (origin, callback) {
+    if (allowedOrigins.includes(origin) || !origin) {
+      callback(null, true);
+    } else {
+      callback(new Error('Not allowed by CORS'));
+    }
+  },
+  methods: ['GET', 'POST', 'PUT', 'DELETE'], // Allow specific methods
+  credentials: true, // Allow cookies if needed
+};
+app.use(cors(corsOptions));
 app.use(express.urlencoded({ extended:true,limit:'100mb' }));
 // app.use((req, res, next) => {
 //     console.log(`(${moment().tz("Asia/Kolkata").format("DD-MM-YYYY hh:mm A")}) ${req.method} ${req.url}`); //for show api urls
