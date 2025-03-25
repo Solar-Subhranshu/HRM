@@ -19,6 +19,16 @@ console.log(PORT);
 
 app.use(cookieParser());
 app.use(express.json({limit: '100mb'}));
+app.use((req, res, next) => {
+  const now = new Date();
+  const istTime = new Date(now.getTime() + (5.5 * 60 * 60 * 1000)) // Convert to IST
+    .toISOString()
+    .replace("T", " ") // Replace "T" with space for readability
+    .replace("Z", " IST"); // Add "IST" at the end
+
+  console.log(`[${istTime}] ${req.method} ${req.url}`);
+  next();
+});
 // app.use(cors({
 //     origin: true,
 //     credentials:true
@@ -45,16 +55,7 @@ app.use(express.urlencoded({ extended:true,limit:'100mb' }));
 //     next();
 // });
 
-app.use((req, res, next) => {
-    const now = new Date();
-    const istTime = new Date(now.getTime() + (5.5 * 60 * 60 * 1000)) // Convert to IST
-      .toISOString()
-      .replace("T", " ") // Replace "T" with space for readability
-      .replace("Z", " IST"); // Add "IST" at the end
-  
-    console.log(`[${istTime}] ${req.method} ${req.url}`);
-    next();
-  });
+
 
 app.use("/auth", authEmpRoute);
 app.use("/common",commonRoute);
